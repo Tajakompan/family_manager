@@ -18,7 +18,7 @@
             <div class="title"> <h2>PLANIRANJE OBROKOV</h2> </div>
         </div>
         <div class="content">
-            <table>
+            <table id="table_1">
                 <thead>
                     <colgroup>
                         <col style="width: 25%">
@@ -38,11 +38,11 @@
                 </tbody>
             </table>
         </div>
-        <div class="add_something_view window">
+        <div class="add_something_view" id="add_something_view">
             <div class="add_meal window" id="add_meal_window">
                 <div class="title">Dodaj obrok:</div>
                 <form id="add_meal_form" class="form" method="post" action="add_meal_in_db.php">
-                    <label>Ime seznama:</label> <input type="text" name="new_meal">
+                    <label>Naziv:</label> <input type="text" name="new_meal">
                     <div class="btns">
                         <button type="reset" id="cancel_meal_btn">Prekliči</button>
                         <button type="submit" id="add_new_meal_btn">Dodaj</button>
@@ -52,5 +52,6 @@
         </div>
     </main>
     <script src="fill_table.js" ></script>
+    <script src="form.js" ></script>
 </body>
 </html>

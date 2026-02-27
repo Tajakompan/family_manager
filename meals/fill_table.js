@@ -23,11 +23,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function createAddLink(dateISO, mealType) {
-        let a = document.createElement("a");
-        a.innerHTML = "<span class='hover_add'><span class='material-symbols-outlined'>add_circle</span></span>";
+        let a = document.createElement("div");
+        a.className = "hover_add add_meal_btn";
+        a.dataset.date = dateISO;
+        a.dataset.mealType = mealType;
+        a.innerHTML = "<span class='material-symbols-outlined'>add_circle</span>";
         // prilagodi, kam naj gre
-        a.href = "add_meal.php?date=" + encodeURIComponent(dateISO) + "&meal=" + encodeURIComponent(mealType);
-        a.className = "add-meal-link";
         return a;
     }
 
@@ -39,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    for (let i = 0; i < 14; i++) {
+    for (let i = 0; i < 7; i++) {
         let d = new Date(today);
         d.setDate(today.getDate() + i);
 

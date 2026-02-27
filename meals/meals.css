@@ -27,12 +27,12 @@ tr:last-child td{
     border-bottom: none;
 }
 th{
-    height: 50px;
+    height: 55px;
     font-size: 25px;
     color:rgba(255, 255, 255, 0.5)
 }
 td{
-    height: 45px;
+    height: 50px;
     color: rgba(255, 255, 255, 0.851);
     font-size: 20px;
 }
@@ -45,6 +45,7 @@ td:nth-child(1), td:nth-child(2), td:nth-child(3){
 
 .hover_add{
     color: rgba(255, 255, 255, 0.57);
+    cursor: pointer;
 }
 
 .hover_add:hover{
