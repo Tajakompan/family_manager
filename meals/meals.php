@@ -38,6 +38,18 @@
                 </tbody>
             </table>
         </div>
+        <div class="add_something_view window">
+            <div class="add_meal window" id="add_meal_window">
+                <div class="title">Dodaj obrok:</div>
+                <form id="add_meal_form" class="form" method="post" action="add_meal_in_db.php">
+                    <label>Ime seznama:</label> <input type="text" name="new_meal">
+                    <div class="btns">
+                        <button type="reset" id="cancel_meal_btn">Prekliči</button>
+                        <button type="submit" id="add_new_meal_btn">Dodaj</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </main>
     <script src="fill_table.js" ></script>
 </body>
