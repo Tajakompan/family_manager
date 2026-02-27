@@ -1,0 +1,59 @@
+.sidebar {
+    position: fixed;   /* odstrani, če nočeš fixed */
+    top: 0;
+    left: 0;
+    width: 15vw;
+    max-width: 15vw;
+    height: 100vh;
+    background-color: rgb(200, 200, 200);
+}
+
+.sidebar-nav{
+    margin: 5px;
+    padding: 0;
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-item {
+    display: flex;
+    width: 95%;
+    height: 7vh;
+    text-align: center;
+    background-color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 5px;
+    margin: 4px;
+}
+
+.sidebar-logo {
+    display: flex;
+    width: 95%;
+    height: 18vh;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    margin: 4px;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-logo img{
+    width: 90%;
+    max-width: 90%;
+}
+
+.interactive:hover{
+    background-color: rgb(128, 128, 128);
+}
+.sidebar-item a{
+    text-decoration: none;
+    color:black;
+    display: flex;          /* ali block */
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+

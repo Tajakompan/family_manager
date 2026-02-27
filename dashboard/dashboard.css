@@ -1,0 +1,60 @@
+body{
+    margin: 0;
+    overflow: hidden;
+}
+
+.pin {
+    display: inline-block;
+    width: auto;
+    max-width: 500px;
+    margin: 15px;
+    padding: 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.layout{
+    display: flex;
+}
+
+.vertical_flex{
+    display: flex;
+    flex-direction: column;
+    margin-left: 15vw;
+    width: calc(100% - 15vw);
+    height: 100vh;
+    background-color: #3c3c3c;
+}
+
+
+.greeting{
+    width: fit-content;
+    height: 7vh;
+    max-height: 7vh;
+    color: black;
+    background-color: white;
+    display: inline-flex;
+    font-size: 35px;
+    font-weight: 600;
+    align-items: center;
+    padding-left: 3vh;
+    padding-right: 3vh;
+    border: none;
+    border-radius: 10px;
+    margin-left: 1.5vw;
+    margin-top: 3vh;
+}
+
+
+.content {
+    padding: 20px;
+    width: 75%;
+    height: 100vh;
+    margin: 1.5vh 1.5vw;
+    background-color: white;
+    border: none;
+    border-radius: 10px;
+}
+
+
+

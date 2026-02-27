@@ -1,0 +1,96 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+}
+body.loading {
+  visibility: hidden;
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,   /* 0 = outline, 1 = filled */
+    'wght' 400, /* debelina */
+    'GRAD' 0,
+    'opsz' 24;
+}
+
+/*ZGORNJI BAR*/
+.top_row{
+  margin-top: 8px;
+  height: 8vh;
+  display: flex;
+  align-items: center;     
+  justify-content: space-between;
+  padding: 12px 18px;
+}
+.button_space{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0;
+}
+.button_space button{
+  padding: 10px 20px;
+  min-width: 200px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  background: #B6EA6B;
+  color: #1f1f1f;
+  font-size: 20px;
+}
+.button_space button:hover{
+  background: #9fce5e;
+}
+
+/*naslovi*/
+.title {
+  flex: 1;
+  display: flex;
+  justify-content: center;  
+  align-items: center;      
+}
+.title h2{
+  margin: 0;
+  font-size: 40px;
+  font-weight: 700;
+  color: white;
+}
+.small_title{
+  height: 30px;
+  font-size: 25px;
+  font-weight: 700;
+  color: white;
+  text-align: center;
+  margin-top: 5px;
+}
+.small_title.left{
+  text-align: left;
+  margin-left: 2.5vw;
+}
+
+/*DESNI KLIK*/
+.menu{
+  position: fixed;
+  display: none;
+  flex-direction: column;
+  background-color: #2f2f2f;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+  z-index: 10000;
+  min-width: 180px;
+}
+.menu_item{
+  padding: 10px 14px;
+  color: white;
+  cursor: pointer;
+  user-select: none;
+}
+.menu_item:hover{
+  background-color: #fd684d;
+}
+

@@ -1,0 +1,438 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+}
+
+.sredina {
+    margin-left: 15vw;
+    flex: 3; /* zasede ves preostanek */
+    background-color: #3c3c3c;
+    display: flex;
+    flex-direction: column;
+}
+
+.mesec {
+    width: 100%;
+    height: 8vh;
+    max-height: 10vh;
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 2vh;
+    background-color: #3c3c3c;
+    color: white;
+    border: none;
+}
+
+.mesec .nav-btn{
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    color: #96CA43;
+}
+.mesec .nav-btn :hover{
+    color: #96CA43;
+}
+.mesec .ime {
+    flex: 4;
+}
+
+#outer_table{
+    width: 95%;
+    margin: 3vh auto;
+    background-color: rgb(238, 238, 238);
+    flex: 1;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.outer_td, #outer_table th {
+    text-align: center;
+    border: 1px solid black;
+    width: 10vw;
+}
+#outer_table th {
+  font-size: 35px;      /* če hočeš lahko pustiš 35, ampak bo višje */
+  padding: 0;           /* KLJUČNO */
+  line-height: 1;       /* KLJUČNO */
+  height: 4vh;          /* izberi */
+  vertical-align: middle;
+}
+.outer_td{
+    padding-top: 0;
+    height: 10vh;
+}
+.inner_table{
+    height: 100%;
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 0;           /* KLJUČNO */
+    font-size: 11px;
+}
+.inner_td{
+    font-weight: normal;
+}
+.date{
+    font-size: 30px;
+    font-weight: bold;
+}
+
+/* notranje celice */
+.inner_td {
+  padding: 0;          /* da ni lufta */
+  margin: 0;
+  border: 0;           /* če nočeš dvojnih robov */
+  min-height: 2vh;
+  height: 2vh;
+
+}
+
+.desno {
+    flex: 1;
+    display: none;
+    flex-direction: column;
+    width: 20vw;
+    max-width: 20vw;
+    height: 100vh;
+    background-color: rgb(200, 200, 200);
+    border: 1px solid black;
+}
+
+
+.desno.active {
+    display: flex;
+}
+
+.danes .date{
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.dan {
+    cursor: pointer;
+}
+
+.selected {
+    background-color: rgba(255, 166, 0, 0.581);
+    color: white;
+}
+
+.to_select {
+    background-color: rgba(157, 0, 55, 0.313);
+    color: white;
+}
+
+.desno .center{
+  height: 90%;
+  width: 100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.desno .add_event{
+    height: 10%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.desno .add_event:hover{
+    background-color: rgba(157, 0, 55, 0.313);
+}
+
+.desno .add_event .to_select{
+    background-color: #96CA43;
+}
+
+.desno .datum {
+    background-color: #96CA43;
+    height: 15vh;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+}
+
+#view-day-selected.view.active {
+  display: flex;
+  flex-direction: column;
+  height: 90%; /* matches .tekst */
+}
+
+.this_day_events {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.one_event {
+    margin: 2vh 1vw;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 5px;
+}
+
+.chosen-date-data{
+    height: 15vh;
+    width: 100%;
+    text-align: center;
+}
+
+.tekst{
+  height: 90%;
+  width: 100%;
+}
+
+.view{
+    display: none;
+}
+
+.view.active{
+  display:block;
+}
+#add_event_form{
+    overflow-y: auto;
+  max-height: 100%;
+  padding-bottom: 12px;
+}
+#add_event_form h3{
+    text-align: center;
+    font-weight: 700;
+    font-size: 25px;
+}
+#add_event_form form{
+    border-radius: 10px;
+    color: white;
+    padding: 14px;
+    width: 85%;
+}
+#add_event_form input{
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(0,0,0,0.25);
+    color: white;
+    outline: none;
+}
+#add_event_form label{
+  font-size: 16px;
+  opacity: 0.85;
+  color:#1f1f1f
+}
+#add_event_form form{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;      /* razmik med vrsticami */
+}
+
+#add_event_form form .input_row{
+  margin: 0;      /* odstrani velike margine */
+  display: flex;
+  flex-direction: column;
+  gap: 6px;       /* label bližje inputu */
+}
+#add_event_form form .input_row.checkbox{
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+#add_event_form form .input_row.checkbox input{
+  width: auto;
+  padding: 0;
+}
+/* checkbox row layout */
+#add_event_form .input_row.checkbox{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;              /* priporočeno: brez velikih marginov */
+}
+
+/* skrij default checkbox */
+#add_event_form .input_row.checkbox input[type="checkbox"]{
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* label postane “klikljiv” in nosi checkbox */
+#add_event_form .input_row.checkbox label{
+  position: relative;
+  padding-left: 34px;     /* prostor za kvadratek */
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.95rem;     /* manj kot 20px */
+  opacity: 0.9;
+}
+
+/* kvadratek */
+#add_event_form .input_row.checkbox label::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(0,0,0,0.25);
+}
+
+/* kljukica (narišemo s border) */
+#add_event_form .input_row.checkbox label::after{
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  width: 6px;
+  height: 10px;
+  transform: translateY(-58%) rotate(45deg);
+  border-right: 3px solid #B6EA6B;
+  border-bottom: 3px solid #B6EA6B;
+  opacity: 0;
+}
+
+/* checked state */
+#add_event_form .input_row.checkbox input[type="checkbox"]:checked + label::after{
+  opacity: 1;
+}
+
+/* focus (tipkovnica) */
+#add_event_form .input_row.checkbox input[type="checkbox"]:focus-visible + label::before{
+  outline: 2px solid #B6EA6B;
+  outline-offset: 2px;
+}
+
+/* hover */
+#add_event_form .input_row.checkbox label:hover::before{
+  border-color: rgba(182,234,107,0.7);
+}
+
+
+
+#add_event_form button{
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    margin-top: 5px;
+    height: auto;
+    width: 40%;
+    font-size: 18px;
+}
+#add_event_form #submit{
+    background-color: #bfff59;
+    color: #1f1f1f;
+}
+#add_event_form #submit:hover{
+    background-color: #98ce40;
+}
+#add_event_form #cancel_btn{
+    background-color: #585858;
+    color: #ffffff;
+}
+#add_event_form #cancel_btn:hover{
+    background-color: #353535;
+}
+
+#add_event_form .submit-buttons{
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+}
+
+
+.hidden_error{
+    width: 100%;
+    color: rgb(233, 27, 92);
+    margin: auto;
+    text-align: center;
+}
+
+
+
+.one_event{
+  position: relative;
+  padding: 10px 12px;
+}
+
+.event_head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.event_title{
+  font-weight: 700;
+}
+
+.event_menu_btn{
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.event_menu_btn:hover{
+  background: rgba(0,0,0,0.08);
+}
+
+/* dropdown */
+.event_menu{
+  position: absolute;
+  top: 40px;
+  right: 10px;
+  display: none;
+  flex-direction: column;
+  min-width: 140px;
+  background: white;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 10px;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+  overflow: hidden;
+  z-index: 50;
+}
+
+.one_event.menu-open .event_menu{
+  display: flex;
+}
+
+.event_action{
+  border: none;
+  background: transparent;
+  padding: 10px 12px;
+  text-align: left;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.event_action:hover{
+  background: rgba(0,0,0,0.06);
+}
+
+.event_action.danger{
+  color: #d62828;
+}

@@ -1,0 +1,20 @@
+.login_frame{
+    width: 75%;
+}
+
+.two_columns{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 16px;
+    margin-bottom: 10px;
+}
+
+.one_column{
+    display: flex;
+    justify-content: center;
+    margin: auto;
+}
+
+button{
+    font-size: 18px;
+}

@@ -1,0 +1,132 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    flex-direction: row;
+    font-family: Arial, sans-serif;
+}
+
+/* LEVA STRAN */
+.left {
+    flex: 1.25;
+    background-color: #82cb6c;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* DESNA STRAN */
+.right {
+    flex: 1;
+    background-color: #6f6ccb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* LOGIN OKVIR */
+.login_frame {
+    background-color: #3c3c3c;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 65%;
+    padding: 10px;
+    padding-top: 0;
+    border-radius: 12px;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.title{
+    text-align: center;
+  background-color: transparent;
+  color: white;
+  font-size: 2.2rem;
+  font-weight: 700;
+  padding: 0;
+}
+/* FORM */
+form, .nice_gray {
+    background-color: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    color: white;
+    padding: 14px;
+    width: 90%;
+}
+
+
+.nice_gray {
+    background-color: transparent;
+    margin: 12px 0;
+    padding: 12px;
+    text-align: center;
+}
+
+.error{
+    color: red;
+    margin-top: 0px;
+}
+
+label {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    opacity: 0.85;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px; 
+}
+
+/* INPUT */
+input, select {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(0,0,0,0.25);
+    color: white;
+    outline: none;
+}
+
+input::placeholder {
+    color: rgba(255,255,255,0.6);
+}
+
+input:focus {
+    border-color: #B6EA6B;
+}
+
+input.red {
+    border-color: #fd684d;
+}
+
+#submit{
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    background: #B6EA6B;
+    color: #1f1f1f;
+    margin-top: 5px;
+}
+#submit:hover{
+    background: #c8ff7b;
+}
+
+a{
+    color: #B6EA6B;
+}
+a:hover{
+    color: #93bd58;
+}
