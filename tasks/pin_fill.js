@@ -1,29 +1,25 @@
 const myContainer = document.getElementById("my_tasks_container");
 const otherContainer = document.getElementById("other_tasks_container");
-const tpl = document.getElementById("pin_template");
+const temp = document.getElementById("pin_template");
 
 function fmtDate(d) {
   if (!d) return "~ ni časovne omejitve ~";
   return d;
 }
 
-function makePin(task, mode) {
-  // mode: "my" | "other"
-    const clone = tpl.content.cloneNode(true);
-
-    const pinEl = clone.querySelector(".pin"); // ← TO JE KLJUČNO
-    pinEl.dataset.pinId = task.id ?? 0;
-    pinEl.dataset.task = JSON.stringify(task);
+function makePin(task, mode) { //mode je my ali other
+    const clone = temp.content.cloneNode(true);
+    const pin = clone.querySelector(".pin");
+    pin.dataset.pinId = task.id ?? 0;
+    pin.dataset.task = JSON.stringify(task);
 
     clone.querySelector(".task_title").textContent = task.name ?? "";
-
     clone.querySelector(".created_by").textContent = task.created_by ?? "";
     clone.querySelector(".to_do_by").textContent = fmtDate(task.to_do_by);
-
     clone.querySelector(".points").textContent = task.points ?? "";
 
-    const doersEl = clone.querySelector(".doers");
-    doersEl.textContent = task.doers || "—";
+    const doers = clone.querySelector(".doers");
+    doers.textContent = task.doers || " —";
   
     const btn = clone.querySelector(".action_btn");
     const icon = clone.querySelector(".icon");
@@ -33,7 +29,7 @@ function makePin(task, mode) {
         btn.title = "Označi kot opravljeno";
         btn.addEventListener("click", async () => {
             await markDone(task.id);
-            await loadAll(); // refresh vseh seznamov
+            await loadAll();
         });
     } else {
         icon.textContent = "add_2";
@@ -84,8 +80,7 @@ async function loadAll() {
   await Promise.all([loadMyTasks(), loadOtherTasks(), loadPoints()]);
 }
 
-/* --- akcije --- */
-/* 1) označi opravljeno (naredi si endpoint po tvoji logiki) */
+
 async function markDone(taskId) {
   const res = await fetch("mark_task_done.php", {
     method: "POST",
@@ -96,7 +91,6 @@ async function markDone(taskId) {
   if (!res.ok) throw new Error("mark_task_done.php HTTP " + res.status);
 }
 
-/* 2) prevzemi opravilo (insert v who_is_doing_it) */
 async function claimTask(taskId) {
   const res = await fetch("claim_task.php", {
     method: "POST",

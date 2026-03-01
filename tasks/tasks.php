@@ -33,6 +33,7 @@ if (!isset($_SESSION["user_id"])) {
             <div class="add_task window" id="add_task_window">
                 <div class="title">Ustvari novo opravilo:</div>
                 <form id="add_task_form" class="form" method="post" action="add_task_in_db.php">
+                    <input type="hidden" name="task_id">
                     <label>Opravilo:</label> <input type="text" name="new_task">
                     <label>Podrobnosti:</label> <input type="textarea" name="details">
                     <label>Opraviti do:</label> <input type="date" name="to_do_by">
@@ -53,7 +54,7 @@ if (!isset($_SESSION["user_id"])) {
             </div>
         </div>
         <div class="bottom">
-            <div class="center_content">
+            <div class="center_content" id="big_container">
                 <div class="small_title left">Moja opravila</div>
                 <div class="my_tasks gray" id="my_tasks_container"></div>
 
@@ -115,6 +116,8 @@ if (!isset($_SESSION["user_id"])) {
         <script src="pin_fill.js"></script>
         <script src="points_fill.js"></script>
         <script src="form_validation.js"></script>
+        <script src="right_click.js"></script>
+        <script src="../common_code/common_js.js"></script>
     </main>
 </body>
 </html>

@@ -17,9 +17,17 @@ document.addEventListener("DOMContentLoaded", () => {
     table.addEventListener("click", (e) => {
       const plus = e.target.closest(".add_meal_btn");
       if (!plus) return;
-
+      if(plus.classList.contains("has_meal")) return;
       e.preventDefault();
       e.stopPropagation();
+
+      const mealDateInput = document.getElementById("meal_date");
+      const mealTypeInput = document.getElementById("meal_type");
+      const mealIdInput = document.getElementById("meal_id");
+
+      mealDateInput.value = plus.dataset.date || "";
+      mealTypeInput.value = plus.dataset.mealType || "";
+      mealIdInput.value = plus.dataset.mealId || "";
 
       showWindow("add_meal_window");
       add_something_view?.classList.add("active");

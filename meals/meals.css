@@ -48,6 +48,9 @@ td:nth-child(1), td:nth-child(2), td:nth-child(3){
     cursor: pointer;
 }
 
-.hover_add:hover{
+.hover_add:hover, .weekend{
     color:#B6EA6B;
+}
+.has_meal{
+    color: white;
 }

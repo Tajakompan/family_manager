@@ -7,22 +7,23 @@ if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
 }
 
 $family_id = (int)$_SESSION["family_id"];
+$meal_id = (int)$_GET["meal_id"];
 
 $sql = "SELECT id, name, meal_category, date_of_meal as date
         FROM meal 
         WHERE family_id = ? 
-        AND datediff(date_of_meal, current_date()) BETWEEN 0 AND 9";
+        AND id = ?";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $family_id);
+$stmt->bind_param("ii", $family_id, $meal_id);
 $stmt->execute();
 $res = $stmt->get_result();
+$row = $res->fetch_assoc();
 
-$out = [];
-while ($row = $res->fetch_assoc()) {
-  $out[] = $row;
+if ($meal_id <= 0) {
+  echo json_encode(["ok" => false, "meal" => null]);
+  exit;
 }
-
 header("Content-Type: application/json; charset=utf-8");
-echo json_encode($out);
+echo json_encode(["ok" => (bool)$row, "meal" => $row ?: null]);
 ?>

@@ -1,11 +1,8 @@
 <?php
 require_once __DIR__ . "/../config.php";
 
-header("Content-Type: application/json; charset=utf-8");
-
 if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
-  http_response_code(401);
-  echo json_encode(["error" => "Unauthorized"]);
+  header("Location: ../entry/login.php");
   exit;
 }
 
@@ -20,6 +17,7 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $family_id);
 $stmt->execute();
 $res = $stmt->get_result();
+$stmt->close();
 
 $data = [];
 while ($row = $res->fetch_assoc()) {
@@ -28,7 +26,7 @@ while ($row = $res->fetch_assoc()) {
     "points" => (int)$row["user_points"],
   ];
 }
-$stmt->close();
 
+header("Content-Type: application/json; charset=utf-8");
 echo json_encode($data);
 ?>

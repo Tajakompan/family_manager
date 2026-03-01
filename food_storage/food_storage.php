@@ -106,7 +106,10 @@ $chosen_id = isset($_GET['storage_id']) ? (int)$_GET['storage_id'] : 0;
         
         
         <div class="center">
-            <div class="title">ZALOGA</div>
+            <div class="top_row">
+                <div class="title"><h2>ZALOGA</h2></div>
+            </div>
+            
             <div class="nav">
                 <div class="add_storage_location" id="add_storage_location">NOVA LOKACIJA</div>
                 <?php

@@ -43,6 +43,9 @@
                 <div class="title">Dodaj obrok:</div>
                 <form id="add_meal_form" class="form" method="post" action="add_meal_in_db.php">
                     <label>Naziv:</label> <input type="text" name="new_meal">
+                    <input type="hidden" name="date_of_meal" id="meal_date">
+                    <input type="hidden" name="meal_category" id="meal_type">
+                    <input type="hidden" name="meal_id" id="meal_id">
                     <div class="btns">
                         <button type="reset" id="cancel_meal_btn">Prekliči</button>
                         <button type="submit" id="add_new_meal_btn">Dodaj</button>
@@ -51,7 +54,12 @@
             </div>
         </div>
     </main>
+    <div id="row_menu" class="menu">
+        <div class="menu_item edit">Uredi</div>
+        <div class="menu_item delete">Izbriši</div>
+    </div>
     <script src="fill_table.js" ></script>
     <script src="form.js" ></script>
+    <script src="right_click.js" ></script>
 </body>
 </html>

@@ -13,11 +13,8 @@ $name = trim($_POST["new_task"] ?? "");
 $details = trim($_POST["details"] ?? "");
 $no_date = isset($_POST["no_date"]) ? 1 : 0;
 $points = (int)($_POST["points"] ?? 0);
-
 $to_do_by = trim($_POST["to_do_by"] ?? "");
-if ($no_date === 1 || $to_do_by === "") {
-  $to_do_by = null;
-}
+if ($no_date === 1 || $to_do_by === "") $to_do_by = null;
 
 if ($task_id > 0 && $name !== "") {
   $sql = "UPDATE task

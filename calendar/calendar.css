@@ -1,380 +1,277 @@
-body {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    height: 100%;
-    overflow: hidden;
+/* ====== BASE / LAYOUT ====== */
+:root{
+  --bg: #3c3c3c;
+  --panel: #5a5a5a;
+  --panel-2: #6a6a6a;
+  --panel-3: #7a7a7a;
+  --text: #ffffff;
+  --muted: rgba(255,255,255,0.75);
+  --accent: #96CA43;
+  --accent-2: #BFFF59;
+  --border: rgba(0,0,0,0.35);
+  --shadow: 0 8px 22px rgba(0,0,0,0.35);
 }
 
-.sredina {
-    margin-left: 15vw;
-    flex: 3; /* zasede ves preostanek */
-    background-color: #3c3c3c;
-    display: flex;
-    flex-direction: column;
+*{ box-sizing: border-box; }
+
+body{
+  margin: 0;
+  padding: 0;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
 }
 
-.mesec {
-    width: 100%;
-    height: 8vh;
-    max-height: 10vh;
-    text-align: center;
-    font-size: 40px;
-    font-weight: bold;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 2vh;
-    background-color: #3c3c3c;
-    color: white;
-    border: none;
+/* Sredina ostane zamaknjena zaradi sidebarja */
+.sredina{
+  margin-left: 15vw;
+  flex: 3;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  padding: 22px 22px 18px 22px;
+  gap: 16px;
+}
+
+/* ====== HEADER ====== */
+.page-header{
+  background: transparent;
+}
+
+.title{
+  margin-bottom: 5px;
+}
+
+/* mesec nav - kot ostali “top” elementi */
+.mesec{
+  width: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 auto 3px;
+}
+
+.mesec .ime{
+  flex: 4;
+  text-align: center;
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--text);
 }
 
 .mesec .nav-btn{
-    flex: 1;
-    text-align: center;
-    text-decoration: none;
-    color: #96CA43;
+  text-align: center;
+  text-decoration: none;
+  color: #1f1f1f;
+  background: var(--accent-2);
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-weight: 800;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.28);
 }
-.mesec .nav-btn :hover{
-    color: #96CA43;
+.nav-btn{
+  width: 60px;
+  padding: 3px;
 }
-.mesec .ime {
-    flex: 4;
+
+.mesec .nav-btn:hover{
+  background: var(--accent);
+}
+
+.calendar-card{
+  background: var(--panel);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 14px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 #outer_table{
-    width: 95%;
-    margin: 3vh auto;
-    background-color: rgb(238, 238, 238);
-    flex: 1;
-    border-collapse: collapse;
-    border-spacing: 0;
+  width: 100%;
+  height: 100%;
+  border-collapse: separate;
+  border-spacing: 8px; /* “card” look med dnevi */
+  table-layout: fixed;
 }
 
-.outer_td, #outer_table th {
-    text-align: center;
-    border: 1px solid black;
-    width: 10vw;
+#outer_table th{
+  background: #4a4a4a;
+  color: var(--text);
+  border-radius: 12px;
+  font-size: 22px;
+  height: 40px;
+  text-align: center;
+  letter-spacing: 1px;
 }
-#outer_table th {
-  font-size: 35px;      /* če hočeš lahko pustiš 35, ampak bo višje */
-  padding: 0;           /* KLJUČNO */
-  line-height: 1;       /* KLJUČNO */
-  height: 4vh;          /* izberi */
-  vertical-align: middle;
+
+#outer_table th, #outer_table td{
+  width: 14.2857%;
 }
+
+/* celica dneva = mini card */
 .outer_td{
-    padding-top: 0;
-    height: 10vh;
+  background: var(--panel-3);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 14px;
+  height: 92px;
+  padding: 0;
+  overflow: hidden;
+  transition: transform 0.08s ease, background 0.15s ease, border-color 0.15s ease;
 }
+
+.outer_td:hover{
+  background: var(--panel-3);
+
+  transform: translateY(-1px);
+  cursor: pointer;
+}
+
+/* prazne celice (pred/po mesecu) */
+.prazno{
+  background: rgba(255,255,255,0.05);
+  border: 1px dashed rgba(255,255,255,0.15);
+  cursor: default !important;
+  transform: none !important;
+}
+
+/* notranja tabela (da ohraniš obstoječo JS/HTML strukturo) */
 .inner_table{
-    height: 100%;
-    width: 100%;
-    border-collapse: collapse;
-    border-spacing: 0;
-    margin: 0;           /* KLJUČNO */
-    font-size: 11px;
-}
-.inner_td{
-    font-weight: normal;
-}
-.date{
-    font-size: 30px;
-    font-weight: bold;
-}
-
-/* notranje celice */
-.inner_td {
-  padding: 0;          /* da ni lufta */
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
   margin: 0;
-  border: 0;           /* če nočeš dvojnih robov */
-  min-height: 2vh;
-  height: 2vh;
-
+  font-size: 11px;
+  color: var(--muted);
 }
 
-.desno {
-    flex: 1;
-    display: none;
-    flex-direction: column;
-    width: 20vw;
-    max-width: 20vw;
-    height: 100vh;
-    background-color: rgb(200, 200, 200);
-    border: 1px solid black;
+.inner_td{
+  padding: 0 8px;
+  margin: 0;
+  border: 0;
+  height: 18px;
+  line-height: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+.date{
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--text);
+  padding-top: 8px;
+  padding-bottom: 2px;
+}
 
-.desno.active {
-    display: flex;
+/* danes */
+.danes{
+  border-color: rgba(182,234,107,0.85);
+  box-shadow: 0 0 0 2px rgba(182,234,107,0.18) inset;
 }
 
 .danes .date{
-    font-weight: bold;
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
-.dan {
-    cursor: pointer;
+/* izbrano (JS uporablja .selected) */
+.selected{
+  background: rgba(150, 202, 67, 0.643) !important;
+  border-color: rgba(150, 202, 67, 0.95) !important;
+  color: #1f1f1f !important;
 }
 
-.selected {
-    background-color: rgba(255, 166, 0, 0.581);
-    color: white;
+/* “to_select” če jo kje uporabljaš */
+.to_select{
+  background-color: rgba(167, 215, 100, 0.378) !important;
+  border-color: rgba(182,234,107,0.55) !important;
 }
 
-.to_select {
-    background-color: rgba(157, 0, 55, 0.313);
-    color: white;
+/* ====== DESNI PANEL ====== */
+.desno{
+  flex: 1;
+  display: none;
+  flex-direction: column;
+  width: 20vw;
+  max-width: 20vw;
+  height: 100vh;
+  background: var(--panel);
+  border-left: 1px solid rgba(255,255,255,0.10);
+  box-shadow: -8px 0 22px rgba(0,0,0,0.25);
+  padding: 16px;
+  gap: 12px;
 }
 
+.desno.active{
+  display: flex;
+}
+
+.tekst{
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+.view{ display: none; }
+.view.active{ display: block; }
+
+/* prazni view */
 .desno .center{
-  height: 90%;
+  height: 100%;
   width: 100%;
   display:flex;
   justify-content:center;
   align-items:center;
+  color: var(--muted);
+  text-align: center;
+  padding: 10px;
 }
 
-.desno .add_event{
-    height: 10%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    text-decoration: none;
+/* izbran dan - glava */
+.chosen_date_data{
+  background: var(--accent);
+  color: #1f1f1f;
+  border-radius: 14px;
+  padding: 14px 12px;
+  font-weight: 900;
+  font-size: 22px;
+  text-align: center;
 }
 
-.desno .add_event:hover{
-    background-color: rgba(157, 0, 55, 0.313);
-}
-
-.desno .add_event .to_select{
-    background-color: #96CA43;
-}
-
-.desno .datum {
-    background-color: #96CA43;
-    height: 15vh;
-    width: 100%;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 40px;
-}
-
-#view-day-selected.view.active {
+/* list dogodkov */
+#view-day-selected.view.active{
   display: flex;
   flex-direction: column;
-  height: 90%; /* matches .tekst */
+  height: 100%;
+  gap: 12px;
 }
 
-.this_day_events {
+.this_day_events{
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  padding-right: 6px;
 }
 
-.one_event {
-    margin: 2vh 1vw;
-    background-color: #ffffff;
-    border: none;
-    border-radius: 5px;
-}
-
-.chosen-date-data{
-    height: 15vh;
-    width: 100%;
-    text-align: center;
-}
-
-.tekst{
-  height: 90%;
-  width: 100%;
-}
-
-.view{
-    display: none;
-}
-
-.view.active{
-  display:block;
-}
-#add_event_form{
-    overflow-y: auto;
-  max-height: 100%;
-  padding-bottom: 12px;
-}
-#add_event_form h3{
-    text-align: center;
-    font-weight: 700;
-    font-size: 25px;
-}
-#add_event_form form{
-    border-radius: 10px;
-    color: white;
-    padding: 14px;
-    width: 85%;
-}
-#add_event_form input{
-    width: 100%;
-    padding: 8px 12px;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.18);
-    background: rgba(0,0,0,0.25);
-    color: white;
-    outline: none;
-}
-#add_event_form label{
-  font-size: 16px;
-  opacity: 0.85;
-  color:#1f1f1f
-}
-#add_event_form form{
-  display: flex;
-  flex-direction: column;
-  gap: 12px;      /* razmik med vrsticami */
-}
-
-#add_event_form form .input_row{
-  margin: 0;      /* odstrani velike margine */
-  display: flex;
-  flex-direction: column;
-  gap: 6px;       /* label bližje inputu */
-}
-#add_event_form form .input_row.checkbox{
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-}
-
-#add_event_form form .input_row.checkbox input{
-  width: auto;
-  padding: 0;
-}
-/* checkbox row layout */
-#add_event_form .input_row.checkbox{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0;              /* priporočeno: brez velikih marginov */
-}
-
-/* skrij default checkbox */
-#add_event_form .input_row.checkbox input[type="checkbox"]{
-  position: absolute;
-  opacity: 0;
-  width: 1px;
-  height: 1px;
-}
-
-/* label postane “klikljiv” in nosi checkbox */
-#add_event_form .input_row.checkbox label{
-  position: relative;
-  padding-left: 34px;     /* prostor za kvadratek */
-  cursor: pointer;
-  user-select: none;
-  font-size: 0.95rem;     /* manj kot 20px */
-  opacity: 0.9;
-}
-
-/* kvadratek */
-#add_event_form .input_row.checkbox label::before{
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.25);
-  background: rgba(0,0,0,0.25);
-}
-
-/* kljukica (narišemo s border) */
-#add_event_form .input_row.checkbox label::after{
-  content: "";
-  position: absolute;
-  left: 7px;
-  top: 50%;
-  width: 6px;
-  height: 10px;
-  transform: translateY(-58%) rotate(45deg);
-  border-right: 3px solid #B6EA6B;
-  border-bottom: 3px solid #B6EA6B;
-  opacity: 0;
-}
-
-/* checked state */
-#add_event_form .input_row.checkbox input[type="checkbox"]:checked + label::after{
-  opacity: 1;
-}
-
-/* focus (tipkovnica) */
-#add_event_form .input_row.checkbox input[type="checkbox"]:focus-visible + label::before{
-  outline: 2px solid #B6EA6B;
-  outline-offset: 2px;
-}
-
-/* hover */
-#add_event_form .input_row.checkbox label:hover::before{
-  border-color: rgba(182,234,107,0.7);
-}
-
-
-
-#add_event_form button{
-    padding: 10px 14px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    font-weight: 500;
-    margin-top: 5px;
-    height: auto;
-    width: 40%;
-    font-size: 18px;
-}
-#add_event_form #submit{
-    background-color: #bfff59;
-    color: #1f1f1f;
-}
-#add_event_form #submit:hover{
-    background-color: #98ce40;
-}
-#add_event_form #cancel_btn{
-    background-color: #585858;
-    color: #ffffff;
-}
-#add_event_form #cancel_btn:hover{
-    background-color: #353535;
-}
-
-#add_event_form .submit-buttons{
-    display: flex;
-    justify-content: space-around;
-    margin-top: 15px;
-}
-
-
-.hidden_error{
-    width: 100%;
-    color: rgb(233, 27, 92);
-    margin: auto;
-    text-align: center;
-}
-
-
-
+/* dogodek kartica */
 .one_event{
   position: relative;
-  padding: 10px 12px;
+  margin: 10px 0;
+  background: #ffffff;
+  color: #1f1f1f;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 12px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.18);
 }
 
+/* header v kartici dogodka */
 .event_head{
   display: flex;
   align-items: center;
@@ -383,7 +280,7 @@ body {
 }
 
 .event_title{
-  font-weight: 700;
+  font-weight: 900;
 }
 
 .event_menu_btn{
@@ -400,7 +297,7 @@ body {
   background: rgba(0,0,0,0.08);
 }
 
-/* dropdown */
+/* dropdown menu */
 .event_menu{
   position: absolute;
   top: 40px;
@@ -426,7 +323,7 @@ body {
   padding: 10px 12px;
   text-align: left;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .event_action:hover{
@@ -435,4 +332,194 @@ body {
 
 .event_action.danger{
   color: #d62828;
+}
+
+/* gumb spodaj */
+.desno .add_event{
+  height: 54px;
+  width: 100%;
+  border-radius: 14px;
+  background: var(--accent-2);
+  color: #1f1f1f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  box-shadow: 0 10px 18px rgba(0,0,0,0.25);
+}
+
+.desno .add_event:hover{
+  background: var(--accent);
+}
+
+/* ====== ADD EVENT FORM ====== */
+#add_event_form{
+  overflow-y: auto;
+  max-height: 100%;
+  padding-bottom: 12px;
+}
+
+#add_event_form h3{
+  text-align: center;
+  font-weight: 900;
+  font-size: 26px;
+  margin: 4px 0 8px 0;
+  letter-spacing: 1px;
+}
+
+#add_event_form form{
+  border-radius: 14px;
+  color: white;
+  padding: 14px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#add_event_form label{
+  font-size: 15px;
+  opacity: 0.9;
+  color: rgba(255,255,255,0.85);
+}
+
+#add_event_form input{
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.25);
+  color: white;
+  outline: none;
+}
+
+#add_event_form input:focus{
+  border-color: rgba(182,234,107,0.7);
+}
+
+#add_event_form form .input_row{
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* checkbox row layout */
+#add_event_form form .input_row.checkbox{
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+/* skrij default checkbox */
+#add_event_form .input_row.checkbox input[type="checkbox"]{
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* label nosi custom checkbox */
+#add_event_form .input_row.checkbox label{
+  position: relative;
+  padding-left: 34px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* kvadratek */
+#add_event_form .input_row.checkbox label::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 7px;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(0,0,0,0.25);
+}
+
+/* kljukica */
+#add_event_form .input_row.checkbox label::after{
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  width: 6px;
+  height: 10px;
+  transform: translateY(-58%) rotate(45deg);
+  border-right: 3px solid #B6EA6B;
+  border-bottom: 3px solid #B6EA6B;
+  opacity: 0;
+}
+
+#add_event_form .input_row.checkbox input[type="checkbox"]:checked + label::after{
+  opacity: 1;
+}
+
+/* gumbi */
+#add_event_form .submit-buttons{
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+#add_event_form button{
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  height: auto;
+  width: 50%;
+  font-size: 16px;
+}
+
+#add_event_form #submit{
+  background-color: var(--accent-2);
+  color: #1f1f1f;
+}
+
+#add_event_form #submit:hover{
+  background-color: var(--accent);
+}
+
+#add_event_form #cancel_btn{
+  background-color: #6b6b6b;
+  color: #ffffff;
+}
+
+#add_event_form #cancel_btn:hover{
+  background-color: #555555;
+}
+
+.hidden_error{
+  width: 100%;
+  color: rgb(233, 27, 92);
+  margin: auto;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* ====== RESPONSIVE (da se desni panel ne sesuje) ====== */
+@media (max-width: 1200px){
+  .desno{
+    width: 26vw;
+    max-width: 26vw;
+  }
+  .page-title{ font-size: 36px; }
+  .mesec .ime{ font-size: 24px; }
+}
+
+@media (max-width: 980px){
+  body{ overflow: auto; }
+  .sredina{ margin-left: 0; }
+  .desno{
+    display: none !important;
+  }
 }

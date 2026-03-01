@@ -19,33 +19,23 @@ async function loadPoints() {
     return;
   }
 
-    tbody.innerHTML = "";
+  tbody.innerHTML = "";
 
-    for (let i = 0; i < data.length; i++) {
+  for (let i = 0; i < data.length; i++) {
     let row = data[i];
 
     let tr = document.createElement("tr");
 
     let tdName = document.createElement("td");
-    tdName.textContent = row.name ? row.name : "";
+    tdName.textContent = row.name ?? "";
 
     let tdPoints = document.createElement("td");
-    tdPoints.textContent = row.points ? row.points : 0;
+    tdPoints.textContent = row.points ?? 0;
 
     tr.appendChild(tdName);
     tr.appendChild(tdPoints);
-
     tbody.appendChild(tr);
-    }
-}
-
-function escapeHtml(s) {
-  return String(s)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
