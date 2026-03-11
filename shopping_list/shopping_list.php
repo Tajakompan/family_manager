@@ -19,8 +19,6 @@ $family_id = (int)$_SESSION["family_id"];
     <link rel="stylesheet" href="../common_code/common_css.css">
     <link rel="stylesheet" href="../common_code/form_window.css">
     <link rel="stylesheet" href="../common_code/open_space_settings.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=check" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=add" />
 </head>
 <body>
     <?php include "../sidebar/sidebar.php"; ?>
@@ -36,31 +34,27 @@ $family_id = (int)$_SESSION["family_id"];
             <div class="pin">
                 <table class="shopping_lists_container">
                 <colgroup>
-                    <col style="width: 35%">
-                    <col style="width: 16%">
-                    <col style="width: 16%">
-                    <col style="width: 11%">
-                    <col style="width: 11%">
-                    <col style="width: 11%">
+                    <col style="width: 52%">
+                    <col style="width: 20%">
+                    <col style="width: 14%">
+                    <col style="width: 14%">
                 </colgroup>
 
                 <thead>
                     <tr>
-                        <td class="ctr shop_name" colspan="4">TRGOVINA</td>
-                        <td class="ctr add_btn" colspan="2"><span class="material-symbols-outlined">add</span></td>
+                        <td class="ctr shop_name" colspan="3">TRGOVINA</td>
+                        <td class="ctr add_btn"><img class="table_icon" src="../img/add_24dp_3F3F3F_FILL0_wght400_GRAD0_opsz24.svg" alt="Dodaj izdelek"></td>
                     </tr>
                     <tr>
                         <td class="sortable" data-col="0" data-type="text">Izdelek</td>
-                        <td class="ctr sortable" data-col="1" data-type="number">Količina</td>
-                        <td class="ctr sortable" data-col="2" data-type="text">Enota</td>
-                        <td class="ctr sortable" data-col="3" data-type="number">Kos</td>
-                        <td class="ctr sortable" data-col="4" data-type="text">Nuja</td>
-                        <td class="ctr"><span class="material-symbols-outlined">check</span></td>
+                        <td class="ctr sortable" data-col="1" data-type="number">Kos</td>
+                        <td class="ctr sortable" data-col="2" data-type="text">Nuja</td>
+                        <td class="ctr"><img class="table_icon" src="../img/check_24dp_3F3F3F_FILL0_wght400_GRAD0_opsz24.svg" alt="Kupljeno"></td>
                     </tr>
                 </thead>
 
                 <tbody class="shopping_list_table_body">
-                    <tr><td colspan="5">Nalagam…</td></tr>
+                    <tr><td colspan="4">Nalagam…</td></tr>
                 </tbody>
                 </table>
             </div>
@@ -156,3 +150,5 @@ $family_id = (int)$_SESSION["family_id"];
     <script src="../common_code/sortable.js"></script>
 </body>
 </html>
+
+

@@ -1,7 +1,14 @@
-.login_frame{
-    width: 55%;
+.login_panel {
+    max-width: 520px;
 }
-form{
+
+.login_frame {
+    width: 100%;
+}
+
+form {
     display: flex;
     flex-direction: column;
 }
+
+

@@ -1,6 +1,9 @@
-<?php
+﻿<?php
 require_once __DIR__ . "/../config.php";
 $error = "";
+$email = "";
+$password = "";
+$invalid_fields = [];
 if(isset($_SESSION["user_id"])){
     header("location: ../dashboard/dashboard.php");
     exit;
@@ -11,6 +14,12 @@ else{
         $password = $_POST["password"] ?? "";
 
         if ($email === "" || $password === "") {
+            if ($email === "") {
+                $invalid_fields["email"] = true;
+            }
+            if ($password === "") {
+                $invalid_fields["password"] = true;
+            }
             $error = "Vnos email-a in gesla je obvezen!";
         } else {
             $sql = "
@@ -36,10 +45,31 @@ else{
             $stmt->close(); //zapre prepared statement
 
             if (!$user) {
+                $invalid_fields["email"] = true;
                 $error = "Uporabnik s tem emailom ne obstaja.";
             } else {
-                // ZA ZDAJ: plain-text (ni se hash)
-                if ($password !== $user["password"]) {
+                $stored_password = $user["password"];
+                $is_password_valid = password_verify($password, $stored_password);
+
+                // Legacy fallback: ce je v bazi se vedno plain-text, ga ob uspesni prijavi pretvorimo v hash.
+                if (
+                    !$is_password_valid &&
+                    empty(password_get_info($stored_password)["algo"]) &&
+                    hash_equals($stored_password, $password)
+                ) {
+                    $is_password_valid = true;
+                    $new_hash = password_hash($password, PASSWORD_DEFAULT);
+                    $update_sql = "UPDATE app_user SET password = ? WHERE id = ?";
+                    $update_stmt = $conn->prepare($update_sql);
+                    if ($update_stmt) {
+                        $update_stmt->bind_param("si", $new_hash, $user["id"]);
+                        $update_stmt->execute();
+                        $update_stmt->close();
+                    }
+                }
+
+                if (!$is_password_valid) {
+                    $invalid_fields["password"] = true;
                     $error = "Napačno geslo.";
                 } else {
                     // SESSION
@@ -69,33 +99,36 @@ else{
     <link rel="stylesheet" href="../common_code/open_space_settings.css">
 </head>
 <body>
-<div class="left">
-    
+<div class="left image_placeholder">
+        <img src="../img/login_page.png.png" alt="Login ilustracija">
 </div>
 <div class="right">
-    <div class="login_frame">
-        <h2 class="title">Prijava</h2>
-
-        <?php if ($error): ?>
-            <div class="error"><?= htmlspecialchars($error) ?></div>
-        <?php endif; ?>
-
-        <form method="post">
-            <div class="field">
-                <label>Email:</label>
-                <input type="email" name="email" >
-            </div>
-            <div class="field">
-                <label>Geslo:</label>
-                <input type="password" name="password" >
-            </div>
-
-            <button type="submit" id="submit">Prijava</button>
-        </form>
-        <div class="nice_gray">
-            Še nimaš računa? <a href="registration.php">Registriraj se!</a>
+    <div class="login_panel">
+        <div class="panel_top">
+            <h2 class="title">Prijava</h2>
+            <p>Dobrodošli nazaj v Family Manager.</p>
         </div>
-        
+        <div class="login_frame">
+            <?php if ($error): ?>
+                <div class="error"><?= htmlspecialchars($error) ?></div>
+            <?php endif; ?>
+
+            <form method="post">
+                <div class="field">
+                    <label>Email:</label>
+                    <input type="email" name="email" value="<?= htmlspecialchars($email, ENT_QUOTES) ?>" class="<?= isset($invalid_fields["email"]) ? "red" : "" ?>">
+                </div>
+                <div class="field">
+                    <label>Geslo:</label>
+                    <input type="password" name="password" value="<?= htmlspecialchars($password, ENT_QUOTES) ?>" class="<?= isset($invalid_fields["password"]) ? "red" : "" ?>">
+                </div>
+
+                <button type="submit" id="submit">Prijava</button>
+            </form>
+            <div class="nice_gray">
+                Še nimaš računa? <a href="registration.php">Registriraj se!</a>
+            </div>
+        </div>
     </div>
 </div>
 </body>

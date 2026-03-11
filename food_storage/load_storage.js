@@ -6,6 +6,58 @@ function update_storage_id_in_url() {
   window.history.replaceState({}, "", url.toString());
 }
 
+async function fetchJson(url, options = {}) {
+  const res = await fetch(url, { credentials: "same-origin", ...options });
+  if (!res.ok) throw new Error(url + " HTTP " + res.status);
+  return await res.json();
+}
+
+function createEatSoonGroup(storageName, productNames) {
+  const group = document.createElement("li");
+  group.className = "eat_soon_group";
+
+  const title = document.createElement("div");
+  title.className = "eat_soon_group_title";
+  title.textContent = storageName;
+
+  const list = document.createElement("ul");
+  list.className = "eat_soon_items";
+
+  for (const name of productNames) {
+    const item = document.createElement("li");
+    item.textContent = name;
+    list.appendChild(item);
+  }
+
+  group.appendChild(title);
+  group.appendChild(list);
+  return group;
+}
+
+async function loadEatSoonPanel() {
+  const listEl = document.getElementById("eat_soon_list");
+  const emptyEl = document.getElementById("eat_soon_empty");
+  if (!listEl || !emptyEl) return;
+
+  listEl.innerHTML = "";
+  emptyEl.hidden = true;
+
+  const storages = await fetchJson("get_storage_locations.php");
+  let hasItems = false;
+
+  for (const storage of storages) {
+    const products = await fetchJson(`get_expiring_storage.php?storage_id=${storage.id}`);
+    if (!products.length) continue;
+
+    hasItems = true;
+    listEl.appendChild(createEatSoonGroup(storage.name, products.map(product => product.name)));
+  }
+
+  if (!hasItems) {
+    emptyEl.hidden = false;
+  }
+}
+
 function switch_chosen_storage(id){
     document.querySelectorAll('.chosen_storage').forEach(v => v.classList.remove('chosen_storage'));
     document.getElementById(id).classList.add('chosen_storage');
@@ -17,7 +69,15 @@ function loadFood(storageId) {
   fetch(`get_right_storage.php?storage_id=${storageId}`)
     .then(r => r.text())
     .then(html => {
-      document.getElementById('storage_table_body').innerHTML = html;
+      const tbody = document.getElementById('storage_table_body');
+      const content = document.querySelector('.content');
+      const emptyText = document.getElementById('storage_empty_text');
+
+      tbody.innerHTML = html;
+      const hasRows = tbody.querySelector('tr') !== null;
+
+      content.classList.toggle('is-empty', !hasRows);
+      if (emptyText) emptyText.hidden = hasRows;
 
       colorExpireDates(5); 
     });
@@ -34,6 +94,8 @@ document.querySelectorAll('.nav_item').forEach(btn => {
 
 window.addEventListener('DOMContentLoaded', () => {
   const chosen = document.querySelector('.nav_item.chosen_storage');
+  loadEatSoonPanel().catch(console.error);
+  if (!chosen) return;
   const storageId = chosen.dataset.storageId;
   document.getElementById('storage_id_input').value = document.querySelector('.nav_item.chosen_storage').dataset.storageId;
   update_storage_id_in_url();

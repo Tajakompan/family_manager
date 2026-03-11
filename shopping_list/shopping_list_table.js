@@ -60,14 +60,14 @@ function loadShoppingListForShop(shop_id) {
     .then(html => {
       const tbody = document.getElementById(`shop_${shop_id}_tbody`);
       if (tbody) {
-        tbody.innerHTML = html || `<tr><td colspan="6" style="text-align: center; border: none; height: 200px">Prazen seznam</td></tr>`;
+        tbody.innerHTML = html || `<tr><td colspan="4" style="text-align: center; border: none; height: 200px">Prazen seznam</td></tr>`;
       }
     })
     .catch(err => {
       console.error("Napaka pri shop_id", shop_id, err);
       const tbody = document.getElementById(`shop_${shop_id}_tbody`);
       if (tbody) {
-        tbody.innerHTML = `<tr><td colspan="5">Napaka pri nalaganju.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4">Napaka pri nalaganju.</td></tr>`;
       }
     });
 }

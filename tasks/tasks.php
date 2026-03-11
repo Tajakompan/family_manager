@@ -18,7 +18,6 @@ if (!isset($_SESSION["user_id"])) {
     <link rel="stylesheet" href="../common_code/common_css.css">
     <link rel="stylesheet" href="../common_code/open_space_settings.css">
     <link rel="stylesheet" href="../common_code/form_window.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <title>Opravila</title>
 </head>
 <body>
@@ -53,7 +52,7 @@ if (!isset($_SESSION["user_id"])) {
                 <div class="details"></div>
             </div>
         </div>
-        <div class="bottom">
+        <div class="tasks_bottom">
             <div class="center_content" id="big_container">
                 <div class="small_title left">Moja opravila</div>
                 <div class="my_tasks gray" id="my_tasks_container"></div>
@@ -82,7 +81,7 @@ if (!isset($_SESSION["user_id"])) {
                             </div>
                             <div class="right_data btns one">
                                 <button type="button" class="action_btn">
-                                    <span class="material-symbols-outlined icon"></span>
+                                    <img class="icon_img" src="../img/add_24dp_3F3F3F_FILL0_wght400_GRAD0_opsz24.svg" alt="Prevzemi opravilo">
                                 </button>
                             </div>
                         </div>
@@ -121,3 +120,4 @@ if (!isset($_SESSION["user_id"])) {
     </main>
 </body>
 </html>
+

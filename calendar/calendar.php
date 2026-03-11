@@ -79,7 +79,6 @@ for ($d = 1; $d <= $days_in_month; $d++) {
     <link rel="stylesheet" href="../sidebar/sidebar.css">
     <link rel="stylesheet" href="../common_code/common_css.css">
     <link rel="stylesheet" href="../common_code/open_space_settings.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 </head>
 
 <body>
@@ -91,9 +90,9 @@ for ($d = 1; $d <= $days_in_month; $d++) {
         <div class="title"><h2>KOLEDAR</h2></div>
 
         <div class="mesec">
-            <a class="nav-btn" href="?month=<?= $prev_month ?>&year=<?= $prev_year ?>"><span class="material-symbols-outlined">arrow_left_alt</span></a>
+            <a class="nav-btn" href="?month=<?= $prev_month ?>&year=<?= $prev_year ?>"><span class="nav-arrow" aria-hidden="true">&#8249;</span></a>
             <div class="ime"><?= $months[$month_now - 1] . " " . $year_now ?></div>
-            <a class="nav-btn" href="?month=<?= $next_month ?>&year=<?= $next_year ?>"><span class="material-symbols-outlined">arrow_right_alt</span></a>
+            <a class="nav-btn" href="?month=<?= $next_month ?>&year=<?= $next_year ?>"><span class="nav-arrow" aria-hidden="true">&#8250;</span></a>
         </div>
     </div>
 
@@ -174,19 +173,19 @@ for ($d = 1; $d <= $days_in_month; $d++) {
     <form method="post" data-mode="add" action="add_event.php?month=<?= $month_now ?>&year=<?= $year_now ?>">
         <input type="hidden" name="event_id" id="event_id" value="">
 
-        <div id="error_name" class="hidden_error"></div>
+        <div id="error_name" class="error"></div>
         <div class="input_row">
             <label>Naziv</label>
             <input type="text" name="name">
         </div>
 
-        <div id="error_date" class="hidden_error"></div>
+        <div id="error_date" class="error"></div>
         <div class="input_row">
             <label>Datum</label>
             <input type="date" name="date" id="date_input">
         </div>
 
-        <div id="error_time" class="hidden_error"></div>
+        <div id="error_time" class="error"></div>
         <div class="input_row">
             <label>Ura</label>
             <input type="time" name="time">

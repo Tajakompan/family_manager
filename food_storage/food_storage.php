@@ -78,7 +78,7 @@ $chosen_id = isset($_GET['storage_id']) ? (int)$_GET['storage_id'] : 0;
                             <label>Ime izdelka:</label> <input type="text" name="product_name">
                             <label>Količina:</label> <input type="text" name="product_amount">
                             <label>Enota:</label> <input type="text" name="product_unit">
-                            <label>Kvantiteta:</label> <input type="text" name="product_quantity">
+                            <label>Kos:</label> <input type="text" name="product_quantity">
                             <label>Kategorija:</label> 
                             <select name="product_category">
                                 <?php 
@@ -126,6 +126,7 @@ $chosen_id = isset($_GET['storage_id']) ? (int)$_GET['storage_id'] : 0;
                 ?>
             </div>
             <div class="content">
+                <div class="empty_text" id="storage_empty_text" hidden>Prazno</div>
                 <table class="food_table">
                     <colgroup>
                         <col style="width: 35%">
@@ -141,7 +142,7 @@ $chosen_id = isset($_GET['storage_id']) ? (int)$_GET['storage_id'] : 0;
                             <td class="sortable" data-col="0" data-type="text">Izdelek</td>
                             <td class="sortable" data-col="1" data-type="number">Količina</td>
                             <td class="sortable" data-col="2" data-type="text">Enota</td>
-                            <td class="sortable" data-col="3" data-type="number">Kvantiteta</td>
+                            <td class="sortable" data-col="3" data-type="number">Kos</td>
                             <td class="sortable" data-col="4" data-type="text">Kategorija</td>
                             <td class="sortable" data-col="5" data-type="date">Uporabno do</td>
                             <td class="sortable" data-col="6" data-type="text">Status izdelka</td>
@@ -156,6 +157,11 @@ $chosen_id = isset($_GET['storage_id']) ? (int)$_GET['storage_id'] : 0;
         <div class="right">
             <div class="add_product btn" id="add_product">POSPRAVI IZDELEK</div>
             <div class="add_category btn" id="add_category">DODAJ KATEGORIJO</div>
+            <div class="eat_soon_panel">
+                <div class="eat_soon_title">ROK UPORABE SE IZTEKA:</div>
+                <ul id="eat_soon_list" class="eat_soon_list"></ul>
+                <div id="eat_soon_empty" class="eat_soon_empty" hidden>Prazno</div>
+            </div>
         </div>
 
         <div id="nav_menu" class="menu">

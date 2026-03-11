@@ -22,17 +22,19 @@ function makePin(task, mode) { //mode je my ali other
     doers.textContent = task.doers || " —";
   
     const btn = clone.querySelector(".action_btn");
-    const icon = clone.querySelector(".icon");
+    const icon = clone.querySelector(".icon_img");
 
     if (mode === "my") {
-        icon.textContent = "done_all";
+        icon.src = "../img/done_all_24dp_3F3F3F_FILL0_wght400_GRAD0_opsz24.svg";
+        icon.alt = "Označi kot opravljeno";
         btn.title = "Označi kot opravljeno";
         btn.addEventListener("click", async () => {
             await markDone(task.id);
             await loadAll();
         });
     } else {
-        icon.textContent = "add_2";
+        icon.src = "../img/add_24dp_3F3F3F_FILL0_wght400_GRAD0_opsz24.svg";
+        icon.alt = "Prevzemi opravilo";
         btn.title = "Prevzemi opravilo";
         btn.addEventListener("click", async () => {
             await claimTask(task.id);
@@ -104,3 +106,4 @@ async function claimTask(taskId) {
 document.addEventListener("DOMContentLoaded", () => {
   loadAll().catch(err => console.error(err));
 });
+

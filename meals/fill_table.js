@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
         a.className = "hover_add add_meal_btn";
         a.dataset.date = dateISO;
         a.dataset.mealType = mealType;
-        a.innerHTML = "<span class='material-symbols-outlined'>add_circle</span>";
+        a.innerHTML = "<img src='../img/add_circle_24dp_3F3F3F_FILL0_wght400_GRAD0_opsz24.svg' alt='Dodaj obrok'>";
         return a;
     }
 
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
         el.textContent = mealName;
     } else {
         el.classList.add("empty", "hover_add");
-        el.innerHTML = "<span class='material-symbols-outlined'>add_circle</span>";
+        el.innerHTML = "<img src='../img/add_circle_24dp_3F3F3F_FILL0_wght400_GRAD0_opsz24.svg' alt='Dodaj obrok'>";
     }
 
     return el;

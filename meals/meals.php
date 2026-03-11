@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="../common_code/common_css.css">
     <link rel="stylesheet" href="../common_code/form_window.css">
     <link rel="stylesheet" href="../common_code/open_space_settings.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 </head>
 <body>
     <?php include "../sidebar/sidebar.php"; ?>

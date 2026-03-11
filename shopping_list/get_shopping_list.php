@@ -26,11 +26,12 @@ while ($k = $res->fetch_assoc()) {
     $id = (int)$k["id"];
     $purchased = (int)$k["purchased"];
     $qty = (int)$k["quantity"];
+    $amount = rtrim(rtrim(number_format($k["amount"], 2, ".", ""), "0"), ".");
+    $unit = trim((string)$k["unit"]);
+    $amountUnit = $unit === "" ? $amount : ($amount . " " . $unit);
 
     echo "<tr data-row-id='{$id}' class='list_item ".($purchased ? "done" : "")."' data-shop-id='".(int)$k["shop_id"]."'>";
-    echo "<td>".htmlspecialchars($k["name"])."</td>";
-    echo "<td class='ctr'>" . rtrim(rtrim(number_format($k["amount"], 2, '.', ''), '0'), '.') . "</td>";
-    echo "<td class='ctr'>".htmlspecialchars($k["unit"])."</td>";
+    echo "<td>".htmlspecialchars($k["name"])." <span class='item_measure'>".htmlspecialchars($amountUnit)."</span></td>";
     echo "<td class='ctr'><input type='number' class='qty-input' data-id='{$id}' min='1' step='1' value='{$qty}'> </td>";
     echo "<td class='necessity ".htmlspecialchars($k["necessity"])."'></td>";
     echo "<td class='ctr'> <input type='checkbox' class='check-item' data-id='{$id}' ".($purchased ? "checked" : "")."></td>";

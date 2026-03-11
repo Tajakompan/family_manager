@@ -1,7 +1,17 @@
-<?php
+﻿<?php
 require_once __DIR__ . "/../config.php";
 $error = "";
 $success = "";
+$invalid_fields = [];
+$name = "";
+$surname = "";
+$birthdate = "";
+$email = "";
+$password = "";
+$password2 = "";
+$role = "";
+$code = "";
+$today = date("Y-m-d");
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $name = trim($_POST["name"] ?? "");
@@ -13,14 +23,56 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $role = $_POST["role"] ?? "";
     $code = trim($_POST["code"] ?? "");
 
-    if ($name === "" || $surname === "" || $birthdate === "" || $email === "" || $password === "" || $role === "") {
+    if ($name === "" || $surname === "" || $birthdate === "" || $email === "" || $password === "" || $password2 === "" || $code === "" || $role === "") {
+        if ($name === "") {
+            $invalid_fields["name"] = true;
+        }
+        if ($surname === "") {
+            $invalid_fields["surname"] = true;
+        }
+        if ($birthdate === "") {
+            $invalid_fields["birthdate"] = true;
+        }
+        if ($email === "") {
+            $invalid_fields["email"] = true;
+        }
+        if ($password === "") {
+            $invalid_fields["password"] = true;
+        }
+        if ($password2 === "") {
+            $invalid_fields["password2"] = true;
+        }
+        if ($code === "") {
+            $invalid_fields["code"] = true;
+        }
+        if ($role === "") {
+            $invalid_fields["role"] = true;
+        }
         $error = "Vsa polja so obvezna.";
-    } 
+    }
+    else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $invalid_fields["email"] = true;
+        $error = "Email ni v pravilnem formatu.";
+    }
+    else if ($birthdate > $today) {
+        $invalid_fields["birthdate"] = true;
+        $error = "Datum rojstva ne sme biti v prihodnosti.";
+    }
+    else if (!in_array($role, ["child", "adult", "parent"], true)) {
+        $invalid_fields["role"] = true;
+        $error = "Izbrana vloga ni veljavna.";
+    }
     else if ($password !== $password2) {
+        $invalid_fields["password"] = true;
+        $invalid_fields["password2"] = true;
         $error = "Gesli se ne ujemata.";
     }
+    else if (mb_strlen($password) < 8) {
+        $invalid_fields["password"] = true;
+        $invalid_fields["password2"] = true;
+        $error = "Geslo mora vsebovati vsaj 8 znakov.";
+    }
     else {
-        // preveri, če email že obstaja
         $sql = "SELECT id FROM app_user WHERE email = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("s", $email);
@@ -28,12 +80,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->store_result();
 
         if ($stmt->num_rows > 0) {
+            $invalid_fields["email"] = true;
             $error = "Uporabnik s tem emailom že obstaja.";
             $stmt->close();
         } 
         else {
             $stmt->close();
-            // preveri, če družina obstaja, in pridobi family_id
             $sql = "SELECT id FROM family WHERE code = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("s", $code);
@@ -42,6 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $family = $result->fetch_assoc();
             
             if (!$family) {
+                $invalid_fields["code"] = true;
                 $error = "Napačna koda, ta družina ne obstaja.";
             } 
             else{
@@ -57,13 +110,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $role_id = (int)$role_row["id"];
                 $stmt->close();
 
+                $password_hash = password_hash($password, PASSWORD_DEFAULT);
                 $sql = "INSERT INTO app_user (name, surname, birthdate, email, password, user_role_id, family_id)
                         VALUES (?, ?, ?, ?, ?, ?, ?)";
                 $stmt = $conn->prepare($sql);
-                $stmt->bind_param("sssssii", $name, $surname, $birthdate, $email, $password, $role_id, $family_id);
+                $stmt->bind_param("sssssii", $name, $surname, $birthdate, $email, $password_hash, $role_id, $family_id);
 
                 if ($stmt->execute()) 
-                    $success = "Registracija uspešna. Sedaj se lahko prijaviš.";
+                    $success = "Registracija uspešna. Sedaj se lahko prijavite.";
                 else 
                     $error = "Napaka pri registraciji.";
             }
@@ -84,58 +138,63 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <link rel="stylesheet" href="registration.css">
 </head>
 <body>
-    <div class="left">
-        
+    <div class="left image_placeholder">
+            <img src="../img/login_page.png.png" alt="Family Manager ilustracija">
     </div>
     <div class="right">
-        <div class="login_frame">
-            <h2 class="title">Registracija</h2>
+        <div class="login_panel">
+            <div class="panel_top">
+                <h2 class="title">Registracija</h2>
+            </div>
+            <div class="login_frame">
 
             <?php if ($error): ?>
-                <div style="color:red;"><?php echo $error; ?></div>
+                <div class="error"><?= htmlspecialchars($error) ?></div>
             <?php endif; ?>
 
             <?php if ($success): ?>
-                <div style="color:green;"><?php echo $success; ?></div>
-                <a href="login.php">Pojdi na prijavo</a>
+                <div class="nice_gray" style="text-align:center;">
+                    <div style="color:#a7d65e; margin-bottom:8px;"><?= htmlspecialchars($success) ?></div>
+                    <a href="login.php">Pojdi na prijavo</a>
+                </div>
             <?php else: ?>
 
             <form method="post">
                 <div class="two_columns">
                     <div class="field">
                         <label>Ime:</label>
-                        <input type="text" name="name">
+                        <input type="text" name="name" value="<?= htmlspecialchars($name, ENT_QUOTES) ?>" class="<?= isset($invalid_fields["name"]) ? "red" : "" ?>">
                     </div>
                     <div class="field">
                         <label>Priimek:</label>
-                        <input type="text" name="surname">
+                        <input type="text" name="surname" value="<?= htmlspecialchars($surname, ENT_QUOTES) ?>" class="<?= isset($invalid_fields["surname"]) ? "red" : "" ?>">
                     </div>
                     <div class="field">
                         <label>Datum rojstva:</label>
-                        <input type="date" name="birthdate" id="birthdate" onchange="update_roles()">
+                        <input type="date" name="birthdate" id="birthdate" max="<?= $today ?>" onchange="update_roles()" value="<?= htmlspecialchars($birthdate, ENT_QUOTES) ?>" class="<?= isset($invalid_fields["birthdate"]) ? "red" : "" ?>">
                     </div>
                     <div class="field">
                         <label>Email:</label>
-                        <input type="email" name="email">
+                        <input type="email" name="email" value="<?= htmlspecialchars($email, ENT_QUOTES) ?>" class="<?= isset($invalid_fields["email"]) ? "red" : "" ?>">
                     </div>
                     <div class="field">
                         <label>Geslo:</label>
-                        <input type="password" name="password">
+                        <input type="password" name="password" minlength="8" value="<?= htmlspecialchars($password, ENT_QUOTES) ?>" class="<?= isset($invalid_fields["password"]) ? "red" : "" ?>">
                     </div>
                     <div class="field">
                         <label>Ponovi geslo:</label>
-                        <input type="password" name="password2">
+                        <input type="password" name="password2" minlength="8" value="<?= htmlspecialchars($password2, ENT_QUOTES) ?>" class="<?= isset($invalid_fields["password2"]) ? "red" : "" ?>">
                     </div>
                     <div class="field">
                         <label>Koda družine</label>
-                        <input type="text" name="code">
+                        <input type="text" name="code" value="<?= htmlspecialchars($code, ENT_QUOTES) ?>" class="<?= isset($invalid_fields["code"]) ? "red" : "" ?>">
                     </div>
                     <div class="field">
                         <label>Vloga:</label>
-                        <select name="role">
-                            <option id="role_child" value="child">Otrok</option>
-                            <option id="role_adult" value="adult">Odrasel</option>
-                            <option id="role_parent" value="parent">Starš</option>
+                        <select name="role" class="<?= isset($invalid_fields["role"]) ? "red" : "" ?>">
+                            <option id="role_child" value="child" <?= $role === "child" ? "selected" : "" ?>>Otrok</option>
+                            <option id="role_adult" value="adult" <?= $role === "adult" ? "selected" : "" ?>>Odrasel</option>
+                            <option id="role_parent" value="parent" <?= $role === "parent" ? "selected" : "" ?>>Starš</option>
                         </select>
                     </div>
                 </div>
@@ -146,12 +205,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </form>
             
             <div class="nice_gray">
-                Družina še ni ustvarjena? <a href="create_family.php">Ustvari jo!</a> <br>
-                Že imaš račun? <a href="login.php">Prijavi se</a>
+                Družina še ni ustvarjena? <a href="create_family.php">Ustvarite jo!</a> <br>
+                Že imate račun? <a href="login.php">Prijavite se</a>
             </div>
 
             <?php endif; ?>
+            </div>
+        </div>
+    </div>
 
+ 
 </body>
 </html>
 
@@ -203,3 +266,4 @@ function update_roles(){
 window.addEventListener("load", update_roles);
 
 </script>
+
