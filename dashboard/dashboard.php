@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . "/../config.php";
 
 if (!isset($_SESSION["user_id"])) {
@@ -101,6 +101,7 @@ else
             <div class="update_user window" id="update_user_window">
                 <div class="title">Uredi osebne podatke:</div>
                 <form id="update_user_form" class="form" method="post" action="update_user.php">
+                    <div class="error" id="update_user_password_error" aria-live="polite" hidden></div>
                     <div class="two_columns">
                         <div class="field">
                             <label>Ime:</label>
@@ -145,3 +146,4 @@ else
     <script src="profile_card_fill.js"></script>
 </body>
 </html>
+

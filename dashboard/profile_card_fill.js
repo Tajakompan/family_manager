@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const roleLabels = {
     child: "Otrok",
     adult: "Odrasel",
-    parent: "Star\u0161"
+    parent: "Starš"
   };
 
   try {
@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!res.ok || !res.user) return;
 
     const user = res.user;
-    profile_name.textContent = `${user.name} ${user.surname}`;
+    profile_name.textContent = user.name + " " + user.surname;
     profile_role.textContent = roleLabels[user.user_role_name] ?? user.user_role_name;
     profile_email.textContent = user.email;
   } catch (err) {

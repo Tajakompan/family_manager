@@ -254,6 +254,21 @@ button:disabled,
   box-shadow: 0 2px 6px var(--clr-rgba-0-0-0-0-12);
 }
 
+.btn{
+  border-radius: 10px;
+  border: 2px solid #92bc56;
+  background-color: #b6ea6b;
+  color:#202020;
+  width: fit-content;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.warning_btn{
+  border: 2px solid #ad2222e0;
+  background-color: #d62828e0;
+}
+
 
 /*ZGORNJI BAR*/
 .top_row{
@@ -341,7 +356,16 @@ h2{
 }
 
 
+.non-important{
+  color:#7a7a7ac0;
+  background-color: white;
+  font-weight: 500;
+}
 
+.low{
+  height: 20px;
+  font-size: 15px;
+}
 
 
 

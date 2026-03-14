@@ -30,7 +30,7 @@ if (!$tab) {
 $data = [
   "id" => (int)$tab["id"],
   "name" => $tab["name"],
-  "code" => (int)$tab["code"],
+  "code" => $tab["code"],
 ];
 
 echo json_encode($data);

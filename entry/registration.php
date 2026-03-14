@@ -192,9 +192,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <div class="field">
                         <label>Vloga:</label>
                         <select name="role" class="<?= isset($invalid_fields["role"]) ? "red" : "" ?>">
-                            <option id="role_child" value="child" <?= $role === "child" ? "selected" : "" ?>>Otrok</option>
+                            <option id="role_parent" value="parent" <?= $role === "parent" ? "selected" : "" ?>>Starš - admin</option>
                             <option id="role_adult" value="adult" <?= $role === "adult" ? "selected" : "" ?>>Odrasel</option>
-                            <option id="role_parent" value="parent" <?= $role === "parent" ? "selected" : "" ?>>Starš</option>
+                            <option id="role_child" value="child" <?= $role === "child" ? "selected" : "" ?>>Otrok</option>
                         </select>
                     </div>
                 </div>

@@ -24,11 +24,49 @@ document.addEventListener("DOMContentLoaded", () => {
     const option_btn = document.getElementById("option_btn");
     const edit_data = document.getElementById("edit_data");
     const delete_user = document.getElementById("delete_user");
+    const profile_name = document.getElementById("profile_name");
+    const profile_email = document.getElementById("profile_email");
+    const greeting_name = document.querySelector(".title_left h2 span");
 
     const overlay = document.getElementById("add_something_view");
     const update_user_window = document.getElementById("update_user_window");
     const update_user_form = document.getElementById("update_user_form");
     const cancel_update_user_btn = document.getElementById("cancel_update_user_btn");
+    const password_error = document.getElementById("update_user_password_error");
+
+    function setPasswordError(message = "") {
+        if (!password_error) return;
+
+        password_error.textContent = message;
+        password_error.hidden = message === "";
+    }
+
+    function getUpdateUserErrorMessage(errorCode) {
+        switch (errorCode) {
+            case "required_fields":
+                return "Vsa polja razen gesla so obvezna.";
+            case "invalid_email":
+                return "E-mail ni v veljavnem formatu.";
+            case "future_birthdate":
+                return "Datum rojstva ne more biti v prihodnosti.";
+            case "email_taken":
+                return "Ta e-mail ze uporablja drug uporabnik.";
+            case "password_mismatch":
+                return "Gesli se ne ujemata.";
+            case "password_too_short":
+                return "Geslo mora imeti vsaj 8 znakov.";
+            default:
+                return "Posodobitev ni uspela. Poskusi znova.";
+        }
+    }
+
+    function refreshProfileSummary(user) {
+        if (!user) return;
+
+        if (profile_name) profile_name.textContent = `${user.name} ${user.surname}`;
+        if (profile_email) profile_email.textContent = user.email;
+        if (greeting_name) greeting_name.textContent = user.name;
+    }
 
     async function prefillUpdateUserForm() {
         if (!update_user_form) return;
@@ -50,6 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (birthdateInput) birthdateInput.value = birthdate ?? "";
             if (passwordInput1) passwordInput1.value = "";
             if (passwordInput2) passwordInput2.value = "";
+            setPasswordError("");
         } catch (err) {
             console.error("Update profile prefill failed:", err);
         }
@@ -63,6 +102,21 @@ document.addEventListener("DOMContentLoaded", () => {
     function closeUpdateUserWindow() {
         update_user_window?.classList.remove("active");
         overlay?.classList.remove("active");
+    }
+
+    async function restoreUpdateUserErrorState() {
+        const params = new URLSearchParams(window.location.search);
+        const error = params.get("update_user_error");
+        if (!error) return;
+
+        await prefillUpdateUserForm();
+        setPasswordError(getUpdateUserErrorMessage(error));
+        openUpdateUserWindow();
+
+        params.delete("update_user_error");
+        const query = params.toString();
+        const nextUrl = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
+        window.history.replaceState({}, "", nextUrl);
     }
 
     option_btn?.addEventListener("click", (e) => {
@@ -101,12 +155,44 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    update_user_form?.addEventListener("submit", () => {
-        closeUpdateUserWindow();
+    update_user_form?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        setPasswordError("");
+
+        const submit_btn = update_user_form.querySelector('button[type="submit"]');
+        if (submit_btn) submit_btn.disabled = true;
+
+        try {
+            const result = await fetchJson(update_user_form.action, {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                body: new FormData(update_user_form)
+            });
+
+            if (!result.ok) {
+                setPasswordError(getUpdateUserErrorMessage(result.error));
+                openUpdateUserWindow();
+                return;
+            }
+
+            refreshProfileSummary(result.user);
+            closeUpdateUserWindow();
+        } catch (err) {
+            console.error("Update profile failed:", err);
+            setPasswordError("Posodobitev ni uspela. Poskusi znova.");
+            openUpdateUserWindow();
+        } finally {
+            if (submit_btn) submit_btn.disabled = false;
+        }
     });
 
     delete_user?.addEventListener("click", () => {
         if (!confirm("Ali si preprican, da zelis izbrisati svoj uporabniski racun? S tem ga bos za vedno izgubil, z njim pa tudi vse svoje podatke, ki si jih prispeval v druzino.")) return;
         fetch("../entry/delete_app_user.php").then(() => location.reload());
     });
+
+    restoreUpdateUserErrorState();
 });
