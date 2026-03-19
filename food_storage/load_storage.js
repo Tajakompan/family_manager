@@ -12,7 +12,7 @@ async function fetchJson(url, options = {}) {
   return await res.json();
 }
 
-function createEatSoonGroup(storageName, productNames) {
+function createOnRightGroup(storageName, productNames) {
   const group = document.createElement("li");
   group.className = "eat_soon_group";
 
@@ -46,11 +46,35 @@ async function loadEatSoonPanel() {
   let hasItems = false;
 
   for (const storage of storages) {
-    const products = await fetchJson(`get_expiring_storage.php?storage_id=${storage.id}`);
+    const products = await fetchJson(`get_expiring_storage.php?storage_id=${storage.id}&expired=${0}`);
     if (!products.length) continue;
 
     hasItems = true;
-    listEl.appendChild(createEatSoonGroup(storage.name, products.map(product => product.name)));
+    listEl.appendChild(createOnRightGroup(storage.name, products.map(product => product.name)));
+  }
+
+  if (!hasItems) {
+    emptyEl.hidden = false;
+  }
+}
+
+async function loadExpiredPanel() {
+  const listEl = document.getElementById("expired_list");
+  const emptyEl = document.getElementById("expired_empty");
+  if (!listEl || !emptyEl) return;
+
+  listEl.innerHTML = "";
+  emptyEl.hidden = true;
+
+  const storages = await fetchJson("get_storage_locations.php");
+  let hasItems = false;
+
+  for (const storage of storages) {
+    const products = await fetchJson(`get_expiring_storage.php?storage_id=${storage.id}&expired=${1}`);
+    if (!products.length) continue;
+
+    hasItems = true;
+    listEl.appendChild(createOnRightGroup(storage.name, products.map(product => product.name)));
   }
 
   if (!hasItems) {
@@ -95,6 +119,7 @@ document.querySelectorAll('.nav_item').forEach(btn => {
 window.addEventListener('DOMContentLoaded', () => {
   const chosen = document.querySelector('.nav_item.chosen_storage');
   loadEatSoonPanel().catch(console.error);
+  loadExpiredPanel().catch(console.error);
   if (!chosen) return;
   const storageId = chosen.dataset.storageId;
   document.getElementById('storage_id_input').value = document.querySelector('.nav_item.chosen_storage').dataset.storageId;

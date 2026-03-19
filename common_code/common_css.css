@@ -355,6 +355,10 @@ h2{
   transform: translateX(1px);
 }
 
+.red{
+  color: #ff2323;
+}
+
 
 .non-important{
   color:#7a7a7ac0;

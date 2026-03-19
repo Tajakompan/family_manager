@@ -110,21 +110,36 @@ $chosen_id = isset($_GET['storage_id']) ? (int)$_GET['storage_id'] : 0;
                 <div class="title"><h2>ZALOGA</h2></div>
             </div>
             
-            <div class="nav">
-                <div class="add_storage_location" id="add_storage_location">NOVA LOKACIJA</div>
-                <?php
-                    $st = 0;
-                foreach($storage_location_table as $k){
-                    $is_chosen = ($chosen_id > 0 && (int)$k["id"] === $chosen_id);
-                    // če ni storage_id v URL, izberi prvega
-                    if ($chosen_id === 0 && $st === 0) $is_chosen = true;
+            <div class="storage_toolbar">
+                <div class="nav">
+                    <div class="add_storage_location" id="add_storage_location"><img src="../img/add_24dp_3F3F3F_FILL0_wght400_GRAD0_opsz24.svg" alt="+">NOVO</div>
+                    <?php
+                        $st = 0;
+                    foreach($storage_location_table as $k){
+                        $is_chosen = ($chosen_id > 0 && (int)$k["id"] === $chosen_id);
+                        // če ni storage_id v URL, izberi prvega
+                        if ($chosen_id === 0 && $st === 0) $is_chosen = true;
 
-                    $c = $is_chosen ? "chosen_storage" : "";
-                    echo "<div class='nav_item $c' id='id_".$k["id"]."' data-storage-id='".$k['id']."'>".$k["name"]."</div>";
-                    $st++;
-                }
-                ?>
+                        $c = $is_chosen ? "chosen_storage" : "";
+                        echo "<div class='nav_item $c' id='id_".$k["id"]."' data-storage-id='".$k['id']."'>".$k["name"]."</div>";
+                        $st++;
+                    }
+                    ?>
+                </div>
+
+                <div class="storage_toolbar_actions">
+                    <div class="storage_toolbar_action add_product" id="add_product">
+                        <img src="../img/add_24dp_3F3F3F_FILL0_wght400_GRAD0_opsz24.svg" alt="+">
+                        <span>IZDELEK</span>
+                    </div>
+                    <div class="storage_toolbar_action add_category" id="add_category">
+                        <img src="../img/add_24dp_3F3F3F_FILL0_wght400_GRAD0_opsz24.svg" alt="+">
+                        <span>KATEGORIJA</span>
+                    </div>
+                </div>
+
             </div>
+
             <div class="content">
                 <div class="empty_text" id="storage_empty_text" hidden>Prazno</div>
                 <table class="food_table">
@@ -155,12 +170,15 @@ $chosen_id = isset($_GET['storage_id']) ? (int)$_GET['storage_id'] : 0;
             </div>
         </div>
         <div class="right">
-            <div class="add_product btn" id="add_product">POSPRAVI IZDELEK</div>
-            <div class="add_category btn" id="add_category">DODAJ KATEGORIJO</div>
-            <div class="eat_soon_panel">
-                <div class="eat_soon_title">ROK UPORABE SE IZTEKA:</div>
-                <ul id="eat_soon_list" class="eat_soon_list"></ul>
-                <div id="eat_soon_empty" class="eat_soon_empty" hidden>Prazno</div>
+            <div class="on_right_panel">
+                <div class="on_right_title">ROK UPORABE SE IZTEKA:</div>
+                <ul id="eat_soon_list" class="on_right_list"></ul>
+                <div id="eat_soon_empty" class="on_right_empty" hidden>Prazno</div>
+            </div>
+            <div class="on_right_panel">
+                <div class="on_right_title">ROK UPORABE JE POTEKEL:</div>
+                <ul id="expired_list" class="on_right_list"></ul>
+                <div id="expired_empty" class="on_right_empty" hidden>Prazno</div>
             </div>
         </div>
 

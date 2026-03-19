@@ -9,7 +9,7 @@ if (!isset($_SESSION["user_id"])) {
 $family_id = (int)$_SESSION["family_id"];
 $hour = date("H");
 if($hour >= 18)
-    $greeting = "Dober večer";
+    $greeting = "Dober veÄŤer";
 else if($hour >= 12)
     $greeting = "Dober dan";
 else
@@ -41,7 +41,7 @@ else
                                 <ul id="task_list"></ul>
                             </div>
                         </div>
-
+ 
                         <div class="pin" id="shopping_list_pin">
                             <div class="small_pin_title">nujno kupi</div>
                             <div class="mini_main">
@@ -68,7 +68,7 @@ else
                         </div>
 
                         <div class="pin" id="storage_pin">
-                            <div class="small_pin_title">bliža se rok uporabe</div>
+                            <div class="small_pin_title">pomembno v zalogi</div>
                             <div class="mini_main">
                                 <ul id="storage_list"></ul>
                             </div>
@@ -80,6 +80,13 @@ else
                             <div class="small_pin_title">današnji dogodki</div>
                             <div class="mini_main">
                                 <ul id="events_list"></ul>
+                            </div>
+                        </div>
+
+                        <div class="pin" id="meals_pin">
+                            <div class="small_pin_title">današnji obroki</div>
+                            <div class="mini_main">
+                                <ul id="meals_list"></ul>
                             </div>
                         </div>
                     </div>
@@ -134,11 +141,23 @@ else
                     </div>
                 </form>
             </div>
+            <div class="upload_image window" id="upload_image_window">
+                <div class="title">Spremeni profilno sliko:</div>
+                <form id="upload_image_form" class="form" action="upload_profile_image.php" method="POST" enctype="multipart/form-data">
+                    <div class="error" id="upload_image_error" aria-live="polite" hidden></div>
+                    <label for="profile_image">Izberi profilno sliko:</label>
+                    <input type="file" name="profile_image" id="profile_image" accept="image/*" required>
+                    <div class="btns">
+                        <button type="reset" id="cancel_upload_image_btn">Prekliči</button>
+                        <button type="submit" id="upload_image_btn">Posodobi</button>
+                    </div>
+                </form>
+            </div>
         </div>
         <div id="row_menu" class="menu">
             <div class="menu_item" id="edit_data">Uredi podatke</div>
             <div class="menu_item"id="change_image">Zamenjaj uporabniško sliko</div>
-            <div class="menu_item"id="delete_user">Izbriši uporabnika</div>
+            <div class="menu_item red"id="delete_user">Izbriši uporabnika</div>
         </div>
     </div>
     <script src="pin_fill.js"></script>
@@ -146,4 +165,7 @@ else
     <script src="profile_card_fill.js"></script>
 </body>
 </html>
+
+
+
 

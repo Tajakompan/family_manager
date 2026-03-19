@@ -202,4 +202,31 @@ input.red{
   border-color: var(--clr-rgba-182-234-107-0-35);
 }
 
+.window input[type="file"]{
+  width: 100%;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid var(--clr-rgba-255-255-255-0-18);
+  background: var(--clr-rgba-0-0-0-0-25);
+  color: white;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.window input[type="file"]::file-selector-button{
+  margin-right: 12px;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-accent-green);
+  color: var(--clr-hex-1f1f1f);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.window input[type="file"]::file-selector-button:hover{
+  filter: brightness(0.97);
+}
+
+
 

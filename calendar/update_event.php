@@ -69,5 +69,8 @@ $stmt->close();
 
 $month_now = (int)($_GET["month"] ?? date("n"));
 $year_now  = (int)($_GET["year"] ?? date("Y"));
-header("Location: calendar.php?month=$month_now&year=$year_now");
+$selected_user_id = (int)($_GET["user_id"] ?? 0);
+
+header("Location: calendar.php?month=$month_now&year=$year_now&user_id=$selected_user_id");
 exit;
+

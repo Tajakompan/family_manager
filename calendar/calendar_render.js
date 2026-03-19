@@ -60,7 +60,7 @@ function renderEventsForDate(dateStr){
                 <div><b>Ura: </b>${escapeHtml(e.event_time)}</div>
                 <div><b>Lokacija: </b>${escapeHtml(e.location)}</div>
                 <div><b>Opis: </b>${escapeHtml(e.description)}</div>
-                <div><b>Od: </b>${escapeHtml(e.user_id)}</div>
+                <div><b>Ustvaril: </b>${escapeHtml(e.user_name)}</div>
                 <div><b>Opomnik: </b>${escapeHtml(e.reminder)}</div>
             </div>`;
         //doda id na okvirček z informacijami o dogodku

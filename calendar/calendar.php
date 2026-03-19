@@ -31,23 +31,108 @@ if ($next_month > 12) {
 $days_in_month = cal_days_in_month(CAL_GREGORIAN, $month_now, $year_now);
 $start_day = (int)date('N', strtotime("$year_now-$month_now-01")); // 1=pon ... 7=ned
 
+$selected_user_id = isset($_GET["user_id"]) ? (int)$_GET["user_id"] : 0;
+
 $events_by_date = [];
 for ($d = 1; $d <= $days_in_month; $d++) {
     $dateKey = sprintf('%04d-%02d-%02d', $year_now, $month_now, $d);
     $events_by_date[$dateKey] = [];
 }
 
+$users = [];
+$user_sql = "SELECT id, name, surname
+             FROM app_user
+             WHERE family_id = ?
+             ORDER BY name, surname";
+$user_stmt = $conn->prepare($user_sql);
+$user_stmt->bind_param("i", $family_id);
+$user_stmt->execute();
+$user_result = $user_stmt->get_result();
+
+while ($row = $user_result->fetch_assoc()) {
+    $users[] = $row;
+}
+$user_stmt->close();
+
+
+$events_by_date = [];
+// pobere dogodke na datum
 // pobere dogodke na datum
 for ($d = 1; $d <= $days_in_month; $d++) {
     $dateKey = sprintf('%04d-%02d-%02d', $year_now, $month_now, $d);
 
-    $sql = "SELECT id, name, event_time, whole_day, location, description, created_by_app_user_id, reminder
-            FROM event
-            WHERE family_id = ? AND event_date = ?
-            ORDER BY (event_time IS NULL), event_time";
+    if ($selected_user_id > 0) {
+        if ($selected_user_id === $user_id) {
+            // gledam svoje dogodke -> vidim vse svoje
+            $sql = "SELECT 
+                        e.id,
+                        e.name,
+                        e.event_time,
+                        e.whole_day,
+                        e.location,
+                        e.description,
+                        a.name AS user_name,
+                        e.reminder,
+                        e.just_for_creator
+                    FROM event e
+                    INNER JOIN app_user a ON e.created_by_app_user_id = a.id
+                    WHERE e.family_id = ?
+                      AND e.event_date = ?
+                      AND e.created_by_app_user_id = ?
+                    ORDER BY (e.event_time IS NULL), e.event_time";
 
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("is", $family_id, $dateKey);
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("isi", $family_id, $dateKey, $selected_user_id);
+        } else {
+            // gledam dogodke druge osebe -> vidim samo javne
+            $sql = "SELECT 
+                        e.id,
+                        e.name,
+                        e.event_time,
+                        e.whole_day,
+                        e.location,
+                        e.description,
+                        a.name AS user_name,
+                        e.reminder,
+                        e.just_for_creator
+                    FROM event e
+                    INNER JOIN app_user a ON e.created_by_app_user_id = a.id
+                    WHERE e.family_id = ?
+                      AND e.event_date = ?
+                      AND e.created_by_app_user_id = ?
+                      AND e.just_for_creator = 0
+                    ORDER BY (e.event_time IS NULL), e.event_time";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("isi", $family_id, $dateKey, $selected_user_id);
+        }
+    } else {
+        // gledam "Dogodki vseh"
+        // svoje vidim vse, od drugih pa samo javne
+        $sql = "SELECT 
+                    e.id,
+                    e.name,
+                    e.event_time,
+                    e.whole_day,
+                    e.location,
+                    e.description,
+                    a.name AS user_name,
+                    e.reminder,
+                    e.just_for_creator
+                FROM event e
+                INNER JOIN app_user a ON e.created_by_app_user_id = a.id
+                WHERE e.family_id = ?
+                  AND e.event_date = ?
+                  AND (
+                        e.created_by_app_user_id = ?
+                        OR e.just_for_creator = 0
+                  )
+                ORDER BY (e.event_time IS NULL), e.event_time";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("isi", $family_id, $dateKey, $user_id);
+    }
+
     $stmt->execute();
     $result = $stmt->get_result();
     $dayEvents = $result->fetch_all(MYSQLI_ASSOC);
@@ -62,11 +147,13 @@ for ($d = 1; $d <= $days_in_month; $d++) {
             "whole_day" => (int)$e["whole_day"],
             "location" => ($e["location"] ?? "") === "" ? "/" : $e["location"],
             "description" => ($e["description"] ?? "") === "" ? "/" : $e["description"],
-            "user_id" => (int)$e["created_by_app_user_id"],
-            "reminder" => $e["reminder"] ?? ""
+            "user_name" => $e["user_name"],
+            "reminder" => $e["reminder"] ?? "",
+            "just_for_creator" => (int)($e["just_for_creator"] ?? 0)
         ];
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="sl">
@@ -78,6 +165,7 @@ for ($d = 1; $d <= $days_in_month; $d++) {
     <link rel="stylesheet" href="calendar.css">
     <link rel="stylesheet" href="../sidebar/sidebar.css">
     <link rel="stylesheet" href="../common_code/common_css.css">
+    <link rel="stylesheet" href="../common_code/form_window.css">
     <link rel="stylesheet" href="../common_code/open_space_settings.css">
 </head>
 
@@ -90,9 +178,29 @@ for ($d = 1; $d <= $days_in_month; $d++) {
         <div class="title"><h2>KOLEDAR</h2></div>
 
         <div class="mesec">
-            <a class="nav-btn" href="?month=<?= $prev_month ?>&year=<?= $prev_year ?>"><span class="nav-arrow" aria-hidden="true">&#8249;</span></a>
+            <div class="space"></div>
+            <a class="nav-btn" href="?month=<?= $prev_month ?>&year=<?= $prev_year ?>&user_id=<?= $selected_user_id ?>">
+                <span class="nav-arrow" aria-hidden="true">&#8249;</span>
+            </a>
             <div class="ime"><?= $months[$month_now - 1] . " " . $year_now ?></div>
-            <a class="nav-btn" href="?month=<?= $next_month ?>&year=<?= $next_year ?>"><span class="nav-arrow" aria-hidden="true">&#8250;</span></a>
+            <a class="nav-btn" href="?month=<?= $next_month ?>&year=<?= $next_year ?>&user_id=<?= $selected_user_id ?>">
+                <span class="nav-arrow" aria-hidden="true">&#8250;</span>
+            </a>            
+            <div class="space" id="select_user">
+                <form method="get" class="calendar-filter">
+                    <input type="hidden" name="month" value="<?= $month_now ?>">
+                    <input type="hidden" name="year" value="<?= $year_now ?>">
+
+                    <select name="user_id" id="user_filter" class="calendar-select" onchange="this.form.submit()">
+                        <option value="0" <?= $selected_user_id === 0 ? "selected" : "" ?>>Dogodki vseh</option>
+                        <?php foreach ($users as $user): ?>
+                            <option value="<?= (int)$user["id"] ?>" <?= $selected_user_id === (int)$user["id"] ? "selected" : "" ?>>
+                                <?= htmlspecialchars($user["name"] . " " . $user["surname"]) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -170,7 +278,7 @@ for ($d = 1; $d <= $days_in_month; $d++) {
 <div class="desno" id="add_event_form">
     <h3>Dodaj dogodek</h3>
 
-    <form method="post" data-mode="add" action="add_event.php?month=<?= $month_now ?>&year=<?= $year_now ?>">
+    <form method="post" data-mode="add" action="add_event.php?month=<?= $month_now ?>&year=<?= $year_now ?>&user_id=<?= $selected_user_id ?>">
         <input type="hidden" name="event_id" id="event_id" value="">
 
         <div id="error_name" class="error"></div>
@@ -227,6 +335,7 @@ for ($d = 1; $d <= $days_in_month; $d++) {
     window.eventsByDate = <?= json_encode($events_by_date, JSON_UNESCAPED_UNICODE); ?>;
     window.calMonth = <?= (int)$month_now ?>;
     window.calYear  = <?= (int)$year_now ?>;
+    window.selectedUserId = <?= (int)$selected_user_id ?>;
 </script>
 
 <script src="calendar_render.js"></script>

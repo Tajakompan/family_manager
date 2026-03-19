@@ -134,6 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.key === "Escape") {
             hideMenus();
             closeUpdateUserWindow();
+            closeUploadImageWindow();
         }
     });
     window.addEventListener("scroll", hideMenus, { passive: true });
@@ -152,6 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
     overlay?.addEventListener("click", (e) => {
         if (e.target === overlay) {
             closeUpdateUserWindow();
+            closeUploadImageWindow();
         }
     });
 
@@ -194,5 +196,75 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch("../entry/delete_app_user.php").then(() => location.reload());
     });
 
+
+    const change_image = document.getElementById("change_image");
+    const upload_image_window = document.getElementById("upload_image_window");
+    const cancel_upload_image_btn = document.getElementById("cancel_upload_image_btn");
+    const upload_image_error = document.getElementById("upload_image_error");
+
+    function setUploadImageError(message = "") {
+        if (!upload_image_error) return;
+
+        upload_image_error.textContent = message;
+        upload_image_error.hidden = message === "";
+    }
+
+    function restoreUploadImageErrorState() {
+        const params = new URLSearchParams(window.location.search);
+        const error = params.get("upload_image_error");
+        if (!error) return;
+
+        setUploadImageError(getUploadImageErrorMessage(error));
+        openUploadImageWindow();
+
+        params.delete("upload_image_error");
+        const query = params.toString();
+        const nextUrl = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
+        window.history.replaceState({}, "", nextUrl);
+    }
+
+
+
+    function openUploadImageWindow() {
+        overlay?.classList.add("active");
+        upload_image_window?.classList.add("active");
+    }
+
+    function closeUploadImageWindow() {
+        upload_image_window?.classList.remove("active");
+        overlay?.classList.remove("active");
+    }
+
+    change_image?.addEventListener("click", () => {
+        hideMenus();
+        setUploadImageError("");
+        openUploadImageWindow();
+    });
+
+    cancel_upload_image_btn?.addEventListener("click", () => {
+        setUploadImageError("");
+        closeUploadImageWindow();
+    });
+    
+
+    function getUploadImageErrorMessage(errorCode) {
+        switch (errorCode) {
+            case "missing_file":
+                return "Datoteka ni bila izbrana.";
+            case "file_too_large":
+                return "Slika je prevelika.";
+            case "invalid_type":
+                return "Dovoljene so samo JPG, PNG in WEBP slike.";
+            case "read_failed":
+                return "Branje datoteke ni uspelo.";
+            case "save_failed":
+                return "Shranjevanje slike ni uspelo.";
+            default:
+                return "Nalaganje slike ni uspelo.";
+        }
+    }
     restoreUpdateUserErrorState();
+    restoreUploadImageErrorState();
+
+
 });

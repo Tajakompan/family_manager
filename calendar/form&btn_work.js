@@ -161,8 +161,10 @@ function switchEventToAddMode(month, year) {
   const form = document.querySelector('#add_event_form form');
   if (!form) return;
 
+  const selectedUserId = window.selectedUserId || 0;
+
   form.dataset.mode = "add";
-  form.action = `add_event.php?month=${encodeURIComponent(month)}&year=${encodeURIComponent(year)}`;
+  form.action = `add_event.php?month=${encodeURIComponent(month)}&year=${encodeURIComponent(year)}&user_id=${encodeURIComponent(selectedUserId)}`;
 
   const hid = document.getElementById("event_id");
   if (hid) hid.value = "";
@@ -172,13 +174,16 @@ function switchEventToAddMode(month, year) {
   if (h3) h3.textContent = "Dodaj dogodek:";
 }
 
+
 //forma namenjena updejtu dogodka
 function switchEventToUpdateMode(eventId, month, year) {
   const form = document.querySelector('#add_event_form form');
   if (!form) return;
 
+  const selectedUserId = window.selectedUserId || 0;
+
   form.dataset.mode = "update";
-  form.action = `update_event.php?month=${encodeURIComponent(month)}&year=${encodeURIComponent(year)}`;
+  form.action = `update_event.php?month=${encodeURIComponent(month)}&year=${encodeURIComponent(year)}&user_id=${encodeURIComponent(selectedUserId)}`;
 
   const hid = document.getElementById("event_id");
   if (hid) hid.value = eventId;
@@ -187,3 +192,4 @@ function switchEventToUpdateMode(eventId, month, year) {
   const h3 = document.querySelector('#add_event_form h3');
   if (h3) h3.textContent = "Uredi dogodek:";
 }
+

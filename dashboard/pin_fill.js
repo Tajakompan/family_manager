@@ -1,4 +1,4 @@
-async function fetchJson(url, options = {}) {
+﻿async function fetchJson(url, options = {}) {
   const res = await fetch(url, { credentials: "same-origin", ...options });
   if (!res.ok) throw new Error(url + " HTTP " + res.status);
   return await res.json();
@@ -48,9 +48,36 @@ function createGroupItem(title, items) {
   return group;
 }
 
+function createSectionItem(title, groups) {
+  const section = document.createElement("li");
+  section.className = "dashboard-section";
+
+  const heading = document.createElement("div");
+  heading.className = "dashboard-section-title";
+  heading.textContent = title;
+
+  const nested = document.createElement("ul");
+  nested.className = "dashboard-section-list";
+
+  for (const group of groups) {
+    nested.appendChild(group);
+  }
+
+  section.appendChild(heading);
+  section.appendChild(nested);
+  return section;
+}
+
 function capitalizeFirst(text) {
   if (!text) return text;
   return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function getMealLabel(category) {
+  if (category === "breakfast") return "Zajtrk";
+  if (category === "lunch") return "Kosilo";
+  if (category === "dinner") return "Večerja";
+  return category;
 }
 
 function setupDashboardClock() {
@@ -111,6 +138,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const eventsList = document.getElementById("events_list");
   const shoppingList = document.getElementById("shopping_list");
   const storageList = document.getElementById("storage_list");
+  const mealsList = document.getElementById("meals_list");
   setupDashboardClock();
 
   taskList.innerHTML = "";
@@ -149,15 +177,43 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   if (!hasShoppingItems) setEmpty(shoppingList);
 
+  mealsList.innerHTML = "";
+  const meals = await fetchJson("../meals/get_meals.php");
+  const todaysMeals = meals.filter(meal => meal.date === localDateKey());
+  const mealCategories = ["breakfast", "lunch", "dinner"];
+
+  for (const category of mealCategories) {
+    const meal = todaysMeals.find(item => item.meal_category === category);
+    const mealName = meal?.name?.trim() || " - ";
+    mealsList.appendChild(createSimpleItem(`${getMealLabel(category)}: ${mealName}`));
+  }
+
   storageList.innerHTML = "";
   const storages = await fetchJson("../food_storage/get_storage_locations.php");
-  let hasStorageItems = false;
+  const expiringGroups = [];
+  const expiredGroups = [];
   for (const storage of storages) {
-    const products = await fetchJson(`../food_storage/get_expiring_storage.php?storage_id=${storage.id}`);
-    if (!products.length) continue;
-    hasStorageItems = true;
+    const [expiringProducts, expiredProducts] = await Promise.all([
+      fetchJson(`../food_storage/get_expiring_storage.php?storage_id=${storage.id}&expired=0`),
+      fetchJson(`../food_storage/get_expiring_storage.php?storage_id=${storage.id}&expired=1`)
+    ]);
 
-    storageList.appendChild(createGroupItem(storage.name, products.map(product => product.name)));
+    if (expiringProducts.length) {
+      expiringGroups.push(createGroupItem(storage.name, expiringProducts.map(product => product.name)));
+    }
+
+    if (expiredProducts.length) {
+      expiredGroups.push(createGroupItem(storage.name, expiredProducts.map(product => product.name)));
+    }
   }
-  if (!hasStorageItems) setEmpty(storageList);
+
+  if (expiringGroups.length) {
+    storageList.appendChild(createSectionItem("Rok se bo kmalu iztekel", expiringGroups));
+  }
+  if (expiredGroups.length) {
+    storageList.appendChild(createSectionItem("Rok je že potekel", expiredGroups));
+  }
+  if (!expiringGroups.length && !expiredGroups.length) setEmpty(storageList);
 });
+
+
