@@ -9,7 +9,7 @@ if (!isset($_SESSION["user_id"])) {
 $family_id = (int)$_SESSION["family_id"];
 $hour = date("H");
 if($hour >= 18)
-    $greeting = "Dober veÄŤer";
+    $greeting = "Dober večer";
 else if($hour >= 12)
     $greeting = "Dober dan";
 else

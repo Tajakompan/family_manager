@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/reminder_helpers.php";
+
 
 if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
     header("Location: ../entry/login.php");
@@ -37,18 +39,55 @@ if ($whole_day === 1) {
     if (trim($time) === "") $time = null;
 }
 
-if (trim((string)$reminder) === "") $reminder = null;
+$reminder = normalizeReminderInput($reminder);
 
-$sql = "UPDATE event
-        SET name = ?,
-            event_date = ?,
-            event_time = ?,
-            whole_day = ?,
-            location = ?,
-            description = ?,
-            reminder = ?,
-            just_for_creator = ?
-        WHERE id = ? AND family_id = ?";
+if (($reminder === null) && trim((string)($_POST["reminder"] ?? "")) !== "") {
+    $m = (int)($_GET["month"] ?? date("n"));
+    $y = (int)($_GET["year"] ?? date("Y"));
+    header("Location: calendar.php?month=$m&year=$y");
+    exit;
+}
+
+$currentReminder = null;
+$oldStmt = $conn->prepare("SELECT reminder FROM event WHERE id = ? AND family_id = ?");
+$oldStmt->bind_param("ii", $id, $family_id);
+$oldStmt->execute();
+$oldResult = $oldStmt->get_result()->fetch_assoc();
+$oldStmt->close();
+
+if ($oldResult) {
+    $currentReminder = $oldResult["reminder"];
+}
+
+$reminderChanged = ((string)$currentReminder !== (string)$reminder);
+
+
+if ($reminderChanged) {
+    $sql = "UPDATE event
+            SET name = ?,
+                event_date = ?,
+                event_time = ?,
+                whole_day = ?,
+                location = ?,
+                description = ?,
+                reminder = ?,
+                just_for_creator = ?,
+                reminder_sent_at = NULL,
+                reminder_last_attempt_at = NULL,
+                reminder_error = NULL
+            WHERE id = ? AND family_id = ?";
+} else {
+    $sql = "UPDATE event
+            SET name = ?,
+                event_date = ?,
+                event_time = ?,
+                whole_day = ?,
+                location = ?,
+                description = ?,
+                reminder = ?,
+                just_for_creator = ?
+            WHERE id = ? AND family_id = ?";
+}
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param(

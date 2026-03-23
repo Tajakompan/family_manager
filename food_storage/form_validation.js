@@ -77,3 +77,156 @@ async function fsCheckName(){
 // listenerji
 fsNameInp?.addEventListener("input", fsDebouncedCheck);
 fsNameInp?.addEventListener("blur", fsCheckName);
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("add_product_form");
+  if (!form) return;
+
+  const storageInput = form.querySelector('input[name="storage_id"]');
+  const nameInput = form.querySelector('input[name="product_name"]');
+  const amountInput = form.querySelector('input[name="product_amount"]');
+  const unitInput = form.querySelector('input[name="product_unit"]');
+  const quantityInput = form.querySelector('input[name="product_quantity"]');
+  const categorySelect = form.querySelector('select[name="product_category"]');
+  const expiresInput = form.querySelector('input[name="product_expires_on"]');
+  const statusSelect = form.querySelector('select[name="product_status"]');
+
+  const fields = [
+    nameInput,
+    amountInput,
+    unitInput,
+    quantityInput,
+    categorySelect,
+    expiresInput,
+    statusSelect
+  ];
+
+  function clearErrors() {
+    fields.forEach(field => field?.classList.remove("red"));
+  }
+
+  function isPositiveDecimal(value) {
+    const normalized = value.replace(",", ".").trim();
+    if (normalized === "") return false;
+    const num = Number(normalized);
+    return Number.isFinite(num) && num > 0;
+  }
+
+  function isPositiveInteger(value) {
+    const trimmed = value.trim();
+    if (trimmed === "") return false;
+    const num = Number(trimmed);
+    return Number.isInteger(num) && num > 0;
+  }
+
+  form.addEventListener("submit", function (event) {
+    clearErrors();
+
+    let isValid = true;
+
+    const storageValue = Number(storageInput?.value || 0);
+    const nameValue = nameInput?.value.trim() || "";
+    const amountValue = amountInput?.value || "";
+    const unitValue = unitInput?.value.trim() || "";
+    const quantityValue = quantityInput?.value || "";
+    const categoryValue = Number(categorySelect?.value || 0);
+    const expiresValue = expiresInput?.value || "";
+    const statusValue = statusSelect?.value || "";
+
+    if (storageValue <= 0) {
+      isValid = false;
+      alert("Najprej izberi lokacijo shranjevanja.");
+    }
+
+    if (nameValue === "") {
+      nameInput?.classList.add("red");
+      isValid = false;
+    }
+
+    if (!isPositiveDecimal(amountValue)) {
+      amountInput?.classList.add("red");
+      isValid = false;
+    }
+
+    if (unitValue === "") {
+      unitInput?.classList.add("red");
+      isValid = false;
+    }
+
+    if (!isPositiveInteger(quantityValue)) {
+      quantityInput?.classList.add("red");
+      isValid = false;
+    }
+
+    if (categoryValue <= 0) {
+      categorySelect?.classList.add("red");
+      isValid = false;
+    }
+
+    if (statusValue === "") {
+      statusSelect?.classList.add("red");
+      isValid = false;
+    }
+
+    if (!isValid) {
+      event.preventDefault();
+    }
+  });
+
+  fields.forEach(field => {
+    if (!field) return;
+
+    const eventName = field.tagName === "SELECT" ? "change" : "input";
+    field.addEventListener(eventName, () => {
+      field.classList.remove("red");
+    });
+  });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  const categoryForm = document.getElementById("add_category_form");
+  if (!categoryForm) return;
+
+  const categoryInput = categoryForm.querySelector('input[name="new_category"]');
+  if (!categoryInput) return;
+
+  categoryForm.addEventListener("submit", function (event) {
+    categoryInput.classList.remove("red");
+
+    const value = categoryInput.value.trim();
+
+    if (value === "") {
+      categoryInput.classList.add("red");
+      event.preventDefault();
+    }
+  });
+
+  categoryInput.addEventListener("input", function () {
+    categoryInput.classList.remove("red");
+  });
+});
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const storageForm = document.getElementById("add_storage_form");
+  if (!storageForm) return;
+
+  const storageInput = storageForm.querySelector('input[name="new_storage_location"]');
+  if (!storageInput) return;
+
+  storageForm.addEventListener("submit", function (event) {
+    storageInput.classList.remove("red");
+
+    if (storageInput.value.trim() === "") {
+      storageInput.classList.add("red");
+      event.preventDefault();
+    }
+  });
+
+  storageInput.addEventListener("input", function () {
+    storageInput.classList.remove("red");
+  });
+});
+

@@ -79,7 +79,7 @@ async function loadOtherTasks() {
 }
 
 async function loadAll() {
-  await Promise.all([loadMyTasks(), loadOtherTasks(), loadPoints()]);
+  await Promise.all([loadMyTasks(), loadOtherTasks(), loadPoints(), loadTaskHistory()]);
 }
 
 

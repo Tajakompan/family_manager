@@ -8,11 +8,13 @@ if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
 
 $family_id = (int)$_SESSION["family_id"];
 $user_id = (int)$_SESSION["user_id"];
+$user_role = $_SESSION["user_role"] ?? "";
+$can_change_task_points = in_array($user_role, ["Odrasel", "Starš - admin"], true);
 
 $new_task = trim($_POST["new_task"] ?? "");
 $details = trim($_POST["details"] ?? "");
 $no_date = isset($_POST["no_date"]) ? 1 : 0;
-$points = (int)($_POST["points"] ?? 0);
+$points = $can_change_task_points ? (int)($_POST["points"] ?? 2) : 2;
 $to_do_by = trim($_POST["to_do_by"] ?? "");
 $to_do_by = ($no_date === 1 || $to_do_by === "") ? null : $to_do_by;
 

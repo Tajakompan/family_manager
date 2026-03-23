@@ -192,9 +192,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     delete_user?.addEventListener("click", () => {
-        if (!confirm("Ali si preprican, da zelis izbrisati svoj uporabniski racun? S tem ga bos za vedno izgubil, z njim pa tudi vse svoje podatke, ki si jih prispeval v druzino.")) return;
-        fetch("../entry/delete_app_user.php").then(() => location.reload());
-    });
+    hideMenus();
+
+    if (!confirm("Ali si preprican, da zelis izbrisati svoj uporabniski racun? S tem ga bos za vedno izgubil, z njim pa tudi vse svoje podatke, ki si jih prispeval v druzino.")) {
+        return;
+    }
+
+    window.location.href = "../entry/delete_app_user.php";
+});
+
 
 
     const change_image = document.getElementById("change_image");

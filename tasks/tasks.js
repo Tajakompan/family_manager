@@ -45,6 +45,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // da klik v window ne pobegne
   add_task_window?.addEventListener("click", (e) => e.stopPropagation());
   details_frame?.addEventListener("click", (e) => e.stopPropagation());
+  
+  const pointsInput = document.querySelector('#add_task_form input[name="points"]');
+  const isChild = window.currentUserRole === "Otrok";
+
+  if (pointsInput && isChild) {
+    pointsInput.value = 2;
+    pointsInput.readOnly = true;
+    pointsInput.title = "Otrok ne more spreminjati tock opravila.";
+  }
 
 });
 

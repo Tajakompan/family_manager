@@ -25,6 +25,84 @@ main {
     margin: 3vh 2vw 0 0;
     padding: 10px;
 }
+
+.right_column{
+    flex: 0 0 18vw;
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+    margin: 3vh 2vw 0 0;
+}
+
+.points_container,
+.history_container{
+    background-color: var(--clr-hex-5e5e5e);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.points_container{
+    margin: 0;
+}
+
+.history_container{
+    background: linear-gradient(180deg, #6a6a6a 0%, #626262 100%);
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+    max-height: 55vh;
+    overflow-y: auto;
+}
+
+.history_container .small_title{
+    margin-bottom: 14px;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: #ffffff;
+}
+
+.task_history_list{
+    color: #f2f2f2;
+    font-size: 15px;
+    line-height: 1.45;
+}
+
+.history_user{
+    padding: 8px 0 10px 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.history_user:first-child{
+    border-top: none;
+    padding-top: 0;
+}
+
+.history_user_name{
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
+}
+
+.history_tasks{
+    margin: 0;
+    padding-left: 18px;
+}
+
+.history_tasks li{
+    margin-bottom: 4px;
+    color: #d6d6d6;
+}
+
+.history_empty{
+    text-align: center;
+    color: #d0d0d0;
+    font-size: 15px;
+    padding: 4px 0 2px 0;
+}
+
+
 .points_table{
     width: 100%;
     text-align: center;

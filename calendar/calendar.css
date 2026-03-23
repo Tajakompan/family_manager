@@ -1,55 +1,27 @@
-/* ====== BASE / LAYOUT ====== */
-:root{
-  --bg: var(--clr-hex-3c3c3c);
-  --panel: var(--clr-hex-5a5a5a);
-  --panel-2: var(--clr-hex-6a6a6a);
-  --panel-3: var(--clr-hex-7a7a7a);
-  --text: var(--clr-hex-ffffff);
-  --muted: var(--clr-rgba-255-255-255-0-75);
-  --accent: var(--color-accent-green);
-  --accent-2: var(--color-accent-green);
-  --border: var(--clr-rgba-0-0-0-0-35);
-  --shadow: 0 14px 30px var(--clr-rgba-0-0-0-0-26);
-}
-
-.sredina, .sredina *,
-.desno, .desno *{
+.sredina, .sredina *, .desno, .desno *{
   box-sizing: border-box;
 }
 
 body{
-  margin: 0;
-  padding: 0;
   display: flex;
-  height: 100vh;
   overflow: hidden;
-  background: var(--bg);
-  color: var(--text);
-  font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
 }
 
-/* Sredina ostane zamaknjena zaradi sidebarja */
 .sredina{
   margin-left: 15vw;
   flex: 3;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  background: var(--bg);
+  background: #3c3c3c;
   padding: 22px 22px 18px 22px;
   gap: 16px;
-}
-
-/* ====== HEADER ====== */
-.page-header{
-  background: transparent;
 }
 
 .title{
   margin-bottom: 5px;
 }
 
-/* mesec nav - kot ostali “top” elementi */
 .mesec{
   width: 90%;
   display: flex;
@@ -64,7 +36,7 @@ body{
   text-align: center;
   font-size: 30px;
   font-weight: 800;
-  color: var(--text);
+  color: white;
 }
 
 .mesec .nav-btn{
@@ -75,15 +47,15 @@ body{
   place-items: center;
   text-align: center;
   text-decoration: none;
-  color: var(--clr-hex-1f1f1f);
-  background: var(--accent-2);
+  color: #1f1f1f;
+  background: #b6ea6b;
   border-radius: 12px;
   font-weight: 800;
-  box-shadow: 0 6px 14px var(--clr-rgba-0-0-0-0-28);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
 }
 
 .mesec .nav-btn:hover{
-  background: var(--accent);
+  background: #b6ea6b;
 }
 
 .nav-arrow{
@@ -94,10 +66,10 @@ body{
 }
 
 .calendar-card{
-  background: var(--panel);
-  border: 1px solid var(--clr-rgba-255-255-255-0-08);
+  background: #5a5a5a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
-  box-shadow: var(--shadow);
+  box-shadow: rgba(0,0,0,0.26);
   padding: 14px;
   flex: 1;
   min-height: 0;
@@ -108,13 +80,13 @@ body{
   width: 100%;
   height: 100%;
   border-collapse: separate;
-  border-spacing: 8px; /* “card” look med dnevi */
+  border-spacing: 8px; 
   table-layout: fixed;
 }
 
 #outer_table th{
-  background: var(--clr-hex-4a4a4a);
-  color: var(--text);
+  background: #4a4a4a;
+  color: white;
   border-radius: 12px;
   font-size: 22px;
   height: 40px;
@@ -126,10 +98,9 @@ body{
   width: 14.2857%;
 }
 
-/* celica dneva = mini card */
 .outer_td{
-  background: var(--panel-3);
-  border: 1px solid var(--clr-rgba-255-255-255-0-10);
+  background: #7a7a7a;
+  border: 1px solid rgba(255, 255, 255, 0.10);
   border-radius: 14px;
   height: 92px;
   padding: 0;
@@ -138,33 +109,28 @@ body{
 }
 
 .outer_td:hover{
-  background: var(--panel-3);
-
   transform: translateY(-1px);
   cursor: pointer;
 }
 
-/* prazne celice (pred/po mesecu) */
 .prazno{
-  background: var(--clr-rgba-255-255-255-0-05);
-  border: 1px dashed var(--clr-rgba-255-255-255-0-15);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
   cursor: default !important;
   transform: none !important;
 }
 
-/* notranja tabela (da ohraniš obstoječo JS/HTML strukturo) */
 .inner_table{
   width: 100%;
   height: 100%;
   border-collapse: collapse;
   margin: 0;
   font-size: 11px;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .inner_td{
   padding: 0 8px;
-  margin: 0;
   border: 0;
   height: 18px;
   line-height: 18px;
@@ -176,35 +142,31 @@ body{
 .date{
   font-size: 22px;
   font-weight: 900;
-  color: var(--text);
+  color: white;
   padding-top: 8px;
   padding-bottom: 2px;
 }
 
-/* danes */
 .danes{
-  border-color: var(--clr-rgba-182-234-107-0-85);
-  box-shadow: 0 0 0 2px var(--clr-rgba-182-234-107-0-18) inset;
+  border-color: rgba(182, 234, 107, 0.85); 
+  box-shadow: 0 0 0 2px rgba(182, 234, 107, 0.18) inset;
 }
 
 .danes .date{
   text-decoration: underline;
 }
 
-/* izbrano (JS uporablja .selected) */
 .selected{
-  background: var(--color-accent-green-643) !important;
-  border-color: var(--color-accent-green-95) !important;
-  color: var(--clr-hex-1f1f1f) !important;
+  background: rgba(182, 234, 107, 0.643) !important;
+  border-color: rgba(182, 234, 107, 0.95) !important;
+  color: #1f1f1f !important;
 }
 
-/* “to_select” če jo kje uporabljaš */
 .to_select{
-  background-color: var(--color-accent-green-378) !important;
-  border-color: var(--clr-rgba-182-234-107-0-55) !important;
+  background-color: rgba(182, 234, 107, 0.378) !important;
+  border-color: rgba(182, 234, 107, 0.55) !important;
 }
 
-/* ====== DESNI PANEL ====== */
 .desno{
   flex: 1;
   display: none;
@@ -212,9 +174,9 @@ body{
   width: 20vw;
   max-width: 20vw;
   height: 100vh;
-  background: var(--panel);
-  border-left: 1px solid var(--clr-rgba-255-255-255-0-10);
-  box-shadow: -8px 0 22px var(--clr-rgba-0-0-0-0-25);
+  background: #5a5a5a;
+  border-left: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: -8px 0 22px rgba(0, 0, 0, 0.25);
   padding: 16px;
   gap: 12px;
 }
@@ -232,22 +194,20 @@ body{
 .view{ display: none; }
 .view.active{ display: block; }
 
-/* prazni view */
 .desno .center{
   height: 100%;
   width: 100%;
   display:flex;
   justify-content:center;
   align-items:center;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.75);
   text-align: center;
   padding: 10px;
 }
 
-/* izbran dan - glava */
 .chosen_date_data{
-  background: var(--accent);
-  color: var(--clr-hex-1f1f1f);
+  background: #b6ea6b;
+  color: #1f1f1f;
   border-radius: 14px;
   padding: 14px 12px;
   font-weight: 900;
@@ -255,7 +215,6 @@ body{
   text-align: center;
 }
 
-/* list dogodkov */
 #view-day-selected.view.active{
   display: flex;
   flex-direction: column;
@@ -270,19 +229,17 @@ body{
   padding-right: 6px;
 }
 
-/* dogodek kartica */
 .one_event{
   position: relative;
   margin: 10px 0;
-  background: var(--clr-hex-ffffff);
-  color: var(--clr-hex-1f1f1f);
+  background: white;
+  color: #1f1f1f;
   border: none;
   border-radius: 12px;
   padding: 12px 12px;
-  box-shadow: 0 8px 16px var(--clr-rgba-0-0-0-0-18);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
 }
 
-/* header v kartici dogodka */
 .event_head{
   display: flex;
   align-items: center;
@@ -305,10 +262,9 @@ body{
 }
 
 .event_menu_btn:hover{
-  background: var(--clr-rgba-0-0-0-0-08);
+  background: rgba(0, 0, 0, 0.08);
 }
 
-/* dropdown menu */
 .event_menu{
   position: absolute;
   top: 40px;
@@ -317,9 +273,9 @@ body{
   flex-direction: column;
   min-width: 140px;
   background: white;
-  border: 1px solid var(--clr-rgba-0-0-0-0-12);
+  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 10px;
-  box-shadow: 0 12px 35px var(--clr-rgba-0-0-0-0-25);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
   overflow: hidden;
   z-index: 50;
 }
@@ -338,34 +294,32 @@ body{
 }
 
 .event_action:hover{
-  background: var(--clr-rgba-0-0-0-0-06);
+  background: rgba(0, 0, 0, 0.06);
 }
 
 .event_action.danger{
-  color: var(--clr-hex-d62828);
+  color: #d62828; 
 }
 
-/* gumb spodaj */
 .desno .add_event{
   height: 54px;
   width: 100%;
   border-radius: 14px;
-  background: var(--accent-2);
-  color: var(--clr-hex-1f1f1f);
+  background: #b6ea6b;
+  color: #1f1f1f;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   font-weight: 900;
   letter-spacing: 0.5px;
-  box-shadow: 0 10px 18px var(--clr-rgba-0-0-0-0-25);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.25);
 }
 
 .desno .add_event:hover{
-  background: var(--accent);
+  background: #b6ea6b;
 }
 
-/* ====== ADD EVENT FORM ====== */
 #add_event_form{
   overflow-y: auto;
   max-height: 100%;
@@ -393,38 +347,35 @@ body{
 #add_event_form label{
   font-size: 15px;
   opacity: 0.9;
-  color: var(--clr-rgba-255-255-255-0-85);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 #add_event_form input{
   width: 100%;
   padding: 10px 12px;
   border-radius: 12px;
-  border: 1px solid var(--clr-rgba-255-255-255-0-18);
-  background: var(--clr-rgba-0-0-0-0-25);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.25);
   color: white;
   outline: none;
 }
 
 #add_event_form input:focus{
-  border-color: var(--clr-rgba-182-234-107-0-7);
+  border-color: rgba(182, 234, 107, 0.7); 
 }
 
 #add_event_form form .input_row{
-  margin: 0;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-/* checkbox row layout */
 #add_event_form form .input_row.checkbox{
   flex-direction: row;
   align-items: center;
   gap: 10px;
 }
 
-/* skrij default checkbox */
 #add_event_form .input_row.checkbox input[type="checkbox"]{
   position: absolute;
   opacity: 0;
@@ -432,7 +383,6 @@ body{
   height: 1px;
 }
 
-/* label nosi custom checkbox */
 #add_event_form .input_row.checkbox label{
   position: relative;
   padding-left: 34px;
@@ -440,7 +390,6 @@ body{
   user-select: none;
 }
 
-/* kvadratek */
 #add_event_form .input_row.checkbox label::before{
   content: "";
   position: absolute;
@@ -450,11 +399,10 @@ body{
   width: 20px;
   height: 20px;
   border-radius: 7px;
-  border: 1px solid var(--clr-rgba-255-255-255-0-25);
-  background: var(--clr-rgba-0-0-0-0-25);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.25);
 }
 
-/* kljukica */
 #add_event_form .input_row.checkbox label::after{
   content: "";
   position: absolute;
@@ -463,8 +411,8 @@ body{
   width: 6px;
   height: 10px;
   transform: translateY(-58%) rotate(45deg);
-  border-right: 3px solid var(--color-accent-green);
-  border-bottom: 3px solid var(--color-accent-green);
+  border-right: 3px solid #b6ea6b;
+  border-bottom: 3px solid #b6ea6b;
   opacity: 0;
 }
 
@@ -472,7 +420,6 @@ body{
   opacity: 1;
 }
 
-/* gumbi */
 #add_event_form .submit-buttons{
   display: flex;
   justify-content: space-between;
@@ -492,27 +439,27 @@ body{
 }
 
 #add_event_form #submit{
-  background-color: var(--accent-2);
-  color: var(--clr-hex-1f1f1f);
+  background-color: #b6ea6b;
+  color: #1f1f1f;
 }
 
 #add_event_form #submit:hover{
-  background-color: var(--accent);
+  background-color: #b6ea6b;
 }
 
 #add_event_form #cancel_btn{
-  background-color: var(--clr-hex-6b6b6b);
-  color: var(--clr-hex-ffffff);
+  background-color: #6b6b6b;
+  color: white;
 }
 
 #add_event_form #cancel_btn:hover{
-  background-color: var(--clr-hex-555555);
+  background-color: #555555;
 }
 
 #add_event_form .error{
-  color: var(--clr-hex-ff8f79);
-  background: var(--clr-rgba-172-51-28-0-22);
-  border: 1px solid var(--clr-rgba-255-143-121-0-42);
+  color: #ff8f79;
+  background: rgba(172,51,28,0.22);
+  border: 1px solid rgba(255,143,121,0.42);
   border-radius: 10px;
   padding: 10px 12px;
   font-weight: 600;
@@ -534,9 +481,9 @@ body{
   height: 42px;
   padding: 0 42px 0 14px;
   border-radius: 12px;
-  border: 1px solid var(--clr-rgba-255-255-255-0-18);
-  background-color: var(--clr-rgba-0-0-0-0-25);
-  color: var(--clr-hex-ffffff);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background-color: rgba(0, 0, 0, 0.25);
+  color: white;
   font-weight: 600;
   appearance: none;
   outline: none;
@@ -548,24 +495,20 @@ body{
 }
 
 .calendar-select:focus{
-  border-color: var(--color-accent-green);
-  box-shadow: 0 0 0 3px var(--clr-rgba-182-234-107-0-18);
+  border-color: #b6ea6b;
+  box-shadow: #b5ea6b18;
 }
 
 .calendar-select option{
-  background: var(--clr-hex-3c3c3c);
-  color: var(--clr-hex-ffffff);
+  background: #3c3c3c;
+  color: white;
 }
 
-
-
-/* ====== RESPONSIVE (da se desni panel ne sesuje) ====== */
 @media (max-width: 1200px){
   .desno{
     width: 26vw;
     max-width: 26vw;
   }
-  .page-title{ font-size: 36px; }
   .mesec .ime{ font-size: 24px; }
 }
 
@@ -576,8 +519,3 @@ body{
     display: none !important;
   }
 }
-
-
-
-
-

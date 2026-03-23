@@ -1,9 +1,13 @@
 ﻿<?php
 require_once __DIR__ . "/../config.php";
 $error = "";
+$success = "";
 $email = "";
 $password = "";
 $invalid_fields = [];
+if (($_GET["reset"] ?? "") === "success") {
+    $success = "Geslo je bilo uspešno spremenjeno. Zdaj se lahko prijavite.";
+}
 if(isset($_SESSION["user_id"])){
     header("location: ../dashboard/dashboard.php");
     exit;
@@ -30,6 +34,8 @@ else{
                     u.email,
                     u.password,
                     u.family_id,
+                    u.email_verified,
+                    u.email_verification_sent_at,
                     r.user_role_name
                 FROM app_user u
                 JOIN user_role r ON r.id = u.user_role_id
@@ -71,7 +77,12 @@ else{
                 if (!$is_password_valid) {
                     $invalid_fields["password"] = true;
                     $error = "Napačno geslo.";
-                } else {
+                }
+                else if ((int)$user["email_verified"] !== 1) {
+                    $invalid_fields["email"] = true;
+                    $error = "Email še ni potrjen. Preverite svoj inbox in kliknite potrditveno povezavo.";
+                }
+                 else {
                     // SESSION
                     $_SESSION["user_id"]   = $user["id"];
                     $_SESSION["family_id"] = $user["family_id"];
@@ -109,6 +120,10 @@ else{
             <p>Dobrodošli nazaj v Family Manager.</p>
         </div>
         <div class="login_frame">
+            <?php if ($success): ?>
+                <div class="nice_gray"><?= htmlspecialchars($success) ?></div>
+            <?php endif; ?>
+
             <?php if ($error): ?>
                 <div class="error"><?= htmlspecialchars($error) ?></div>
             <?php endif; ?>
@@ -122,12 +137,16 @@ else{
                     <label>Geslo:</label>
                     <input type="password" name="password" value="<?= htmlspecialchars($password, ENT_QUOTES) ?>" class="<?= isset($invalid_fields["password"]) ? "red" : "" ?>">
                 </div>
-
                 <button type="submit" id="submit">Prijava</button>
+                <div class="nice_gray">
+                    <a href="forgot_password.php">Ste pozabili geslo?</a>
+                </div>
             </form>
             <div class="nice_gray">
-                Še nimaš računa? <a href="registration.php">Registriraj se!</a>
+                Še nimaš računa? <a href="registration.php">Registriraj se!</a><br>
+                Nisi prejel potrditvenega emaila? <a href="resend_verification_email.php">Pošlji znova</a>
             </div>
+
         </div>
     </div>
 </div>

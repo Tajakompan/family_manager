@@ -24,9 +24,12 @@ $currentScript = basename($_SERVER["SCRIPT_NAME"] ?? "");
             <li class="sidebar-item interactive <?= $currentScript === "meals.php" ? "sidebar-item-active" : "" ?>">
                 <a href="../meals/meals.php" <?= $currentScript === "meals.php" ? 'aria-current="page"' : "" ?>><span class="sidebar-link-text">Obroki</span></a>
             </li>
+            <?php if (($_SESSION["user_role"] ?? "") === "Starš - admin"): ?>
             <li class="sidebar-item interactive <?= $currentScript === "admin_page.php" ? "sidebar-item-active" : "" ?>" id="admin_page">
                 <a href="../admin_page/admin_page.php" <?= $currentScript === "admin_page.php" ? 'aria-current="page"' : "" ?>><span class="sidebar-link-text">Upravljanje z družino</span></a>
             </li>
+            <?php endif; ?>
+
         </ul>
         <a class="bottom" href="../entry/logout.php">
             <div class="logout_font">Odjava</div>

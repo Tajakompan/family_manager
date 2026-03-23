@@ -44,7 +44,7 @@ function setPasswordError(message = "") {
   const passwordError = document.getElementById("update_user_password_error");
   if (!passwordError) return;
 
-  passwordError.textContent = message;
+  passwordError.innerHTML = message;
   passwordError.hidden = message === "";
 }
 
@@ -64,6 +64,8 @@ function getUpdateFamilyErrorMessage(errorCode) {
       return "Ime in koda druzine sta obvezna.";
     case "code_taken":
       return "Ta koda druzine je ze zasedena.";
+    case "forbidden":
+      return "To lahko ureja le stars - admin.";
     default:
       return "Posodobitev druzine ni uspela. Poskusi znova.";
   }
@@ -72,21 +74,27 @@ function getUpdateFamilyErrorMessage(errorCode) {
 function getUpdateUserErrorMessage(errorCode) {
   switch (errorCode) {
     case "required_fields":
-      return "Vsa polja razen gesla so obvezna.";
+      return "<span class='red'>Vsa polja razen gesla so obvezna.</span>";
     case "invalid_email":
-      return "E-mail ni v veljavnem formatu.";
+      return "<span class='red'>E-mail ni v veljavnem formatu.</span>";
     case "future_birthdate":
-      return "Datum rojstva ne more biti v prihodnosti.";
+      return "<span class='red'>Datum rojstva ne more biti v prihodnosti.</span>";
     case "email_taken":
-      return "Ta e-mail ze uporablja drug uporabnik.";
+      return "<span class='red'>Ta e-mail ze uporablja drug uporabnik.</span>";
     case "password_mismatch":
-      return "Gesli se ne ujemata.";
+      return "<span class='red'>Gesli se ne ujemata.</span>";
     case "password_too_short":
-      return "Geslo mora imeti vsaj 8 znakov.";
+      return "<span class='red'>Geslo mora imeti vsaj 8 znakov.</span>";
     case "missing_user":
-      return "Izbrani uporabnik ne obstaja vec.";
+      return "<span class='red'>Izbrani uporabnik ne obstaja vec.</span>";
+    case "too_many_parents":
+      return "<span class='red'>Druzina ima lahko najvec dva starsa - admina.</span>";
+    case "minor_must_be_child":
+      return "<span class='red'>Mladoletni uporabnik je lahko le otrok.</span>";
+    case "forbidden":
+      return "<span class='red'>To lahko ureja le stars - admin.</span>";
     default:
-      return "Posodobitev ni uspela. Poskusi znova.";
+      return "<span class='red'>Posodobitev ni uspela. Poskusi znova.</span>";
   }
 }
 
@@ -96,6 +104,8 @@ function getUpdatePointsErrorMessage(errorCode) {
       return "Izbrani uporabnik ne obstaja vec.";
     case "invalid_points":
       return "Vnesi veljavno stevilo tock 0 ali vec.";
+    case "forbidden":
+      return "To lahko ureja le stars - admin.";
     default:
       return "Posodobitev tock ni uspela. Poskusi znova.";
   }
@@ -146,6 +156,67 @@ function closeAllWindows() {
 function getUserById(userId) {
   return state.users.find((user) => Number(user.id) === Number(userId)) ?? null;
 }
+function calculateAgeFromDate(birthdate) {
+  if (!birthdate) return null;
+
+  const birth = new Date(birthdate);
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+
+  if (
+    today.getMonth() < birth.getMonth() ||
+    (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())
+  ) {
+    age--;
+  }
+
+  return age;
+}
+
+function syncUpdateUserRoleOptions() {
+  const form = document.getElementById("update_user_form");
+  if (!form) return;
+
+  const birthdateInput = form.querySelector('input[name="birthdate"]');
+  const roleInput = form.querySelector('select[name="role"]');
+  if (!birthdateInput || !roleInput) return;
+
+  const age = calculateAgeFromDate(birthdateInput.value);
+  const options = Array.from(roleInput.options);
+
+  const parentOption = options.find(
+    (option) => option.textContent.trim() === "Starš - admin"
+  );
+  const adultOption = options.find(
+    (option) => option.textContent.trim() === "Odrasel"
+  );
+  const childOption = options.find(
+    (option) => option.textContent.trim() === "Otrok"
+  );
+
+  if (!parentOption || !adultOption || !childOption) return;
+
+  parentOption.hidden = false;
+  parentOption.disabled = false;
+  adultOption.hidden = false;
+  adultOption.disabled = false;
+  childOption.hidden = false;
+  childOption.disabled = false;
+
+  if (age === null) {
+    return;
+  }
+
+  if (age < 18) {
+    parentOption.hidden = true;
+    parentOption.disabled = true;
+    adultOption.hidden = true;
+    adultOption.disabled = true;
+    roleInput.value = childOption.value;
+  }
+}
+
+
 
 function prefillUpdateFamilyForm(family) {
   const form = document.getElementById("update_family_form");
@@ -158,8 +229,10 @@ function prefillUpdateFamilyForm(family) {
   if (idInput) idInput.value = family.id ?? "";
   if (nameInput) nameInput.value = family.name ?? "";
   if (codeInput) codeInput.value = family.code ?? "";
+
   setFamilyError("");
 }
+
 
 function prefillUpdateUserForm(user) {
   const form = document.getElementById("update_user_form");
@@ -184,8 +257,11 @@ function prefillUpdateUserForm(user) {
   if (roleInput) roleInput.value = String(user.user_role_id ?? "");
   if (passwordInput1) passwordInput1.value = "";
   if (passwordInput2) passwordInput2.value = "";
+
   setPasswordError("");
+  syncUpdateUserRoleOptions();
 }
+
 
 function prefillUpdatePointsForm(user) {
   const form = document.getElementById("update_points_form");
@@ -381,10 +457,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   const overlay = document.getElementById("add_something_view");
   const updateFamilyForm = document.getElementById("update_family_form");
   const updateUserForm = document.getElementById("update_user_form");
+  const updateUserBirthdateInput = updateUserForm?.querySelector('input[name="birthdate"]');
   const updatePointsForm = document.getElementById("update_points_form");
   const cancelUpdateFamilyBtn = document.getElementById("cancel_update_family_btn");
   const cancelUpdateUserBtn = document.getElementById("cancel_update_user_btn");
   const cancelUpdatePointsBtn = document.getElementById("cancel_update_points_btn");
+  updateUserBirthdateInput?.addEventListener("change", syncUpdateUserRoleOptions);
 
   try {
     const [family, users] = await Promise.all([

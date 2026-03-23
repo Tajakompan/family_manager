@@ -15,11 +15,12 @@ if ($id <= 0) { echo json_encode(["ok"=>false, "error"=>"bad_id"]); exit; }
 // prilagodi imena tabel/kolon, če imaš drugače:
 $sql = "
 SELECT
-  fl.id,
-  fl.storage_location_id,
-  fl.expires_on,
+  fl.id AS food_location_id,
+  fl.storage_location_id AS storage_id,
+  fl.expires_on AS product_expires_on,
   fl.quantity,
-  fl.status,
+  fl.status AS product_status,
+  p.id AS product_id,
   p.name AS product_name,
   p.amount AS product_amount,
   p.unit AS product_unit,
@@ -28,6 +29,7 @@ FROM food_location fl
 JOIN product p ON p.id = fl.product_id
 WHERE fl.id = ? AND fl.family_id = ?
 LIMIT 1";
+
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ii", $id, $family_id);

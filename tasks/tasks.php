@@ -57,7 +57,7 @@ if (!isset($_SESSION["user_id"])) {
                 <div class="small_title left">Moja opravila</div>
                 <div class="my_tasks gray" id="my_tasks_container"></div>
 
-                <template id="pin_template">
+                <template id="pin_template"> 
                     <div class="pin">
                         <div class="task_title"></div>
                         <div class="task_data">
@@ -91,18 +91,26 @@ if (!isset($_SESSION["user_id"])) {
                 <div class="small_title left">Ostala opravila</div>
                 <div class="all_tasks gray" id="other_tasks_container"></div>
             </div>
-            <div class="points_container">
-                <div class="small_title">TOČKE:</div>
-                <table class="points_table">
-                    <thead>
-                        <tr>
-                            <th>Ime</th>
-                            <th>Točke</th>
-                        </tr>
-                    </thead>
-                    <tbody id="points_tbody"></tbody>
-                </table>
+            <div class="right_column">
+                <div class="points_container">
+                    <div class="small_title">TOČKE</div>
+                    <table class="points_table">
+                        <thead>
+                            <tr>
+                                <th>Ime</th>
+                                <th>Točke</th>
+                            </tr>
+                        </thead>
+                        <tbody id="points_tbody"></tbody>
+                    </table>
+                </div>
+
+                <div class="history_container">
+                    <div class="small_title">ZGODOVINA OPRAVIL</div>
+                    <div id="task_history_list" class="task_history_list"></div>
+                </div>
             </div>
+
         </div>
 
         <div id="row_menu" class="menu">
@@ -111,13 +119,19 @@ if (!isset($_SESSION["user_id"])) {
             <div class="menu_item delete">Izbriši</div>
         </div>
 
+        <script>
+            window.currentUserRole = <?= json_encode($_SESSION["user_role"] ?? "", JSON_UNESCAPED_UNICODE) ?>;
+        </script>
         <script src="tasks.js"></script>
         <script src="pin_fill.js"></script>
         <script src="points_fill.js"></script>
         <script src="form_validation.js"></script>
         <script src="right_click.js"></script>
         <script src="../common_code/common_js.js"></script>
+        <script src="task_history_fill.js"></script>
+
     </main>
+
 </body>
 </html>
 

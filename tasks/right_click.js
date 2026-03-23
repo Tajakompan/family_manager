@@ -116,7 +116,18 @@ function openTaskEditFromTask(task) {
 
   form.querySelector('input[name="new_task"]').value = task.name ?? "";
   form.querySelector('[name="details"]').value = task.details ?? "";
-  form.querySelector('input[name="points"]').value = task.points ?? 2;
+  const pointsInput = form.querySelector('input[name="points"]');
+  if (pointsInput) {
+    pointsInput.value = task.points ?? 2;
+    if (window.currentUserRole === "Otrok") {
+      pointsInput.readOnly = true;
+      pointsInput.title = "Otrok ne more spreminjati tock opravila.";
+    } else {
+      pointsInput.readOnly = false;
+      pointsInput.title = "";
+    }
+  }
+
 
   const dateInput = form.querySelector('input[name="to_do_by"]');
   const noDateCheckbox = form.querySelector('input[name="no_date"]');

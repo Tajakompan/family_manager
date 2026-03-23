@@ -5,6 +5,11 @@ if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
     header("Location: ../entry/login.php");
     exit;
 }
+if (($_SESSION["user_role"] ?? "") !== "Starš - admin") {
+    header("Location: ../dashboard/dashboard.php");
+    exit;
+}
+
 
 $family_id = (int)$_SESSION["family_id"];
 

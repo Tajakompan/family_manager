@@ -5,6 +5,10 @@ if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
     header("Location: ../entry/login.php");
     exit;
 }
+if (($_SESSION["user_role"] ?? "") !== "Starš - admin") {
+    header("Location: ../dashboard/dashboard.php");
+    exit;
+}
 
 $roles = [];
 $roles_sql = "SELECT id, user_role_name FROM user_role ORDER BY id";
@@ -21,7 +25,7 @@ if ($roles_res) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin</title>
+    <title>Upravljanje z družino - admin</title>
     <link rel="stylesheet" href="admin_page.css">
     <link rel="stylesheet" href="../sidebar/sidebar.css">
     <link rel="stylesheet" href="../common_code/common_css.css">
@@ -47,7 +51,7 @@ if ($roles_res) {
                     <thead>
                         <tr>
                             <th class="non-important low">IME</th>
-                            <th class="non-important low">KODA</th>
+                            <th class="non-important low">VSTOPNA KODA</th>
                         </tr>
                     </thead>
                     <tbody id="family_info"></tbody>
@@ -62,6 +66,7 @@ if ($roles_res) {
                 </tr>
             </template>
         </div>
+
         <div class="small_title left">Uporabniki</div>
         <div class="content small">
             <div class="pin_row">
@@ -99,6 +104,7 @@ if ($roles_res) {
                 </tr>
             </template>
         </div>
+
         <div class="small_title left">Točke</div>
         <div class="content smallest">
             <div class="pin_row">
@@ -125,9 +131,10 @@ if ($roles_res) {
                 </tr>
             </template>
         </div>
+
         <div class="add_something_view" id="add_something_view">
             <div class="update_family window" id="update_family_window">
-                <div class="title">Uredi druzino:</div>
+                <div class="title">Uredi družino:</div>
                 <form id="update_family_form" class="form" method="post" action="update_family.php">
                     <input type="hidden" name="family_id" id="update_family_id">
                     <div class="error" id="update_family_error" aria-live="polite" hidden></div>
@@ -136,7 +143,7 @@ if ($roles_res) {
                         <input type="text" name="name" required>
                     </div>
                     <div class="field">
-                        <label>Koda:</label>
+                        <label>Vstopna koda:</label>
                         <input type="text" name="code" required>
                     </div>
                     <div class="btns">

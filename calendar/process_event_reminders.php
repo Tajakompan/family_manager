@@ -1,0 +1,77 @@
+<?php
+require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/send_event_reminder_email.php";
+
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit("CLI only");
+}
+
+$sql = "SELECT
+            e.id,
+            e.name,
+            e.event_date,
+            e.event_time,
+            e.whole_day,
+            e.location,
+            e.description,
+            u.email,
+            u.name AS user_name,
+            u.surname AS user_surname
+        FROM event e
+        INNER JOIN app_user u ON u.id = e.created_by_app_user_id
+        WHERE e.reminder IS NOT NULL
+          AND e.reminder <= NOW()
+          AND e.reminder_sent_at IS NULL
+          AND (
+                e.reminder_last_attempt_at IS NULL
+                OR e.reminder_last_attempt_at <= DATE_SUB(NOW(), INTERVAL 15 MINUTE)
+          )
+          AND u.email_verified = 1
+          AND u.email <> ''
+        ORDER BY e.reminder ASC
+        LIMIT 50";
+
+$result = $conn->query($sql);
+
+if (!$result) {
+    exit("Query failed.\n");
+}
+
+while ($row = $result->fetch_assoc()) {
+    $recipientName = trim(($row["user_name"] ?? "") . " " . ($row["user_surname"] ?? ""));
+
+    $sent = sendEventReminderEmail(
+        $row["email"],
+        $recipientName,
+        [
+            "name" => $row["name"],
+            "event_date" => $row["event_date"],
+            "event_time" => $row["event_time"],
+            "whole_day" => (int)$row["whole_day"],
+            "location" => $row["location"],
+            "description" => $row["description"]
+        ]
+    );
+
+    if ($sent) {
+        $updateSql = "UPDATE event
+                      SET reminder_sent_at = NOW(),
+                          reminder_last_attempt_at = NOW(),
+                          reminder_error = NULL
+                      WHERE id = ? AND reminder_sent_at IS NULL";
+        $stmt = $conn->prepare($updateSql);
+        $stmt->bind_param("i", $row["id"]);
+    } else {
+        $errorText = "Pošiljanje reminder emaila ni uspelo.";
+        $updateSql = "UPDATE event
+                      SET reminder_last_attempt_at = NOW(),
+                          reminder_error = ?
+                      WHERE id = ?";
+        $stmt = $conn->prepare($updateSql);
+        $stmt->bind_param("si", $errorText, $row["id"]);
+    }
+
+    $stmt->execute();
+    $stmt->close();
+}

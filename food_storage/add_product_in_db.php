@@ -10,11 +10,15 @@ $user_id = (int)$_SESSION["user_id"];
 
 $storage_location   = (int)($_POST["storage_id"] ?? 0);
 $product_name       = trim($_POST["product_name"] ?? "");
-$product_amount     = (int)($_POST["product_amount"] ?? 0);
+$product_amount_raw = str_replace(",", ".", trim($_POST["product_amount"] ?? ""));
+$product_amount     = (float)$product_amount_raw;
 $product_unit       = trim($_POST["product_unit"] ?? "");
 $product_quantity   = (int)($_POST["product_quantity"] ?? 0);
 $product_category   = (int)($_POST["product_category"] ?? 0);
-$product_expires_on = $_POST["product_expires_on"] ?? null;
+$product_expires_on = trim($_POST["product_expires_on"] ?? "");
+if ($product_expires_on === "") {
+    $product_expires_on = null;
+}
 $product_status     = trim($_POST["product_status"] ?? "new");
 
 if(
@@ -24,7 +28,6 @@ if(
     $product_amount <= 0 ||
     $product_unit === "" ||
     $product_quantity <= 0 ||
-    empty($product_expires_on) ||
     $product_status === ""
 ){
     header("Location: food_storage.php?storage_id=" . $storage_location);
@@ -48,7 +51,7 @@ if ($existing_product) {
     $sql = "INSERT INTO product (name, amount, unit, product_category_id, family_id)
             VALUES (?, ?, ?, ?, ?);";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sisii", $product_name, $product_amount, $product_unit, $product_category, $family_id);
+    $stmt->bind_param("sdsii", $product_name, $product_amount, $product_unit, $product_category, $family_id);
     $stmt->execute();
     $product_id = (int)$conn->insert_id;
     $stmt->close();

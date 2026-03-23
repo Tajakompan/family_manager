@@ -45,7 +45,7 @@ $chosen_id = isset($_GET['storage_id']) ? (int)$_GET['storage_id'] : 0;
         <div class="add_something_view" id="add_something_view">
             <div class="add_storage_location_window window">
                 <div class="title">Dodaj novo lokacijo za beleženje zaloge:</div>
-                <form method="post" action="add_storage_in_db.php">
+                <form id="add_storage_form" method="post" action="add_storage_in_db.php">
                     <div class="form">
                             <label>Ime lokacije:</label> <input type="text" name="new_storage_location">
                     </div>
@@ -58,7 +58,7 @@ $chosen_id = isset($_GET['storage_id']) ? (int)$_GET['storage_id'] : 0;
             
             <div class="add_category_window window">
                 <div class="title">Dodaj novo kategorijo izdelkov:</div>
-                <form method="post" action="add_category_in_db.php">
+                <form id="add_category_form" method="post" action="add_category_in_db.php">
                     <div class="form">
                             <label>Ime kategorije:</label> <input type="text" name="new_category">
                     </div>
@@ -76,9 +76,9 @@ $chosen_id = isset($_GET['storage_id']) ? (int)$_GET['storage_id'] : 0;
                             <input type="hidden" name="food_location_id" value="">
                             <input type="hidden" name="storage_id" id="storage_id_input">
                             <label>Ime izdelka:</label> <input type="text" name="product_name">
-                            <label>Količina:</label> <input type="text" name="product_amount">
+                            <label>Količina:</label> <input type="number" name="product_amount" step="0.01" min="0.01">
                             <label>Enota:</label> <input type="text" name="product_unit">
-                            <label>Kos:</label> <input type="text" name="product_quantity">
+                            <label>Kos:</label> <input type="number" name="product_quantity" step="1" min="1">
                             <label>Kategorija:</label> 
                             <select name="product_category">
                                 <?php 
@@ -86,7 +86,7 @@ $chosen_id = isset($_GET['storage_id']) ? (int)$_GET['storage_id'] : 0;
                                         echo "<option value='".$one["id"]."'>".htmlspecialchars($one['name'])."</option>";
                                 ?>
                             </select>
-                            <label>Uporabno do:</label> <input type="date" name="product_expires_on">
+                            <label>Uporabno do (ni obvezno):</label> <input type="date" name="product_expires_on">
                             <label>Status:</label>
                             <select name="product_status">
                                 <option value="new">Novo</option>

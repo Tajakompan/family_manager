@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/reminder_helpers.php";
+
 
 if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
     header("Location: ../entry/login.php");
@@ -42,8 +44,15 @@ if ($whole_day === 1) {
     if (trim($time) === "") $time = null;
 }
 
-// reminder: če je prazno, daj NULL
-if (trim((string)$reminder) === "") $reminder = null;
+$reminder = normalizeReminderInput($reminder);
+
+if (($reminder === null) && trim((string)($_POST["reminder"] ?? "")) !== "") {
+    $m = (int)($_GET["month"] ?? date("n"));
+    $y = (int)($_GET["year"] ?? date("Y"));
+    header("Location: calendar.php?month=$m&year=$y");
+    exit;
+}
+
 
 // --- INSERT ---
 $sql = "INSERT INTO event

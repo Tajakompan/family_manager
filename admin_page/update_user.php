@@ -54,6 +54,10 @@ if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
     header("Location: ../entry/login.php");
     exit;
 }
+if (($_SESSION["user_role"] ?? "") !== "Starš - admin") {
+    respond_update_user(false, "forbidden", [], 403);
+}
+
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     respond_update_user(false, "invalid_request", [], 405);
@@ -105,12 +109,37 @@ if (!$role_row) {
     respond_update_user(false, "required_fields", [], 422, $user_id);
 }
 
+if ($role_row["user_role_name"] === "Starš - admin") {
+    $parent_count_sql = "SELECT COUNT(*) AS total
+                         FROM app_user
+                         WHERE family_id = ? AND user_role_id = ? AND id <> ?";
+    $parent_count_stmt = $conn->prepare($parent_count_sql);
+    $parent_count_stmt->bind_param("iii", $family_id, $role_id, $user_id);
+    $parent_count_stmt->execute();
+    $parent_count_result = $parent_count_stmt->get_result();
+    $parent_count_row = $parent_count_result ? $parent_count_result->fetch_assoc() : null;
+    $parent_count_stmt->close();
+
+    if ((int)($parent_count_row["total"] ?? 0) >= 2) {
+        respond_update_user(false, "too_many_parents", [], 422, $user_id);
+    }
+}
+
+
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     respond_update_user(false, "invalid_email", [], 422, $user_id);
 }
 
 if ($birthdate > $today) {
     respond_update_user(false, "future_birthdate", [], 422, $user_id);
+}
+
+$birthdate_dt = DateTime::createFromFormat("Y-m-d", $birthdate);
+$today_dt = new DateTime("today");
+$age = $birthdate_dt ? $birthdate_dt->diff($today_dt)->y : null;
+
+if ($age !== null && $age < 18 && $role_row["user_role_name"] !== "Otrok") {
+    respond_update_user(false, "minor_must_be_child", [], 422, $user_id);
 }
 
 $check_sql = "SELECT id FROM app_user WHERE email = ? AND id <> ?";

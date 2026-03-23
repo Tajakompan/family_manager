@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/reminder_helpers.php";
 
 if (!isset($_SESSION["user_id"])) {
     header("Location: ../entry/login.php");
@@ -148,7 +149,8 @@ for ($d = 1; $d <= $days_in_month; $d++) {
             "location" => ($e["location"] ?? "") === "" ? "/" : $e["location"],
             "description" => ($e["description"] ?? "") === "" ? "/" : $e["description"],
             "user_name" => $e["user_name"],
-            "reminder" => $e["reminder"] ?? "",
+            "reminder_input" => formatReminderForInput($e["reminder"] ?? null),
+            "reminder_display" => formatReminderForDisplay($e["reminder"] ?? null),
             "just_for_creator" => (int)($e["just_for_creator"] ?? 0)
         ];
     }

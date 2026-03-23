@@ -30,6 +30,11 @@ if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
     exit;
 }
 
+if (($_SESSION["user_role"] ?? "") !== "Starš - admin") {
+    respond_update_points(false, "forbidden", [], 403);
+}
+
+
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     respond_update_points(false, "invalid_request", [], 405);
 }

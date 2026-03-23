@@ -1,5 +1,7 @@
 ﻿<?php
 require_once __DIR__ . "/../config.php";
+require_once __DIR__ . "/send_verification_email.php";
+
 $error = "";
 $success = "";
 $invalid_fields = [];
@@ -12,11 +14,15 @@ $password2 = "";
 $role = "";
 $code = "";
 $today = date("Y-m-d");
+$verification_mail_sent = false;
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $name = trim($_POST["name"] ?? "");
     $surname = trim($_POST["surname"] ?? "");
     $birthdate = trim($_POST["birthdate"] ?? "");
+    $birthdate_dt = DateTime::createFromFormat("Y-m-d", $birthdate);
+    $today_dt = new DateTime("today");
+    $age = $birthdate_dt ? $birthdate_dt->diff($today_dt)->y : null;
     $email = trim($_POST["email"] ?? "");
     $password = $_POST["password"] ?? "";
     $password2 = $_POST["password2"] ?? "";
@@ -58,9 +64,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $invalid_fields["birthdate"] = true;
         $error = "Datum rojstva ne sme biti v prihodnosti.";
     }
-    else if (!in_array($role, ["child", "adult", "parent"], true)) {
+    else if (!in_array($role, ["Starš - admin", "Odrasel", "Otrok"], true)) {
         $invalid_fields["role"] = true;
         $error = "Izbrana vloga ni veljavna.";
+    }
+    else if ($age !== null && $age < 18 && $role !== "Otrok") {
+        $invalid_fields["role"] = true;
+        $error = "Mladoletni uporabnik je lahko le otrok.";
     }
     else if ($password !== $password2) {
         $invalid_fields["password"] = true;
@@ -97,31 +107,85 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $invalid_fields["code"] = true;
                 $error = "Napačna koda, ta družina ne obstaja.";
             } 
-            else{
+                        else{
                 $family_id = (int)$family["id"];
                 $stmt->close();
-                //dobi id role
+                $stmt = null;
+
+                // dobi id role
                 $sql = "SELECT id FROM user_role WHERE user_role_name = ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("s", $role);
                 $stmt->execute();
                 $result = $stmt->get_result();
                 $role_row = $result->fetch_assoc();
-                $role_id = (int)$role_row["id"];
                 $stmt->close();
+                $stmt = null;
 
-                $password_hash = password_hash($password, PASSWORD_DEFAULT);
-                $sql = "INSERT INTO app_user (name, surname, birthdate, email, password, user_role_id, family_id)
-                        VALUES (?, ?, ?, ?, ?, ?, ?)";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("sssssii", $name, $surname, $birthdate, $email, $password_hash, $role_id, $family_id);
+                if (!$role_row) {
+                    $invalid_fields["role"] = true;
+                    $error = "Izbrana vloga ni veljavna.";
+                } else {
+                    $role_id = (int)$role_row["id"];
 
-                if ($stmt->execute()) 
-                    $success = "Registracija uspešna. Sedaj se lahko prijavite.";
-                else 
-                    $error = "Napaka pri registraciji.";
+                    if ($role === "Starš - admin") {
+                        $parent_count_sql = "SELECT COUNT(*) AS total
+                                             FROM app_user
+                                             WHERE family_id = ? AND user_role_id = ?";
+                        $parent_count_stmt = $conn->prepare($parent_count_sql);
+                        $parent_count_stmt->bind_param("ii", $family_id, $role_id);
+                        $parent_count_stmt->execute();
+                        $parent_count_result = $parent_count_stmt->get_result();
+                        $parent_count_row = $parent_count_result ? $parent_count_result->fetch_assoc() : null;
+                        $parent_count_stmt->close();
+
+                        if ((int)($parent_count_row["total"] ?? 0) >= 2) {
+                            $invalid_fields["role"] = true;
+                            $error = "Družina ima lahko največ dva starša - admina.";
+                        }
+                    }
+
+                    if ($error === "") {
+                        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+                        $raw_token = bin2hex(random_bytes(32));
+                        $token_hash = hash("sha256", $raw_token);
+
+                        $sql = "INSERT INTO app_user (
+                                    name, surname, birthdate, email, password, user_role_id, family_id,
+                                    email_verified, email_verification_token_hash, email_verification_sent_at
+                                ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, NOW())";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bind_param(
+                            "sssssiis",
+                            $name,
+                            $surname,
+                            $birthdate,
+                            $email,
+                            $password_hash,
+                            $role_id,
+                            $family_id,
+                            $token_hash
+                        );
+
+                        if ($stmt->execute()) {
+                            $verification_mail_sent = sendVerificationEmail($email, $name, $raw_token);
+
+                            if ($verification_mail_sent) {
+                                $success = "Registracija uspešna. Na vaš email smo poslali povezavo za potrditev.";
+                            } else {
+                                $success = "Registracija uspešna, vendar pošiljanje potrditvenega emaila ni uspelo. Kontaktirajte skrbnika ali poskusite znova kasneje.";
+                            }
+                        } else {
+                            $error = "Napaka pri registraciji.";
+                        }
+
+                        $stmt->close();
+                        $stmt = null;
+                    }
+                }
             }
-            $stmt->close();
+            if($stmt)   
+                $stmt->close();
         }
     }
 }
@@ -155,9 +219,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <?php if ($success): ?>
                 <div class="nice_gray" style="text-align:center;">
                     <div style="color:#a7d65e; margin-bottom:8px;"><?= htmlspecialchars($success) ?></div>
+                    <div style="margin-bottom:8px;">Po potrditvi emaila se lahko prijavite.</div>
                     <a href="login.php">Pojdi na prijavo</a>
                 </div>
             <?php else: ?>
+
 
             <form method="post">
                 <div class="two_columns">
@@ -186,15 +252,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <input type="password" name="password2" minlength="8" value="<?= htmlspecialchars($password2, ENT_QUOTES) ?>" class="<?= isset($invalid_fields["password2"]) ? "red" : "" ?>">
                     </div>
                     <div class="field">
-                        <label>Koda družine</label>
+                        <label>Vstopna koda družine</label>
                         <input type="text" name="code" value="<?= htmlspecialchars($code, ENT_QUOTES) ?>" class="<?= isset($invalid_fields["code"]) ? "red" : "" ?>">
                     </div>
                     <div class="field">
                         <label>Vloga:</label>
                         <select name="role" class="<?= isset($invalid_fields["role"]) ? "red" : "" ?>">
-                            <option id="role_parent" value="parent" <?= $role === "parent" ? "selected" : "" ?>>Starš - admin</option>
-                            <option id="role_adult" value="adult" <?= $role === "adult" ? "selected" : "" ?>>Odrasel</option>
-                            <option id="role_child" value="child" <?= $role === "child" ? "selected" : "" ?>>Otrok</option>
+                            <option id="role_parent" value="Starš - admin" <?= $role === "parent" ? "selected" : "" ?>>Starš - admin</option>
+                            <option id="role_adult" value="Odrasel" <?= $role === "adult" ? "selected" : "" ?>>Odrasel</option>
+                            <option id="role_child" value="Otrok" <?= $role === "child" ? "selected" : "" ?>>Otrok</option>
                         </select>
                     </div>
                 </div>
@@ -220,25 +286,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <script>
 function calculate_age(birthdate){
-    if (!birthdate) 
-        return null;
+    if (!birthdate) return null;
+
     const birth = new Date(birthdate);
     const today = new Date();
     let age = today.getFullYear() - birth.getFullYear();
-    if(today.getMonth() == birth.getMonth() && today.getDate() < birth.getDate())
-        age --;
-    else if(today.getMonth() < birth.getMonth())
-        age --;
+
+    if (
+        today.getMonth() < birth.getMonth() ||
+        (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())
+    ) {
+        age--;
+    }
+
     return age;
 }
-//prilagaja dovoljene role glede na starost
-function update_roles(){
+
+function update_roles() {
     const birthdate = document.getElementById("birthdate").value;
     const age = calculate_age(birthdate);
 
+    const roleSelect = document.querySelector('select[name="role"]');
     const child = document.getElementById("role_child");
     const adult = document.getElementById("role_adult");
     const parent = document.getElementById("role_parent");
+
+    if (!roleSelect || !child || !adult || !parent) return;
 
     if (age === null) {
         child.hidden = false;
@@ -246,24 +319,27 @@ function update_roles(){
         parent.hidden = false;
         return;
     }
+
     if (age < 18) {
         child.hidden = false;
         adult.hidden = true;
         parent.hidden = true;
-        if (adult.checked || parent.checked) {
-            adult.checked = false;
-            parent.checked = false;
-            child.checked = true;
+
+        if (roleSelect.value !== "Otrok") {
+            roleSelect.value = "Otrok";
         }
-    } 
-    else {
+    } else {
         child.hidden = true;
         adult.hidden = false;
         parent.hidden = false;
-        if (child.checked) child.checked = false;
+
+        if (roleSelect.value === "Otrok") {
+            roleSelect.value = "Odrasel";
+        }
     }
 }
-window.addEventListener("load", update_roles);
 
+window.addEventListener("load", update_roles);
 </script>
+
 

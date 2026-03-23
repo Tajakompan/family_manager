@@ -6,6 +6,17 @@ if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
   exit;
 }
 
+if (($_SESSION["user_role"] ?? "") !== "Starš - admin") {
+    http_response_code(403);
+    header("Content-Type: application/json; charset=utf-8");
+    echo json_encode([
+        "ok" => false,
+        "error" => "forbidden"
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+
 $family_id = (int)$_SESSION["family_id"];
 
 $sql = "SELECT a.id, name, surname, email, user_role_id, birthdate, user_points, user_role_name

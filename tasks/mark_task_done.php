@@ -7,18 +7,22 @@ if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
 }
 
 $family_id = (int)$_SESSION["family_id"];
-$user_id   = (int)$_SESSION["user_id"];
 
 $task_id   = (int)($_POST["task_id"] ?? 0);
 
 if ($task_id > 0) {
   //najdi vse userje s tem taskom in tocke za ta task
-  $sql = "SELECT a.app_user_id as user, b.points as points
+  $sql = "SELECT a.app_user_id as user_id,
+                u.name as user_name,
+                b.id as task_id,
+                b.name as task_name,
+                b.points as points
           FROM who_is_doing_it a
           INNER JOIN task b ON a.task_id = b.id
-          WHERE task_id = ?";
+          INNER JOIN app_user u ON u.id = a.app_user_id
+          WHERE a.task_id = ? AND b.family_id = ?";
   $stmt = $conn->prepare($sql);
-  $stmt->bind_param("i", $task_id);
+  $stmt->bind_param("ii", $task_id, $family_id);
   $stmt->execute();
   $results = $stmt->get_result();
   $stmt->close();
@@ -27,14 +31,33 @@ if ($task_id > 0) {
   while ($row = $results->fetch_assoc()) {
     $sql = "UPDATE app_user SET user_points = user_points + ? WHERE id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ii", $row["points"], $row["user"]);
+    $stmt->bind_param("ii", $row["points"], $row["user_id"]);
+
     $stmt->execute();
     $stmt->close();
+
+    $sql = "INSERT INTO task_history
+        (family_id, task_id, task_name, app_user_id, completed_by_name, points_earned, completed_at)
+        VALUES (?, ?, ?, ?, ?, ?, NOW())";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param(
+      "iisisi",
+      $family_id,
+      $row["task_id"],
+      $row["task_name"],
+      $row["user_id"],
+      $row["user_name"],
+      $row["points"]
+    );
+    $stmt->execute();
+    $stmt->close();
+
   }
 
   //brise iz who_is_doing_it
-  $stmt = $conn->prepare("DELETE FROM who_is_doing_it WHERE task_id = ? AND app_user_id = ?");
-  $stmt->bind_param("ii", $task_id, $user_id);
+  $stmt = $conn->prepare("DELETE FROM who_is_doing_it WHERE task_id = ?");
+  $stmt->bind_param("i", $task_id);
+
   $stmt->execute();
   $stmt->close();
 
@@ -45,6 +68,7 @@ if ($task_id > 0) {
   $stmt->close();
 }
 
-header("Location: ../entry/login.php");
+header("Location: ../tasks/tasks.php");
 exit;
+
 ?>

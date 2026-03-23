@@ -42,7 +42,7 @@ else{
             FROM food_location f
             INNER JOIN product p ON f.product_id = p.id
             LEFT JOIN product_category pc ON pc.id = p.product_category_id
-            WHERE f.family_id = ? AND f.storage_location_id = ? AND datediff(expires_on, current_date()) < 5 AND datediff(expires_on, current_date()) >= 0
+            WHERE f.family_id = ? AND f.storage_location_id = ? AND datediff(expires_on, current_date()) < 7 AND datediff(expires_on, current_date()) >= 0
             ORDER BY 
                 f.expires_on IS NULL, 
                 f.expires_on ASC;";

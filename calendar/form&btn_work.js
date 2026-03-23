@@ -147,7 +147,7 @@ document.addEventListener("click", (e) => {
 
         form.querySelector('input[name="location"]').value = (ev.location && ev.location !== "/") ? ev.location : "";
         form.querySelector('input[name="description"]').value = (ev.description && ev.description !== "/") ? ev.description : "";
-        form.querySelector('input[name="reminder"]').value = ev.reminder || "";
+        form.querySelector('input[name="reminder"]').value = ev.reminder_input || "";
         form.querySelector('input[name="just_for_creator"]').checked = (ev.just_for_creator === 1);
     }
   }

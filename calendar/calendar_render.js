@@ -61,7 +61,7 @@ function renderEventsForDate(dateStr){
                 <div><b>Lokacija: </b>${escapeHtml(e.location)}</div>
                 <div><b>Opis: </b>${escapeHtml(e.description)}</div>
                 <div><b>Ustvaril: </b>${escapeHtml(e.user_name)}</div>
-                <div><b>Opomnik: </b>${escapeHtml(e.reminder)}</div>
+                <div><b>Opomnik: </b>${escapeHtml(e.reminder_display)}</div>
             </div>`;
         //doda id na okvirček z informacijami o dogodku
         div.dataset.id = e.id;
