@@ -1,2 +1,2 @@
 <?php
-echo "APP DELA";
+require_once __DIR__ . '/entry/login.php';
