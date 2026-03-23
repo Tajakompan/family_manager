@@ -1,13 +1,26 @@
 <?php
 session_start(); // da $_SESSION deluje
 
-$servername = "localhost";   // ker delaš lokalno
-$username = "root";    // privzeti uporabnik v xampu
-$password = "";       // privzeto brez gesla
-$dbname = "family_manager";  // ime tvoje baze
+if (isset($_ENV['DATABASE_URL']) && !empty($_ENV['DATABASE_URL'])) {
+    $url = $_ENV['DATABASE_URL'];
+    $dbparts = parse_url($url);
 
-// Ustvari povezavo
-$conn = new mysqli($servername, $username, $password, $dbname);
+    $conn = new mysqli(
+        $dbparts['host'],
+        $dbparts['user'],
+        $dbparts['pass'],
+        ltrim($dbparts['path'], '/'),
+        $dbparts['port']
+    );
+} else {
+    // lokalno (XAMPP)
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "family_manager";
+
+    $conn = new mysqli($servername, $username, $password, $dbname);
+}
 
 // Preveri povezavo
 if ($conn->connect_error) {
