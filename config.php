@@ -1,5 +1,8 @@
 <?php
-session_start(); // da $_SESSION deluje
+if (session_status() === PHP_SESSION_NONE) {
+    session_save_path(sys_get_temp_dir());
+    session_start();
+}
 
 if (isset($_ENV['DATABASE_URL']) && !empty($_ENV['DATABASE_URL'])) {
     $url = $_ENV['DATABASE_URL'];
