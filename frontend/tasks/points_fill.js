@@ -1,8 +1,9 @@
 async function loadPoints() {
   const tbody = document.getElementById("points_tbody");
   if (!tbody) return;
+  const tasksApiBase = `${window.API_URL}/tasks`;
 
-  const res = await fetch("get_points.php", {
+  const res = await fetch(`${tasksApiBase}/get_points.php`, {
     method: "GET",
     headers: { "Accept": "application/json" }
   });

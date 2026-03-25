@@ -1,6 +1,7 @@
 const myContainer = document.getElementById("my_tasks_container");
 const otherContainer = document.getElementById("other_tasks_container");
 const temp = document.getElementById("pin_template");
+const tasksApiBase = `${window.API_URL}/tasks`;
 
 function fmtDate(d) {
   if (!d) return "~ ni časovne omejitve ~";
@@ -52,7 +53,7 @@ async function fetchJson(url) {
 
 async function loadMyTasks() {
   myContainer.innerHTML = "";
-  const tasks = await fetchJson("get_my_tasks.php");
+  const tasks = await fetchJson(`${tasksApiBase}/get_my_tasks.php`);
 
   if (!tasks.length) {
     myContainer.innerHTML = "<p style='color:white;opacity:.8; margin-left: 15px'>Ni mojih opravil.</p>";
@@ -66,7 +67,7 @@ async function loadMyTasks() {
 
 async function loadOtherTasks() {
   otherContainer.innerHTML = "";
-  const tasks = await fetchJson("get_other_tasks.php");
+  const tasks = await fetchJson(`${tasksApiBase}/get_other_tasks.php`);
 
   if (!tasks.length) {
     otherContainer.innerHTML = "<p style='color:white;opacity:.8; margin-left: 15px'>Ni ostalih opravil.</p>";
@@ -84,7 +85,7 @@ async function loadAll() {
 
 
 async function markDone(taskId) {
-  const res = await fetch("mark_task_done.php", {
+  const res = await fetch(`${tasksApiBase}/mark_task_done.php`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({ task_id: taskId }),
@@ -94,7 +95,7 @@ async function markDone(taskId) {
 }
 
 async function claimTask(taskId) {
-  const res = await fetch("claim_task.php", {
+  const res = await fetch(`${tasksApiBase}/claim_task.php`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({ task_id: taskId }),
@@ -106,4 +107,5 @@ async function claimTask(taskId) {
 document.addEventListener("DOMContentLoaded", () => {
   loadAll().catch(err => console.error(err));
 });
+
 

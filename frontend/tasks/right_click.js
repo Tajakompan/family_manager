@@ -3,6 +3,7 @@ const other_tasks_container = document.getElementById("other_tasks_container");
 const container = document.getElementById("big_container");
 const row_menu = document.getElementById("row_menu"); 
 const add_something_view = document.getElementById("add_something_view");
+const tasksApiBase = `${window.API_URL}/tasks`;
 
 let rightClickedPinId = null;
 
@@ -43,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    fetch("delete_pin.php", {
+    fetch(`${tasksApiBase}/delete_pin.php`, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: `task_id=${encodeURIComponent(rightClickedPinId)}`
@@ -56,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!rightClickedPinId) return;
 
     try {
-      const res = await fetch(`get_task.php?task_id=${encodeURIComponent(rightClickedPinId)}`);
+      const res = await fetch(`${tasksApiBase}/get_task.php?task_id=${encodeURIComponent(rightClickedPinId)}`);
       const data = await res.json();
 
       if (!data.ok || !data.task) {
@@ -78,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!rightClickedPinId) return;
 
     try {
-      const res = await fetch(`get_task.php?task_id=${encodeURIComponent(rightClickedPinId)}`);
+      const res = await fetch(`${tasksApiBase}/get_task.php?task_id=${encodeURIComponent(rightClickedPinId)}`);
       const data = await res.json();
 
       if (!data.ok || !data.task) {
@@ -159,3 +160,5 @@ function openDetails(task) {
   showWindow("details_frame");
   add_something_view.classList.add("active");
 }
+
+

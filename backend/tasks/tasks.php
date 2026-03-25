@@ -122,6 +122,9 @@ if (!isset($_SESSION["user_id"])) {
         <script>
             window.currentUserRole = <?= json_encode($_SESSION["user_role"] ?? "", JSON_UNESCAPED_UNICODE) ?>;
         </script>
+        <script>
+            window.API_URL = "<?php echo htmlspecialchars(rtrim(getenv('API_URL') ?: 'http://localhost/family_manager/backend', '/'), ENT_QUOTES); ?>";
+        </script>
         <script src="../../frontend/tasks/tasks.js"></script>
         <script src="../../frontend/tasks/pin_fill.js"></script>
         <script src="../../frontend/tasks/points_fill.js"></script>
@@ -134,4 +137,5 @@ if (!isset($_SESSION["user_id"])) {
 
 </body>
 </html>
+
 

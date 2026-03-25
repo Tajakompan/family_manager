@@ -1,8 +1,9 @@
 async function loadTaskHistory() {
   const container = document.getElementById("task_history_list");
   if (!container) return;
+  const tasksApiBase = `${window.API_URL}/tasks`;
 
-  const res = await fetch("get_task_history.php", {
+  const res = await fetch(`${tasksApiBase}/get_task_history.php`, {
     method: "GET",
     headers: { "Accept": "application/json" },
     credentials: "same-origin"
@@ -44,3 +45,4 @@ async function loadTaskHistory() {
     container.appendChild(block);
   }
 }
+
