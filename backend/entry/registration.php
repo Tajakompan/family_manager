@@ -254,7 +254,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     </div>
                     <div class="field">
                         <label>Vstopna koda družine</label>
-                        <input type="text" name="code" value="<?= htmlspecialchars($code, ENT_QUOTES) ?>" class="<?= isset($invalid_fields["code"]) ? "red" : "" ?>">
+                        <input type="text" name="code" placeholder="Če je nimaš, ustvari družino"value="<?= htmlspecialchars($code, ENT_QUOTES) ?>" class="<?= isset($invalid_fields["code"]) ? "red" : "" ?>">
                     </div>
                     <div class="field">
                         <label>Vloga:</label>
