@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . "/../config.php";
 require_once __DIR__ . "/send_event_reminder_email.php";
+file_put_contents(__DIR__ . '/cron_test.log', date('Y-m-d H:i:s') . " cron start\n", FILE_APPEND);
 
 if (PHP_SAPI !== 'cli') {
     http_response_code(403);
@@ -37,8 +38,10 @@ $result = $conn->query($sql);
 if (!$result) {
     exit("Query failed.\n");
 }
+file_put_contents(__DIR__ . '/cron_test.log', date('Y-m-d H:i:s') . " query executed\n", FILE_APPEND);
 
 while ($row = $result->fetch_assoc()) {
+    file_put_contents(__DIR__ . '/cron_test.log', date('Y-m-d H:i:s') . " processing event ID: " . $row["id"] . "\n", FILE_APPEND);
     $recipientName = trim(($row["user_name"] ?? "") . " " . ($row["user_surname"] ?? ""));
 
     $sent = sendEventReminderEmail(
