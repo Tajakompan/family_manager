@@ -27,22 +27,28 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 $user_id = (int)$_SESSION["user_id"];
 $family_id = (int)$_SESSION["family_id"];
 
-if (
-    !isset($_FILES["profile_image"]) ||
-    !is_uploaded_file($_FILES["profile_image"]["tmp_name"]) ||
-    $_FILES["profile_image"]["error"] !== UPLOAD_ERR_OK
-) {
-    header("Location: dashboard.php");
-    exit;
+if (!isset($_FILES["profile_image"])) {
+    redirect_dashboard_with_upload_error("missing_file");
 }
+
+if ($_FILES["profile_image"]["error"] !== UPLOAD_ERR_OK) {
+    error_log("Profile image upload error code: " . $_FILES["profile_image"]["error"]);
+    redirect_dashboard_with_upload_error("missing_file");
+}
+
+if (!is_uploaded_file($_FILES["profile_image"]["tmp_name"])) {
+    error_log("Profile image was not uploaded through HTTP POST.");
+    redirect_dashboard_with_upload_error("missing_file");
+}
+
 
 $tmpPath = $_FILES["profile_image"]["tmp_name"];
 $fileSize = (int)$_FILES["profile_image"]["size"];
 
-if ($fileSize <= 0 || $fileSize > 512 * 1024 ) {
-    header("Location: dashboard.php");
-    exit;
+if ($fileSize <= 0 || $fileSize > 512 * 1024) {
+    redirect_dashboard_with_upload_error("file_too_large");
 }
+
 
 $finfo = new finfo(FILEINFO_MIME_TYPE);
 $mimeType = $finfo->file($tmpPath);
@@ -53,10 +59,12 @@ $allowedTypes = [
     "image/webp"
 ];
 
-if (!in_array($mimeType, $allowedTypes, true)) {
-    header("Location: dashboard.php");
-    exit;
+$imageData = file_get_contents($tmpPath);
+if ($imageData === false) {
+    error_log("Failed to read uploaded profile image.");
+    redirect_dashboard_with_upload_error("read_failed");
 }
+
 
 $imageData = file_get_contents($tmpPath);
 if ($imageData === false) {
@@ -70,9 +78,10 @@ $sql = "UPDATE app_user
 
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
-    http_response_code(500);
-    exit("Napaka pri pripravi poizvedbe.");
+    error_log("Profile image prepare failed: " . $conn->error);
+    redirect_dashboard_with_upload_error("save_failed");
 }
+
 
 $null = null;
 $stmt->bind_param("bsii", $null, $mimeType, $user_id, $family_id);
@@ -80,13 +89,15 @@ $stmt->send_long_data(0, $imageData);
 
 
 $ok = $stmt->execute();
-$affected = $stmt->affected_rows;
+
+if (!$ok) {
+    error_log("Profile image save failed: " . $stmt->error);
+    $stmt->close();
+    redirect_dashboard_with_upload_error("save_failed");
+}
+
 $stmt->close();
 
-if (!$ok || $affected < 1) {
-    http_response_code(500);
-    exit("Shranjevanje slike ni uspelo.");
-}
 
 
 header("Location: dashboard.php");
