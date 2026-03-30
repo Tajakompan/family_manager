@@ -6,6 +6,6 @@ return [
     "password" => "kpzdlbtfyqspkfpi",
     "from_email" => "info.familoop@gmail.com",
     "from_name" => "Familoop",
-    "base_url" => "http://localhost/family_manager"
+    "base_url" => "https://familoop-app.com/app"
 ];
 
