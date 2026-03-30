@@ -115,8 +115,6 @@ document.addEventListener("click", async (e) => {
     if (!res.ok) {
       alert("NAPAKA!\nStatus: " + res.status + "\nOdgovor: " + text);
       return;
-    } else {
-      alert("OK:\n" + text);
     }
 
     // če je OK, odstrani pin
