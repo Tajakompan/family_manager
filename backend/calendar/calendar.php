@@ -162,7 +162,7 @@ for ($d = 1; $d <= $days_in_month; $d++) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koledar</title>
+    <title>Familoop - koledar</title>
 
     <link rel="stylesheet" href="../../frontend/calendar/calendar.css">
     <link rel="stylesheet" href="../../frontend/sidebar/sidebar.css">

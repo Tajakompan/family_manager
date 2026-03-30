@@ -18,7 +18,7 @@ if (!isset($_SESSION["user_id"])) {
     <link rel="stylesheet" href="../../frontend/common_code/common_css.css">
     <link rel="stylesheet" href="../../frontend/common_code/form_window.css">
     <link rel="stylesheet" href="../../frontend/common_code/open_space_settings.css">
-    <title>Opravila</title>
+    <title>Familoop - Opravila</title>
 </head>
 <body>
     <?php include __DIR__ . "/../sidebar/sidebar.php"; ?>

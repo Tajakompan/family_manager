@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <html lang="sl">
 <head>
     <meta charset="UTF-8">
-    <title>Nova družina</title>
+    <title>Familoop - Nova družina</title>
     <link rel="stylesheet" href="../../frontend/entry/entry.css">
     <link rel="stylesheet" href="../../frontend/entry/login.css">
     <link rel="stylesheet" href="../../frontend/common_code/common_css.css">
@@ -63,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </head>
 <body>
     <div class="left image_placeholder">
-         <img src="../img/login_page.png.png" alt="Family Manager ilustracija">
+         <img src="../img/login_page.png" alt="Family Manager ilustracija">
     </div>
     <div class="right">
         <div class="login_panel">

@@ -103,7 +103,7 @@ else{
 <html lang="sl">
 <head>
     <meta charset="UTF-8">
-    <title>Prijava</title>
+    <title>Familoop - Prijava</title>
     <link rel="stylesheet" href="../../frontend/entry/entry.css">
     <link rel="stylesheet" href="../../frontend/entry/login.css">
     <link rel="stylesheet" href="../../frontend/common_code/common_css.css">

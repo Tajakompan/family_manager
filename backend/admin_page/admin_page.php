@@ -25,7 +25,7 @@ if ($roles_res) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upravljanje z družino - admin</title>
+    <title>Familoop - admin</title>
     <link rel="stylesheet" href="../../frontend/admin_page/admin_page.css">
     <link rel="stylesheet" href="../../frontend/sidebar/sidebar.css">
     <link rel="stylesheet" href="../../frontend/common_code/common_css.css">

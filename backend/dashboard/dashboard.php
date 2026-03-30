@@ -20,7 +20,7 @@ else
 <html lang="sl">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
+    <title>Familoop - dashboard</title>
     <link rel="stylesheet" href="../../frontend/dashboard/dashboard.css">
     <link rel="stylesheet" href="../../frontend/sidebar/sidebar.css">
     <link rel="stylesheet" href="../../frontend/common_code/common_css.css">

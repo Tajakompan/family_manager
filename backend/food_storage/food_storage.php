@@ -37,7 +37,7 @@ $chosen_id = isset($_GET['storage_id']) ? (int)$_GET['storage_id'] : 0;
     <link rel="stylesheet" href="../../frontend/common_code/common_css.css">
     <link rel="stylesheet" href="../../frontend/common_code/open_space_settings.css">
     <link rel="stylesheet" href="../../frontend/common_code/form_window.css">
-    <title>Zaloga hrane</title>
+    <title>Familoop - Zaloga hrane</title>
 </head>
 <body>
     <?php include "../sidebar/sidebar.php"; ?>

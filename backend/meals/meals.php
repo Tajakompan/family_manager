@@ -12,7 +12,7 @@ if (!isset($_SESSION["user_id"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Obroki</title>
+    <title>Familoop - Obroki</title>
     <link rel="stylesheet" href="../../frontend/meals/meals.css">
     <link rel="stylesheet" href="../../frontend/sidebar/sidebar.css">
     <link rel="stylesheet" href="../../frontend/common_code/common_css.css">
