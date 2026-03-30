@@ -55,8 +55,11 @@ $mimeType = $finfo->file($tmpPath);
 
 $allowedTypes = [
     "image/jpeg",
+    "image/jpg",
     "image/png",
-    "image/webp"
+    "image/webp",
+    "image/gif",
+    "image/bmp"
 ];
 
 $imageData = file_get_contents($tmpPath);
