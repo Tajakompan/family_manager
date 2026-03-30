@@ -20,7 +20,7 @@ $sql = "SELECT
         FROM event e
         INNER JOIN app_user u ON u.id = e.created_by_app_user_id
         WHERE e.reminder IS NOT NULL
-        AND e.reminder_sent_ast IS NULL
+        AND e.reminder_sent_at IS NULL
         ORDER BY e.id DESC
         LIMIT 10";
 
