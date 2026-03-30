@@ -5,15 +5,15 @@ main{
   margin-left: 15vw;
   display: flex;
   flex-direction: column;
-  background-color: var(--clr-hex-3c3c3c);
+  background-color: #3c3c3c;
 }
 
 .content{
-    background-color: var(--clr-hex-5e5e5e);
+    background-color: #5e5e5e;
     margin: 2vh 2vw;
-    border: 1px solid var(--clr-rgba-255-255-255-0-08);
+    border: 1px solid #ffffff08;
     border-radius: 10px;
-    box-shadow: 0 14px 30px var(--clr-rgba-0-0-0-0-26);
+    box-shadow: 0 14px 30px #00000026;
 }
 
 table{
@@ -31,30 +31,34 @@ tr:last-child td{
 th{
     height: 55px;
     font-size: 25px;
-    color:var(--clr-rgba-255-255-255-0-5)
+    color:#ffffff50;
 }
 td{
     height: 50px;
-    color: var(--clr-rgba-255-255-255-0-851);
+    color: #ffffff85;
     font-size: 20px;
 }
 td:nth-child(1){
     font-weight: bold;
 }
 td:nth-child(1), td:nth-child(2), td:nth-child(3){
-    border-right: 2px solid var(--clr-rgba-255-255-255-0-143);
+    border-right: 2px solid #ffffff15;
 }
 
 .hover_add{
-    color: var(--clr-rgba-255-255-255-0-57);
+    color: #ffffff;
     cursor: pointer;
 }
 
 .hover_add:hover, .weekend{
-    color:var(--color-accent-green);
+    color:#b6ea6b;
 }
 .has_meal{
     color: white;
+}
+
+.hover_add:hover img{
+    filter: brightness(0) saturate(100%) invert(79%) sepia(38%) saturate(465%) hue-rotate(36deg) brightness(101%) contrast(92%);
 }
 
 

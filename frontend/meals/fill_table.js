@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // =============================
-    // 1) Vedno naredimo 7 vrstic
+    // 1) Vedno naredimo 10 vrstic
     // =============================
     tbody.innerHTML = "";
 

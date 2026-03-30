@@ -6,7 +6,7 @@
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  background: var(--clr-rgba-0-0-0-0-35);
+  background: #00000035;
   backdrop-filter: blur(6px);
 }
 .add_something_view.active{
@@ -14,14 +14,14 @@
 }
 
 .window{
-  background-color: var(--clr-hex-3c3c3c);
+  background-color: #3c3c3c;
   flex-direction: column;
   display: none;
   border-radius: 12px;
   padding: 16px;
   width: min(520px, 92vw);     
-  box-shadow: 0 12px 35px var(--clr-rgba-158-158-158-0-35);
-  border: 1px solid var(--clr-rgba-255-255-255-0-08);
+  box-shadow: 0 12px 35px rgba(158,158,158,0.35);
+  border: 1px solid #ffffff08;
   height: auto;               
   gap: 8px; 
 }
@@ -31,7 +31,7 @@
   text-align: center;
 }
 .details_frame .small_title{
-  color:var(--clr-hex-3c3c3c);
+  color:#3c3c3c;
   margin-bottom: 20px;
 }
 
@@ -51,7 +51,7 @@
 
 
 .window .form{
-  background-color: var(--clr-rgba-255-255-255-0-06);
+  background-color: #ffffff06;
   padding: 12px;
   border-radius: 10px;
   color: white;
@@ -81,18 +81,18 @@
   width: auto;
   padding: 10px 12px;
   border-radius: 10px;
-  border: 1px solid var(--clr-rgba-255-255-255-0-18);
-  background: var(--clr-rgba-0-0-0-0-25);
+  border: 1px solid #ffffff18;
+  background: #00000025;
   color: white;
   outline: none;
 }
 
 input:focus{
-  border-color: var(--color-accent-green);
+  border-color: #b6ea6b;
 }
 
 input.red{
-  border-color: var(--clr-hex-fd684d);
+  border-color: #fd684d;
 }
 
 
@@ -114,25 +114,25 @@ input.red{
 }
 
 .btns button:first-child{
-  background: var(--clr-rgba-255-255-255-0-12);
+  background: #ffffff12;
   color: white;
 }
 
 
 .btns button:last-child, .store_btn{
-  background: var(--color-accent-green);
-  color: var(--clr-hex-1f1f1f);
+  background: #b6ea6b;
+  color:#1f1f1f;
 }
 
 .btns button:first-child:hover{
-  background: var(--clr-rgba-154-154-154-0-12);
+  background: rgba(154,154,154,0.12);
   color: white;
 }
 
 
 .btns button:last-child:hover, .store_btn:hover{
-  background: var(--color-accent-green);
-  color: var(--clr-hex-1f1f1f);
+  background: #b6ea6b;
+  color: #1f1f1f;
 }
 
 .btns.one{
@@ -148,8 +148,8 @@ input.red{
   gap: 10px;
   padding: 8px 10px;
   border-radius: 10px;
-  background: var(--clr-rgba-0-0-0-0-18);
-  border: 1px solid var(--clr-rgba-255-255-255-0-10);
+  background: #00000018;
+  border: 1px solid #ffffff10;
 }
 
 /* reset default checkbox styling so it matches */
@@ -158,8 +158,8 @@ input.red{
   height: 18px;
   padding: 0;                 /* prepiše tvoj global input padding */
   border-radius: 6px;
-  border: 1px solid var(--clr-rgba-255-255-255-0-25);
-  background: var(--clr-rgba-0-0-0-0-25);
+  border: 1px solid #ffffff25;
+  background: #00000025;
   appearance: none;
   display: grid;
   place-content: center;
@@ -174,7 +174,7 @@ input.red{
   transform: scale(0);
   transition: transform 120ms ease;
   border-radius: 3px;
-  background: var(--color-accent-green);
+  background: #b6ea6b;
 }
 
 .window input[type="checkbox"]:checked::after{
@@ -183,8 +183,8 @@ input.red{
 
 /* focus ring */
 .window input[type="checkbox"]:focus{
-  border-color: var(--color-accent-green);
-  box-shadow: 0 0 0 3px var(--clr-rgba-182-234-107-0-18);
+  border-color: #b6ea6b;
+  box-shadow: 0 0 0 3px rgba(182,234,107,0.18);
   outline: none;
 }
 
@@ -192,22 +192,22 @@ input.red{
 .check_label{
   cursor: pointer;
   user-select: none;
-  color: var(--clr-rgba-255-255-255-0-92);
+  color: #ffffff92;
   font-weight: 600;
   font-size: 14.5px;
 }
 
 /* hover effect for whole row */
 .check_row:hover{
-  border-color: var(--clr-rgba-182-234-107-0-35);
+  border-color: rgba(182,234,107,0.35);
 }
 
 .window input[type="file"]{
   width: 100%;
   padding: 8px;
   border-radius: 10px;
-  border: 1px solid var(--clr-rgba-255-255-255-0-18);
-  background: var(--clr-rgba-0-0-0-0-25);
+  border: 1px solid #ffffff18;
+  background: #00000025;
   color: white;
   box-sizing: border-box;
   cursor: pointer;
@@ -218,8 +218,8 @@ input.red{
   padding: 10px 14px;
   border: none;
   border-radius: 8px;
-  background: var(--color-accent-green);
-  color: var(--clr-hex-1f1f1f);
+  background: #b6ea6b;
+  color: #1f1f1f;
   font-weight: 700;
   cursor: pointer;
 }

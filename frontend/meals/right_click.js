@@ -63,19 +63,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 //DESNI KLIK NA OBROK
-  table.addEventListener("contextmenu", (e) => {
-    const chosen = e.target.closest(".has_meal");
-    if (!chosen) return;
+// KLIK NA OBROK
+table.addEventListener("click", (e) => {
+  const chosen = e.target.closest(".has_meal");
+  if (!chosen) return;
 
-    e.preventDefault();
-    hideMenus();
+  e.preventDefault();
+  e.stopPropagation();
+  hideMenus();
 
-    rightClickedMealId = chosen.dataset.mealId || chosen.closest(".has_meal")?.dataset.mealId;
-    if (!rightClickedMealId) return;
+  rightClickedMealId = chosen.dataset.mealId || chosen.closest(".has_meal")?.dataset.mealId;
+  if (!rightClickedMealId) return;
 
-    chosen.classList.add("context-active");
-    positionMenu(row_menu, e);
-  });
+  chosen.classList.add("context-active");
+  positionMenu(row_menu, e);
+});
 
   // zapiranje
   document.addEventListener("click", hideMenus);

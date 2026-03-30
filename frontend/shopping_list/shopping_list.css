@@ -4,7 +4,7 @@ main{
   margin-left: 15vw;
   display: flex;
   flex-direction: column;
-  background-color: var(--clr-hex-3c3c3c);
+  background-color: #3c3c3c;
   overflow: hidden;
 }
 .content{
@@ -23,19 +23,19 @@ main{
   margin: 2vh 2vw 2vh 0;
   padding-bottom: 15px;
   padding-right: 15px;
-  background-color: var(--clr-hex-5e5e5e);
-  border: 1px solid var(--clr-rgba-255-255-255-0-08);
+  background-color: #5e5e5e;
+  border: 1px solid #ffffff08;
   border-radius: 10px;
-  box-shadow: 0 14px 30px var(--clr-rgba-0-0-0-0-26);
+  box-shadow: 0 14px 30px #00000026;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
 .store_pin{
-  background: linear-gradient(180deg, var(--clr-hex-fcfcfc) 0%, var(--clr-hex-f3f3f3) 100%);
-  border: 1px solid var(--clr-hex-e6e6e6);
+  background: linear-gradient(180deg, #fcfcfc 0%, #f3f3f3 100%);
+  border: 1px solid #e6e6e6;
   border-radius: 10px;
-  box-shadow: 0 6px 14px var(--clr-rgba-0-0-0-0-14);
+  box-shadow: 0 6px 14px #00000014;
   margin-left: 10px;
   margin-top: 10px;
   margin-right: 2px;
@@ -50,7 +50,7 @@ main{
 .store_pin td{
   border: none;
   padding: 3px 2px;
-  color: var(--clr-hex-232323);
+  color: #232323;
 }
 
 .store_pin .pname{
@@ -64,16 +64,16 @@ main{
 }
 
 .store_pin label{
-  color: var(--clr-hex-2f2f2f);
+  color: #2f2f2f;
   font-weight: 500;
   font-size: 12px;
 }
 
 .store_pin .expires_on,
 .store_pin .storage_id{
-  border: 1px solid var(--clr-hex-c9c9c9);
+  border: 1px solid #c9c9c9;
   border-radius: 7px;
-  background: var(--clr-hex-ffffff);
+  background: white;
   padding: 3px 5px;
   font-size: 12px;
   max-width: 122px;
@@ -82,26 +82,26 @@ main{
 .store_pin .expires_on:focus,
 .store_pin .storage_id:focus{
   outline: none;
-  border-color: var(--color-accent-green);
-  box-shadow: 0 0 0 2px var(--clr-rgba-182-234-107-0-2);
+  border-color: #b6ea6b;
+  box-shadow: 0 0 0 2px rgba(182,234,107,0.2);
 }
 
 .store_pin .store_btn{
   border: none;
   border-radius: 11px;
-  background: linear-gradient(180deg, var(--color-accent-green) 0%, var(--color-accent-green) 100%);
-  color: var(--clr-hex-1f1f1f);
+  background: linear-gradient(180deg, #b6ea6b 0%, #b6ea6b 100%);
+  color: #1f1f1f;
   font-weight: 700;
   padding: 6px 12px;
   font-size: 14px;
   cursor: pointer;
-  box-shadow: 0 6px 12px var(--clr-rgba-0-0-0-0-18);
+  box-shadow: 0 6px 12px #00000018;
   transition: transform 150ms ease, box-shadow 200ms ease, filter 200ms ease;
 }
 
 .store_pin .store_btn:hover{
   transform: translateY(-1px);
-  box-shadow: 0 9px 16px var(--clr-rgba-0-0-0-0-22);
+  box-shadow: 0 9px 16px #00000022;
   filter: saturate(1.04);
 }
 
@@ -129,10 +129,10 @@ main{
   margin: 2vh 2vw;
   padding-bottom: 14px;
   padding-right: 14px;
-  background-color: var(--clr-hex-5e5e5e);
-  border: 1px solid var(--clr-rgba-255-255-255-0-08);
+  background-color: #5e5e5e;
+  border: 1px solid #ffffff08;
   border-radius: 10px;
-  box-shadow: 0 14px 30px var(--clr-rgba-0-0-0-0-26);
+  box-shadow: 0 14px 30px #00000026;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   overflow-y: auto;
@@ -142,12 +142,12 @@ main{
   min-height: 300px;
   max-height: 500px;
   height: fit-content;
-  background: linear-gradient(180deg, var(--clr-hex-fcfcfc) 0%, var(--clr-hex-f2f2f2) 100%);
-  border: 1px solid var(--clr-hex-e2e2e2);
+  background: linear-gradient(180deg, #fcfcfc 0%, #f2f2f2 100%);
+  border: 1px solid #e2e2e2;
   margin-top: 20px;
   margin-left: 20px;
   border-radius: 12px;
-  box-shadow: 0 10px 22px var(--clr-rgba-0-0-0-0-14);
+  box-shadow: 0 10px 22px #00000014;
   overflow-y: auto;
   overflow-x: hidden;
   transition: transform 180ms ease, box-shadow 220ms ease;
@@ -155,7 +155,7 @@ main{
 
 .pin:hover{
   transform: translateY(-1px);
-  box-shadow: 0 14px 26px var(--clr-rgba-0-0-0-0-18);
+  box-shadow: 0 14px 26px #00000018;
 }
 
 .shopping_lists_container{  /*tabela*/
@@ -167,23 +167,23 @@ main{
 
 .shopping_lists_container td{
   padding: 4px 5px;
-  border: 1px solid var(--clr-hex-d2d2d2);
-  color: var(--clr-hex-242424);
+  border: 1px solid #d2d2d2;
+  color: #242424;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .shopping_lists_container thead tr:first-child td{
-  background: var(--clr-hex-ececec);
-  border-bottom-color: var(--clr-hex-c8c8c8);
+  background: #ececec;
+  border-bottom-color: #c8c8c8;
   padding-top: 3px;
   padding-bottom: 3px;
 }
 
 .shopping_lists_container thead tr:nth-child(2) td{
-  background: var(--clr-hex-f7f7f7);
-  color: var(--clr-hex-3a3a3a);
+  background: #f7f7f7;
+  color: #3a3a3a;
   font-weight: 600;
   font-size: 15px;
   padding: 3px 4px;
@@ -195,7 +195,7 @@ main{
 }
 
 .item_measure{
-  color: var(--clr-hex-5a5a5a);
+  color: #5a5a5a;
   font-size: 0.92em;
   font-weight: 600;
 }
@@ -215,7 +215,7 @@ td.sortable{
 }
 
 .add_btn{
-  color: var(--clr-hex-1f1f1f);
+  color: #1f1f1f;
   transition: background-color 180ms ease, color 180ms ease;
 }
 
@@ -232,32 +232,32 @@ td.sortable{
   width: 46px;
   padding: 4px 6px;
   text-align: center;
-  border: 1px solid var(--clr-hex-c8c8c8);
+  border: 1px solid #c8c8c8;
   border-radius: 8px;
-  background: var(--clr-hex-fbfbfb);
+  background: #fbfbfb;
   transition: border-color 150ms ease, box-shadow 180ms ease, background-color 150ms ease;
 }
 .qty-input:focus {
   outline: none;
-  border-color: var(--color-accent-green);
-  box-shadow: 0 0 0 2px var(--clr-rgba-182-234-107-0-25);
+  border-color: #b6ea6b;
+  box-shadow: 0 0 0 2px rgba(182,234,107,0.25);
 }
 
 .qty-input.saved{
-  border-color: var(--color-accent-green);
-  background: var(--clr-hex-f3ffe5);
+  border-color: #b6ea6b;
+  background: #f3ffe5;
 }
 
 .qty-input.save-error{
-  border-color: var(--clr-hex-e46d57);
-  background: var(--clr-hex-fff2ef);
+  border-color: #e46d57;
+  background: #fff2ef;
 }
 
 /* barve nujnosti nakupa */
-td.necessity{box-shadow: inset 0 0 0 2px var(--clr-rgba-0-0-0-0-08);}
-td.necessity.low {background-color: var(--color-accent-green);}
-td.necessity.medium {background-color: var(--clr-hex-f7b84b);}
-td.necessity.high {background-color: var(--clr-hex-fd684d);}
+td.necessity{box-shadow: inset 0 0 0 2px #00000008;}
+td.necessity.low {background-color: #b6ea6b;}
+td.necessity.medium {background-color: #f7b84b;}
+td.necessity.high {background-color: #fd684d;}
 
 /*kupljeno*/
 tr.done {
@@ -266,14 +266,14 @@ tr.done {
 }
 /*siv hover*/
 .list_item:hover, .shop_name:hover, .add_btn:hover{
-  background-color: var(--clr-hex-eaf6d8);
+  background-color: #eaf6d8;
 }
 /* kljukica za nakup*/
 .check-item {
   appearance: none;
   width: 18px;
   height: 18px;
-  border: 1.6px solid var(--clr-hex-b7b7b7);
+  border: 1.6px solid #b7b7b7;
   border-radius: 5px;
   background: white;
   cursor: pointer;
@@ -282,12 +282,12 @@ tr.done {
 }
 /* hover borderja kljukice */
 .check-item:hover {
-  border-color: var(--color-accent-green);
+  border-color: #b6ea6b;
 }
 /* checked stanje */
 .check-item:checked {
-  background-color: var(--color-accent-green);
-  border-color: var(--color-accent-green);
+  background-color: #b6ea6b;
+  border-color: #b6ea6b;
 }
 /*style kljukica */
 .check-item:checked::after {
@@ -305,7 +305,7 @@ tr.done {
 #pins_container > p{
   grid-column: 1 / -1;
   text-align: center;
-  color: var(--clr-rgba-255-255-255-0-85);
+  color: #ffffff85;
   font-size: 25px;
   font-weight: 600;
   margin: 50px 0;

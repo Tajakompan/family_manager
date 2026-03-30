@@ -4,7 +4,7 @@ main {
     margin-left: 15vw;
     display: flex;
     flex-direction: column;
-    background-color: var(--clr-hex-3c3c3c);
+    background-color: #3c3c3c;
     overflow: hidden;
 }
 .tasks_bottom{
@@ -18,11 +18,11 @@ main {
     margin: 0;
 }
 .points_container{
-    flex: 0 0 15vw;
-    height: fit-content;
-    background-color: var(--clr-hex-5e5e5e);
+    flex: 0 0 auto;
+    height: auto;
+    background-color: #5e5e5e;
     border-radius: 10px;
-    margin: 3vh 2vw 0 0;
+    margin: 0;
     padding: 10px;
 }
 
@@ -36,13 +36,9 @@ main {
 
 .points_container,
 .history_container{
-    background-color: var(--clr-hex-5e5e5e);
+    background-color: #5e5e5e;
     border-radius: 10px;
     padding: 10px;
-}
-
-.points_container{
-    margin: 0;
 }
 
 .history_container{
@@ -106,13 +102,13 @@ main {
 .points_table{
     width: 100%;
     text-align: center;
-    color: var(--clr-rgb-236-236-236);
+    color: rgb(236,236,236);
 }
 .points_table th, .points_table td{
     height: 1.7vw;
 }
 .points_table th{
-    color:var(--clr-hex-a2a2a2);
+    color:#a2a2a2;
     height: 2vw;
 }
 .title { /* + common_code*/
@@ -137,7 +133,7 @@ main {
     max-width: 100%;
     margin: 2vh 2vw;  
     padding: 5px;
-    background-color: var(--clr-hex-5e5e5e);
+    background-color: #5e5e5e;
     border-radius: 10px;
     gap: 12px;
     min-height: 15px;
@@ -198,7 +194,7 @@ main {
   height: 24px;
   display: block;
 }
-.atr{color:var(--clr-hex-5e5e5e);}
+.atr{color:#5e5e5e;}
 .val{color: black;}
 
 
