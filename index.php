@@ -1,3 +1,3 @@
 <?php
-header("Location: /family_manager/backend/entry/login.php");
+header("Location: /backend/entry/login.php");
 exit;
