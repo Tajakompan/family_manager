@@ -11,27 +11,18 @@ if (PHP_SAPI !== 'cli') {
 $sql = "SELECT
             e.id,
             e.name,
-            e.event_date,
-            e.event_time,
-            e.whole_day,
-            e.location,
-            e.description,
+            e.reminder,
+            e.reminder_sent_at,
+            e.reminder_last_attempt_at,
             u.email,
-            u.name AS user_name,
-            u.surname AS user_surname
+            u.email_verified,
+            NOW() AS server_now
         FROM event e
         INNER JOIN app_user u ON u.id = e.created_by_app_user_id
         WHERE e.reminder IS NOT NULL
-          AND e.reminder <= NOW()
-          AND e.reminder_sent_at IS NULL
-          AND (
-                e.reminder_last_attempt_at IS NULL
-                OR e.reminder_last_attempt_at <= DATE_SUB(NOW(), INTERVAL 15 MINUTE)
-          )
-          AND u.email_verified = 1
-          AND u.email <> ''
-        ORDER BY e.reminder ASC
-        LIMIT 50";
+        AND e.reminder_sent_ast IS NULL
+        ORDER BY e.id DESC
+        LIMIT 10";
 
 $result = $conn->query($sql);
 
