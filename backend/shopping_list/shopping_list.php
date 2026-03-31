@@ -105,6 +105,7 @@ $family_id = (int)$_SESSION["family_id"];
                 <div class="add_shop window" id="add_shop_window">
                     <div class="title">Dodaj nov izdelek v zalogo:</div>
                     <form id="add_shop_form" class="form" method="post" action="add_shop_in_db.php">
+                        <div class="error" id="add_shop_error" aria-live="polite" hidden></div>    
                         <label>Ime seznama:</label> <input type="text" name="new_shop">
                         <div class="btns">
                             <button type="reset" id="cancel_shop_btn">Prekliči</button>
@@ -116,16 +117,17 @@ $family_id = (int)$_SESSION["family_id"];
                 <div class="add_product window" id="add_product_window">
                     <div class="title">Dodaj nov izdelek na seznam:</div>
                     <form id="add_product_form" class="form" method="post" action="add_product_on_list.php">
+                        <div class="error" id="add_product_error" aria-live="polite" hidden></div>
                         <input type="hidden" name="shop_id" id="product_shop_id">
                         <label>Naziv izdelka:</label> <input type="text" name="product_name">
-                        <label>Količina:</label> <input type="text" name="product_amount">
-                        <label>Enota:</label> <input type="text" name="product_unit">
-                        <label>Kvantiteta:</label> <input type="number" name="product_quantity" min="1" step="1" required>
+                        <label>Količina: </label> <input type="text" name="product_amount" placeholder="označeno na izdelku">
+                        <label>Enota:</label> <input type="text" name="product_unit" placeholder="npr. kg">
+                        <label>Število kosov:</label> <input type="number" name="product_quantity" min="1" step="1" placeholder="npr. 2">
                         <label>Nujnost:</label>
                         <select name="product_necessity" required>
-                            <option value="low">low</option>
-                            <option value="medium" selected>medium</option>
-                            <option value="high">high</option>
+                            <option value="low">ni nujno</option>
+                            <option value="medium" selected>srednje nujno</option>
+                            <option value="high">zelo nujno</option>
                         </select>
                         <div class="btns">
                             <button type="reset" id="cancel_product_btn">Prekliči</button>

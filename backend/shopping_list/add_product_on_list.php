@@ -13,14 +13,25 @@ $product_name = trim($_POST["product_name"] ?? "");
 $product_amount = str_replace(",", ".", trim($_POST["product_amount"] ?? ""));
 $product_unit = trim($_POST["product_unit"] ?? "");
 $product_quantity = (int)($_POST["product_quantity"] ?? 0);
-$product_necessity = strtolower(trim($_POST["product_necessity"] ?? "low"));
-$allowed = ["low","medium","high"];
-if (!in_array($product_necessity, $allowed, true)) {
-    $product_necessity = "low";
+$product_necessity = strtolower(trim($_POST["product_necessity"] ?? ""));
+
+if ($shop <= 0) {
+    header("Location: shopping_list.php?product_error=shop&shop_id=" . $shop);
+    exit;
 }
 
-if ($shop === 0 || $product_name === "" || $product_amount === "" || $product_unit === "" || $product_quantity <= 0) {
-    header("Location: shopping_list.php");
+if ($product_name === "" || $product_amount === "" || $product_unit === "") {
+    header("Location: shopping_list.php?product_error=required&shop_id=" . $shop);
+    exit;
+}
+
+if ($product_quantity <= 0) {
+    header("Location: shopping_list.php?product_error=quantity&shop_id=" . $shop);
+    exit;
+}
+
+if ($product_necessity !== "low" && $product_necessity !== "medium" && $product_necessity !== "high") {
+    header("Location: shopping_list.php?product_error=necessity&shop_id=" . $shop);
     exit;
 }
 
@@ -35,9 +46,10 @@ $stmt->bind_param("isss", $family_id, $product_name, $product_amount, $product_u
 $stmt->execute();
 $existing_product = $stmt->get_result()->fetch_assoc();
 $stmt->close();
+
 if ($existing_product) {
     $product_id = (int)$existing_product["id"];
-}else {
+} else {
     $sql = "INSERT INTO product (name, amount, unit, family_id)
             VALUES (?, ?, ?, ?);";
     $stmt = $conn->prepare($sql);
@@ -49,14 +61,13 @@ if ($existing_product) {
 
 $sql = "INSERT INTO shopping_list (shop_id, product_id, family_id, quantity, necessity)
         VALUES (?, ?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE 
+        ON DUPLICATE KEY UPDATE
         quantity = quantity + VALUES(quantity),
         necessity = VALUES(necessity);";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("iiiis", $shop, $product_id, $family_id, $product_quantity, $product_necessity);
 $stmt->execute();
 $stmt->close();
-
 
 header("Location: shopping_list.php");
 exit;
