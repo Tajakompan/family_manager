@@ -56,6 +56,62 @@ function setPointsError(message = "") {
   pointsError.hidden = message === "";
 }
 
+function clearFieldErrors(form) {
+  if (!form) return;
+  form.querySelectorAll(".red").forEach((el) => el.classList.remove("red"));
+}
+
+function markFieldErrors(form, fieldNames = []) {
+  if (!form) return;
+  clearFieldErrors(form);
+
+  fieldNames.forEach((name) => {
+    const field = form.querySelector(`[name="${name}"]`);
+    if (field) field.classList.add("red");
+  });
+}
+
+function getFamilyErrorFields(errorCode) {
+  switch (errorCode) {
+    case "required_fields":
+      return ["name", "code"];
+    case "code_taken":
+      return ["code"];
+    default:
+      return [];
+  }
+}
+
+function getUpdateUserErrorFields(errorCode) {
+  switch (errorCode) {
+    case "required_fields":
+      return ["name", "surname", "email", "birthdate", "role"];
+    case "invalid_email":
+    case "email_taken":
+      return ["email"];
+    case "future_birthdate":
+      return ["birthdate"];
+    case "password_mismatch":
+    case "password_too_short":
+      return ["password_1", "password_2"];
+    case "too_many_parents":
+    case "minor_must_be_child":
+      return ["role"];
+    default:
+      return [];
+  }
+}
+
+function getPointsErrorFields(errorCode) {
+  switch (errorCode) {
+    case "invalid_points":
+      return ["points"];
+    default:
+      return [];
+  }
+}
+
+
 function getUpdateFamilyErrorMessage(errorCode) {
   switch (errorCode) {
     case "missing_family":
@@ -74,27 +130,27 @@ function getUpdateFamilyErrorMessage(errorCode) {
 function getUpdateUserErrorMessage(errorCode) {
   switch (errorCode) {
     case "required_fields":
-      return "<span class='red'>Vsa polja razen gesla so obvezna.</span>";
+      return "Vsa polja razen gesla so obvezna.";
     case "invalid_email":
-      return "<span class='red'>E-mail ni v veljavnem formatu.</span>";
+      return "E-mail ni v veljavnem formatu.";
     case "future_birthdate":
-      return "<span class='red'>Datum rojstva ne more biti v prihodnosti.</span>";
+      return "Datum rojstva ne more biti v prihodnosti.";
     case "email_taken":
-      return "<span class='red'>Ta e-mail ze uporablja drug uporabnik.</span>";
+      return "Ta e-mail ze uporablja drug uporabnik.";
     case "password_mismatch":
-      return "<span class='red'>Gesli se ne ujemata.</span>";
+      return "Gesli se ne ujemata.";
     case "password_too_short":
-      return "<span class='red'>Geslo mora imeti vsaj 8 znakov.</span>";
+      return "Geslo mora imeti vsaj 8 znakov.";
     case "missing_user":
-      return "<span class='red'>Izbrani uporabnik ne obstaja vec.</span>";
+      return "Izbrani uporabnik ne obstaja vec.";
     case "too_many_parents":
-      return "<span class='red'>Druzina ima lahko najvec dva starsa - admina.</span>";
+      return "Druzina ima lahko najvec dva starsa - admina.";
     case "minor_must_be_child":
-      return "<span class='red'>Mladoletni uporabnik je lahko le otrok.</span>";
+      return "Mladoletni uporabnik je lahko le otrok.";
     case "forbidden":
-      return "<span class='red'>To lahko ureja le stars - admin.</span>";
+      return "To lahko ureja le stars - admin.";
     default:
-      return "<span class='red'>Posodobitev ni uspela. Poskusi znova.</span>";
+      return "Posodobitev ni uspela. Poskusi znova.";
   }
 }
 
@@ -230,6 +286,7 @@ function prefillUpdateFamilyForm(family) {
   if (nameInput) nameInput.value = family.name ?? "";
   if (codeInput) codeInput.value = family.code ?? "";
 
+  clearFieldErrors(form);
   setFamilyError("");
 }
 
@@ -257,7 +314,8 @@ function prefillUpdateUserForm(user) {
   if (roleInput) roleInput.value = String(user.user_role_id ?? "");
   if (passwordInput1) passwordInput1.value = "";
   if (passwordInput2) passwordInput2.value = "";
-
+  
+  clearFieldErrors(form);
   setPasswordError("");
   syncUpdateUserRoleOptions();
 }
@@ -276,6 +334,8 @@ function prefillUpdatePointsForm(user) {
   if (idInput) idInput.value = user.id ?? "";
   if (pointsInput) pointsInput.value = Number(user.user_points ?? 0);
   if (title) title.textContent = user.name ?? "";
+ 
+  clearFieldErrors(form);
   setPointsError("");
 }
 
@@ -505,46 +565,50 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  updateFamilyForm?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    setFamilyError("");
+updateFamilyForm?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  setFamilyError("");
+  clearFieldErrors(updateFamilyForm);
 
-    const submitBtn = updateFamilyForm.querySelector('button[type="submit"]');
-    if (submitBtn) submitBtn.disabled = true;
+  const submitBtn = updateFamilyForm.querySelector('button[type="submit"]');
+  if (submitBtn) submitBtn.disabled = true;
 
-    try {
-      const response = await fetch(updateFamilyForm.action, {
-        method: "POST",
-        headers: {
-          "Accept": "application/json",
-          "X-Requested-With": "XMLHttpRequest"
-        },
-        body: new FormData(updateFamilyForm)
-      });
+  try {
+    const response = await fetch(updateFamilyForm.action, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "X-Requested-With": "XMLHttpRequest"
+      },
+      body: new FormData(updateFamilyForm)
+    });
 
-      const result = await response.json();
+    const result = await response.json();
 
-      if (!response.ok || !result.ok) {
-        setFamilyError(getUpdateFamilyErrorMessage(result.error));
-        openUpdateFamilyWindow();
-        return;
-      }
-
-      updateFamilyInState(result.family);
-      renderFamilyInfo(state.family);
-      closeAllWindows();
-    } catch (err) {
-      console.error("Update family failed:", err);
-      setFamilyError("Posodobitev druzine ni uspela. Poskusi znova.");
+    if (!response.ok || !result.ok) {
+      setFamilyError(getUpdateFamilyErrorMessage(result.error));
+      markFieldErrors(updateFamilyForm, getFamilyErrorFields(result.error));
       openUpdateFamilyWindow();
-    } finally {
-      if (submitBtn) submitBtn.disabled = false;
+      return;
     }
-  });
+
+    updateFamilyInState(result.family);
+    renderFamilyInfo(state.family);
+    closeAllWindows();
+  } catch (err) {
+    console.error("Update family failed:", err);
+    setFamilyError("Posodobitev druzine ni uspela. Poskusi znova.");
+    openUpdateFamilyWindow();
+  } finally {
+    if (submitBtn) submitBtn.disabled = false;
+  }
+});
+
 
   updateUserForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
     setPasswordError("");
+    clearFieldErrors(updateUserForm);
 
     const submitBtn = updateUserForm.querySelector('button[type="submit"]');
     if (submitBtn) submitBtn.disabled = true;
@@ -563,6 +627,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (!response.ok || !result.ok) {
         setPasswordError(getUpdateUserErrorMessage(result.error));
+        markFieldErrors(updateUserForm, getUpdateUserErrorFields(result.error));
         openUpdateUserWindow();
         return;
       }
@@ -580,9 +645,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
+
   updatePointsForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
     setPointsError("");
+    clearFieldErrors(updatePointsForm);
 
     const submitBtn = updatePointsForm.querySelector('button[type="submit"]');
     if (submitBtn) submitBtn.disabled = true;
@@ -601,6 +668,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (!response.ok || !result.ok) {
         setPointsError(getUpdatePointsErrorMessage(result.error));
+        markFieldErrors(updatePointsForm, getPointsErrorFields(result.error));
         openUpdatePointsWindow();
         return;
       }
@@ -616,4 +684,5 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (submitBtn) submitBtn.disabled = false;
     }
   });
+
 });

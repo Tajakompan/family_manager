@@ -1,21 +1,17 @@
 <?php
 require_once __DIR__ . "/../config.php";
-
+/*
+vrača poln seznam vsseh userjev neke družine,
+vrača ga z jsonom
+*/
 if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
   header("Location: ../entry/login.php");
   exit;
 }
-
 if (($_SESSION["user_role"] ?? "") !== "Starš - admin") {
-    http_response_code(403);
-    header("Content-Type: application/json; charset=utf-8");
-    echo json_encode([
-        "ok" => false,
-        "error" => "forbidden"
-    ], JSON_UNESCAPED_UNICODE);
+    header("Location: ../dashboard/dashboard.php");
     exit;
 }
-
 
 $family_id = (int)$_SESSION["family_id"];
 
@@ -38,4 +34,3 @@ $stmt->close();
 header("Content-Type: application/json; charset=utf-8");
 echo json_encode($out);
 ?>
-

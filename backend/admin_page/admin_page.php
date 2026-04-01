@@ -11,21 +11,22 @@ if (($_SESSION["user_role"] ?? "") !== "Starš - admin") {
 }
 
 $roles = [];
-$roles_sql = "SELECT id, user_role_name FROM user_role ORDER BY id";
-$roles_res = $conn->query($roles_sql);
-if ($roles_res) {
-    while ($role = $roles_res->fetch_assoc()) {
+$sql = "SELECT id, user_role_name FROM user_role ORDER BY id";
+$stmt = $conn->query($sql);
+if ($stmt) {
+    while ($role = $stmt->fetch_assoc()) {
         $roles[] = $role;
     }
-    $roles_res->close();
+    $stmt->close();
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Familoop - admin</title>
+    <title>Familoop - Admin</title>
     <link rel="stylesheet" href="../../frontend/admin_page/admin_page.css">
     <link rel="stylesheet" href="../../frontend/sidebar/sidebar.css">
     <link rel="stylesheet" href="../../frontend/common_code/common_css.css">
@@ -140,11 +141,11 @@ if ($roles_res) {
                     <div class="error" id="update_family_error" aria-live="polite" hidden></div>
                     <div class="field">
                         <label>Ime:</label>
-                        <input type="text" name="name" required>
+                        <input type="text" name="name">
                     </div>
                     <div class="field">
-                        <label>Vstopna koda:</label>
-                        <input type="text" name="code" required>
+                        <label>Vstopna koda družine:</label>
+                        <input type="text" name="code">
                     </div>
                     <div class="btns">
                         <button type="reset" id="cancel_update_family_btn">Prekliči</button>
@@ -193,23 +194,23 @@ if ($roles_res) {
                         </div>
                     </div>
                     <div class="btns">
-                        <button type="reset" id="cancel_update_user_btn">Preklici</button>
+                        <button type="reset" id="cancel_update_user_btn">Prekliči</button>
                         <button type="submit" id="update_user_btn">Posodobi</button>
                     </div>
                 </form>
             </div>
             <div class="update_points window" id="update_points_window">
-                <div class="title">Uredi tocke:</div>
+                <div class="title">Uredi točke:</div>
                 <div class="points_user_name" id="update_points_user_name"></div>
                 <form id="update_points_form" class="form" method="post" action="update_points.php">
                     <input type="hidden" name="user_id" id="update_points_user_id">
                     <div class="error" id="update_points_error" aria-live="polite" hidden></div>
                     <div class="field">
-                        <label>Tocke:</label>
+                        <label>Točke:</label>
                         <input type="number" name="points" min="0" step="1" required>
                     </div>
                     <div class="btns">
-                        <button type="reset" id="cancel_update_points_btn">Preklici</button>
+                        <button type="reset" id="cancel_update_points_btn">Prekliči</button>
                         <button type="submit" id="update_points_btn">Posodobi</button>
                     </div>
                 </form>

@@ -1,23 +1,22 @@
 <?php
 require_once __DIR__ . "/../config.php";
 
+/*
+vrne podatke o družini glede na dan family_id
+vrne z jsonom
+*/
 if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
   header("Location: ../entry/login.php");
   exit;
 }
 if (($_SESSION["user_role"] ?? "") !== "Starš - admin") {
-    http_response_code(403);
-    header("Content-Type: application/json; charset=utf-8");
-    echo json_encode([
-        "ok" => false,
-        "error" => "forbidden"
-    ], JSON_UNESCAPED_UNICODE);
+    header("Location: ../dashboard/dashboard.php");
     exit;
 }
 
 $family_id = (int)$_SESSION["family_id"];
 
-$sql = "SELECT id, name, code
+$sql = "SELECT name, code
         FROM family
         WHERE id = ?";
 

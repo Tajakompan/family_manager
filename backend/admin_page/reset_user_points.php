@@ -1,78 +1,66 @@
 <?php
 require_once __DIR__ . "/../config.php";
 
-function wants_json_response(): bool
-{
-    $requested_with = strtolower($_SERVER["HTTP_X_REQUESTED_WITH"] ?? "");
-    $accept = strtolower($_SERVER["HTTP_ACCEPT"] ?? "");
+/*
+izbriše vse točke uporabnika
+vrača json (uspešno oz. navede error, ker itak drugega ne vrača)
+*/
 
-    return $requested_with === "xmlhttprequest" || str_contains($accept, "application/json");
-}
-
-function respond_reset_points(bool $ok, ?string $error = null, array $payload = [], int $status = 200): void
-{
-    if (wants_json_response()) {
-        http_response_code($status);
-        header("Content-Type: application/json; charset=UTF-8");
-        echo json_encode(array_merge([
-            "ok" => $ok,
-            "error" => $error,
-        ], $payload), JSON_UNESCAPED_UNICODE);
-        exit;
-    }
-
-    header("Location: admin_page.php");
-    exit;
-}
+header("Content-Type: application/json; charset=UTF-8");
 
 if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
-    header("Location: ../entry/login.php");
+    http_response_code(401);
+    echo json_encode(["ok" => false, "error" => "unauthorized"]);
     exit;
 }
 if (($_SESSION["user_role"] ?? "") !== "Starš - admin") {
-    respond_reset_points(false, "forbidden", [], 403);
+    http_response_code(403);
+    echo json_encode(["ok" => false, "error" => "forbidden"]);
+    exit;
 }
-
-
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    respond_reset_points(false, "invalid_request", [], 405);
+    http_response_code(405);
+    echo json_encode(["ok" => false, "error" => "invalid_request"]);
+    exit;
 }
 
 $family_id = (int)$_SESSION["family_id"];
 $user_id = (int)($_POST["user_id"] ?? 0);
 
 if ($user_id <= 0) {
-    respond_reset_points(false, "missing_user", [], 422);
+    http_response_code(422);
+    echo json_encode(["ok" => false, "error" => "missing_user"]);
+    exit;
 }
 
-$exists_sql = "SELECT id FROM app_user WHERE id = ? AND family_id = ?";
-$exists_stmt = $conn->prepare($exists_sql);
-$exists_stmt->bind_param("ii", $user_id, $family_id);
-$exists_stmt->execute();
-$exists_stmt->store_result();
-$user_exists = $exists_stmt->num_rows > 0;
-$exists_stmt->close();
+$sql = "SELECT id FROM app_user WHERE id = ? AND family_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("ii", $user_id, $family_id);
+$stmt->execute();
+$stmt->store_result();
+$user_exists = $stmt->num_rows > 0;
+$stmt->close();
 
 if (!$user_exists) {
-    respond_reset_points(false, "missing_user", [], 404);
+    http_response_code(404);
+    echo json_encode(["ok" => false, "error" => "missing_user"]);
+    exit;
 }
 
 $sql = "UPDATE app_user SET user_points = 0 WHERE id = ? AND family_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ii", $user_id, $family_id);
-$execute_ok = $stmt && $stmt->execute();
-if ($stmt) {
-    $stmt->close();
+$ok = $stmt->execute();
+$stmt->close();
+
+if (!$ok) {
+    http_response_code(500);
+    echo json_encode(["ok" => false, "error" => "save_failed"]);
+    exit;
 }
 
-if (!$execute_ok) {
-    respond_reset_points(false, "save_failed", [], 500);
-}
-
-respond_reset_points(true, null, [
-    "user" => [
-        "id" => $user_id,
-        "user_points" => 0,
-    ],
+echo json_encode([
+    "ok" => true,
+    "user" => ["id" => $user_id, "user_points" => 0]
 ]);
-?>
+exit;
