@@ -2,9 +2,17 @@
 require_once __DIR__ . "/../config.php";
 
 $message = "";
+$message_class = "error";
 $is_success = false;
+$show_confirmation = false;
 
-$token = trim($_GET["token"] ?? "");
+$token = "";
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $token = trim($_POST["token"] ?? "");
+} else {
+    $token = trim($_GET["token"] ?? "");
+}
 
 if ($token === "") {
     $message = "Manjka verifikacijski token.";
@@ -26,8 +34,9 @@ if ($token === "") {
         $message = "Povezava za potrditev ni veljavna ali pa je že uporabljena.";
     } else if ((int)$user["email_verified"] === 1) {
         $message = "Email je že potrjen.";
+        $message_class = "nice_gray";
         $is_success = true;
-    } else {
+    } else if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $sql = "UPDATE app_user
                 SET email_verified = 1,
                     email_verified_at = NOW(),
@@ -38,12 +47,19 @@ if ($token === "") {
 
         if ($stmt->execute()) {
             $message = "Email je uspešno potrjen. Zdaj se lahko prijavite.";
+            $message_class = "nice_gray";
             $is_success = true;
         } else {
             $message = "Potrditev emaila ni uspela.";
+            $show_confirmation = true;
+            $message_class = "error";
         }
 
         $stmt->close();
+    } else {
+        $message = "Povezava je veljavna. Za dokončanje registracije kliknite spodnji gumb.";
+        $message_class = "nice_gray";
+        $show_confirmation = true;
     }
 }
 ?>
@@ -64,9 +80,17 @@ if ($token === "") {
             <h2 class="title">Potrditev emaila</h2>
         </div>
         <div class="login_frame">
-            <div class="<?= $is_success ? 'nice_gray' : 'error' ?>">
+            <div class="<?= $message_class ?>">
                 <?= htmlspecialchars($message) ?>
             </div>
+
+            <?php if ($show_confirmation): ?>
+                <form method="post">
+                    <input type="hidden" name="token" value="<?= htmlspecialchars($token, ENT_QUOTES) ?>">
+                    <button type="submit" id="submit">Potrdi email</button>
+                </form>
+            <?php endif; ?>
+
             <div class="nice_gray">
                 <a href="login.php">Pojdi na prijavo</a>
             </div>
