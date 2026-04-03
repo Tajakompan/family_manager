@@ -553,11 +553,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     closeAllWindows();
   });
 
-  overlay?.addEventListener("click", (e) => {
-    if (e.target === overlay) {
-      closeAllWindows();
-    }
-  });
+  let overlayPressStarted = false;
+
+overlay?.addEventListener("mousedown", (e) => {
+  overlayPressStarted = e.target === overlay;
+});
+
+overlay?.addEventListener("click", (e) => {
+  const shouldClose = overlayPressStarted && e.target === overlay;
+  overlayPressStarted = false;
+
+  if (shouldClose) {
+    closeAllWindows();
+  }
+});
+
+document.addEventListener("mouseup", () => {
+  overlayPressStarted = false;
+});
 
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
