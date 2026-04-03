@@ -5,6 +5,7 @@ if (!isset($_SESSION["user_id"])) {
     header("Location: ../entry/login.php");
     exit;
 }
+
 $family_id = (int)$_SESSION["family_id"];
 $user_id = (int)$_SESSION["user_id"];
 
@@ -19,9 +20,9 @@ $product_expires_on = trim($_POST["product_expires_on"] ?? "");
 if ($product_expires_on === "") {
     $product_expires_on = null;
 }
-$product_status     = trim($_POST["product_status"] ?? "new");
+$product_status = trim($_POST["product_status"] ?? "new");
 
-if(
+if (
     $storage_location <= 0 ||
     $product_category <= 0 ||
     $product_name === "" ||
@@ -29,17 +30,20 @@ if(
     $product_unit === "" ||
     $product_quantity <= 0 ||
     $product_status === ""
-){
+) {
     header("Location: food_storage.php?storage_id=" . $storage_location);
     exit;
 }
 
-$sql = "SELECT id FROM product
+$sql = "SELECT id
+        FROM product
         WHERE family_id = ?
           AND LOWER(name) = LOWER(?)
+          AND amount = ?
+          AND LOWER(unit) = LOWER(?)
         LIMIT 1;";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("is", $family_id, $product_name);
+$stmt->bind_param("isds", $family_id, $product_name, $product_amount, $product_unit);
 $stmt->execute();
 $existing_product = $stmt->get_result()->fetch_assoc();
 $stmt->close();
@@ -47,7 +51,6 @@ $stmt->close();
 if ($existing_product) {
     $product_id = (int)$existing_product["id"];
 } else {
-    // Vstavi nov produkt (TUKAJ je bil tvoj glavni bug: $product_category_id ni obstajal)
     $sql = "INSERT INTO product (name, amount, unit, product_category_id, family_id)
             VALUES (?, ?, ?, ?, ?);";
     $stmt = $conn->prepare($sql);
@@ -57,10 +60,8 @@ if ($existing_product) {
     $stmt->close();
 }
 
-$purchased_on = date('Y-m-d');
+$purchased_on = date("Y-m-d");
 
-
-// Vstavi v food_location
 $sql = "INSERT INTO food_location (family_id, storage_location_id, product_id, purchased_on, expires_on, quantity, app_user_id, status)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
@@ -78,7 +79,7 @@ $stmt->bind_param(
     $product_expires_on,
     $product_quantity,
     $user_id,
-    $product_status    
+    $product_status
 );
 $stmt->execute();
 $stmt->close();
