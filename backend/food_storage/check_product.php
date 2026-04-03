@@ -17,13 +17,28 @@ if ($name === "") {
     exit;
 }
 
-$sql = "SELECT id, amount, unit, product_category_id
-        FROM product
-        WHERE family_id = ?
-          AND LOWER(name) = LOWER(?)
-        ORDER BY amount ASC, unit ASC, id ASC";
+$sql = "SELECT p.id, p.amount, p.unit, p.product_category_id,
+               COALESCE(sl.cnt, 0) + COALESCE(fl.cnt, 0) AS usage_score
+        FROM product p
+        LEFT JOIN (
+            SELECT product_id, COUNT(*) AS cnt
+            FROM shopping_list
+            WHERE family_id = ?
+            GROUP BY product_id
+        ) sl ON sl.product_id = p.id
+        LEFT JOIN (
+            SELECT product_id, COUNT(*) AS cnt
+            FROM food_location
+            WHERE family_id = ?
+            GROUP BY product_id
+        ) fl ON fl.product_id = p.id
+        WHERE p.family_id = ?
+          AND LOWER(p.name) = LOWER(?)
+        ORDER BY usage_score DESC, p.id DESC
+        LIMIT 1";
+
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("is", $family_id, $name);
+$stmt->bind_param("iiis", $family_id, $family_id, $family_id, $name);
 $stmt->execute();
 $res = $stmt->get_result();
 
