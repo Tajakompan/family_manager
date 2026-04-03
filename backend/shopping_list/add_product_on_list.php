@@ -45,23 +45,17 @@ $sql = "SELECT id
         FROM product
         WHERE family_id = ?
           AND LOWER(name) = LOWER(?)
+          AND amount = ?
+          AND LOWER(unit) = LOWER(?)
         LIMIT 1;";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("is", $family_id, $product_name);
+$stmt->bind_param("isds", $family_id, $product_name, $product_amount, $product_unit);
 $stmt->execute();
 $existing_product = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
 if ($existing_product) {
     $product_id = (int)$existing_product["id"];
-
-    $sql = "UPDATE product
-            SET amount = ?, unit = ?
-            WHERE id = ? AND family_id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("dsii", $product_amount, $product_unit, $product_id, $family_id);
-    $stmt->execute();
-    $stmt->close();
 } else {
     $sql = "INSERT INTO product (name, amount, unit, family_id)
             VALUES (?, ?, ?, ?);";
