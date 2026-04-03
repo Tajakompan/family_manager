@@ -48,7 +48,7 @@ $family_id = (int)$_SESSION["family_id"];
                     <tr>
                         <td class="sortable" data-col="0" data-type="text">Izdelek</td>
                         <td class="ctr sortable" data-col="1" data-type="number">Kos</td>
-                        <td class="ctr sortable" data-col="2" data-type="text">Nuja</td>
+                        <td class="ctr sortable" data-col="2" data-type="necessity">Nuja</td>
                         <td class="ctr"><img class="table_icon" src="../img/check_24dp_3F3F3F_FILL0_wght400_GRAD0_opsz24.svg" alt="Kupljeno"></td>
                     </tr>
                 </thead>

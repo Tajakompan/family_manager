@@ -33,7 +33,16 @@ while ($k = $res->fetch_assoc()) {
     echo "<tr data-row-id='{$id}' class='list_item ".($purchased ? "done" : "")."' data-shop-id='".(int)$k["shop_id"]."'>";
     echo "<td>".htmlspecialchars($k["name"])." <span class='item_measure'>".htmlspecialchars($amountUnit)."</span></td>";
     echo "<td class='ctr'><input type='number' class='qty-input' data-id='{$id}' min='1' step='1' value='{$qty}'> </td>";
-    echo "<td class='necessity ".htmlspecialchars($k["necessity"])."'></td>";
+    $necessity = (string)$k["necessity"];
+    $necessitySort = 0;
+    if ($necessity === "high") {
+        $necessitySort = 3;
+    } elseif ($necessity === "medium") {
+        $necessitySort = 2;
+    } elseif ($necessity === "low") {
+        $necessitySort = 1;
+    }
+    echo "<td class='necessity ".htmlspecialchars($necessity)."' data-sort-value='{$necessitySort}'></td>";
     echo "<td class='ctr'> <input type='checkbox' class='check-item' data-id='{$id}' ".($purchased ? "checked" : "")."></td>";
     echo "</tr>";
 }

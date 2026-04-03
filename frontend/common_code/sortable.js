@@ -41,8 +41,14 @@ document.addEventListener("click", (e) => {
   const rows = Array.from(tbody.querySelectorAll("tr"));
 
   rows.sort((a, b) => {
-    const aTxt = a.children[colIndex]?.innerText.trim() ?? "";
-    const bTxt = b.children[colIndex]?.innerText.trim() ?? "";
+    const aCell = a.children[colIndex];
+    const bCell = b.children[colIndex];
+
+    const aTxt = aCell?.innerText.trim() ?? "";
+    const bTxt = bCell?.innerText.trim() ?? "";
+
+    const aSortValue = aCell?.dataset.sortValue ?? "";
+    const bSortValue = bCell?.dataset.sortValue ?? "";
 
     let cmp = 0;
 
@@ -62,12 +68,18 @@ document.addEventListener("click", (e) => {
       else if (B === null) cmp = -1;
       else cmp = A - B;
 
+    } else if (type === "necessity") {
+      const A = Number(aSortValue || 0);
+      const B = Number(bSortValue || 0);
+      cmp = A - B;
+
     } else {
       cmp = aTxt.localeCompare(bTxt, "sl", { sensitivity: "base" });
     }
 
     return asc ? cmp : -cmp;
   });
+
 
   table.dataset[key] = asc ? "0" : "1";
   rows.forEach(r => tbody.appendChild(r));
