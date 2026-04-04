@@ -2,7 +2,7 @@
 require_once __DIR__ . "/../config.php";
 
 if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
-    http_response_code(401);
+    header("Location: ../entry/login.php");
     exit;
 }
 
@@ -34,3 +34,5 @@ $stmt->close();
 
 header("Content-Type: application/json; charset=utf-8");
 echo json_encode($items);
+
+?>

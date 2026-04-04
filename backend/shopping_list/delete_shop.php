@@ -14,7 +14,6 @@ if ($shop_id === "") {
     exit;
 }
 
-// Preveri, da obstaja 
 $sql = "SELECT id FROM shop
         WHERE family_id = ?
           AND id = ?
@@ -35,6 +34,5 @@ if ($exists) {
 
 header("Location: shopping_list.php");
 exit;
-
 
 ?>

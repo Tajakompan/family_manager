@@ -6,7 +6,7 @@ if (!isset($_SESSION["user_id"])) {
     exit;
 }
 $family_id = (int)$_SESSION["family_id"];
-$shop_id   = (int)($_GET["shop_id"] ?? 0);
+$shop_id = (int)($_GET["shop_id"] ?? 0);
 
 $sql = "SELECT s.id, s.shop_id, p.name, p.amount, p.unit, s.quantity, s.necessity, s.purchased
         FROM shopping_list s
@@ -35,13 +35,13 @@ while ($k = $res->fetch_assoc()) {
     echo "<td class='ctr'><input type='number' class='qty-input' data-id='{$id}' min='1' step='1' value='{$qty}'> </td>";
     $necessity = (string)$k["necessity"];
     $necessitySort = 0;
-    if ($necessity === "high") {
+    if ($necessity === "high") 
         $necessitySort = 3;
-    } elseif ($necessity === "medium") {
+    elseif ($necessity === "medium") 
         $necessitySort = 2;
-    } elseif ($necessity === "low") {
+    elseif ($necessity === "low") 
         $necessitySort = 1;
-    }
+    
     echo "<td class='necessity ".htmlspecialchars($necessity)."' data-sort-value='{$necessitySort}'></td>";
     echo "<td class='ctr'> <input type='checkbox' class='check-item' data-id='{$id}' ".($purchased ? "checked" : "")."></td>";
     echo "</tr>";

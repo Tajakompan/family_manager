@@ -2,7 +2,10 @@
 require_once __DIR__ . "/../config.php";
 header("Content-Type: application/json; charset=utf-8");
 
-if (!isset($_SESSION["family_id"])) { http_response_code(401); exit; }
+if (!isset($_SESSION["family_id"])) { 
+        header("Location: ../entry/login.php");
+        exit; 
+}
 
 $family_id = (int)$_SESSION["family_id"];
 $id = (int)($_GET["id"] ?? 0);

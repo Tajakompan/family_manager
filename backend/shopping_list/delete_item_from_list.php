@@ -6,11 +6,10 @@ if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
     exit;
 }
 
-$family_id   = (int)$_SESSION["family_id"];
+$family_id = (int)$_SESSION["family_id"];
 $id = trim($_POST["id"] ?? "");
 
 if ($id != "") {
-    // Preveri, da obstaja 
     $sql = "SELECT id FROM shopping_list
             WHERE family_id = ?
             AND id = ?

@@ -6,7 +6,7 @@ if (!isset($_SESSION["user_id"])) {
     exit;
 }
 $family_id = (int)$_SESSION["family_id"];
-$shop_id   = (int)($_GET["shop_id"] ?? 0);
+$shop_id = (int)($_GET["shop_id"] ?? 0);
 
 $sql = "SELECT s.id, s.shop_id, p.name, p.amount, p.unit, s.quantity, s.necessity, s.purchased
         FROM shopping_list s

@@ -16,7 +16,6 @@ if ($new_meal === "") {
     exit;
 }
 
-// Preveri duplikat
 $sql = "SELECT id FROM meal
         WHERE family_id = ?
           AND meal_category = ?

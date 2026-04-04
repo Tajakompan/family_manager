@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . "/../config.php";
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
     header("Location: ../entry/login.php");
@@ -15,29 +14,11 @@ $product_amount = (float)$product_amount_raw;
 $product_unit = trim($_POST["product_unit"] ?? "");
 $product_quantity = (int)($_POST["product_quantity"] ?? 0);
 $product_necessity = strtolower(trim($_POST["product_necessity"] ?? ""));
+if ($product_necessity !== "low" && $product_necessity !== "medium" && $product_necessity !== "high")
+    $product_necessity = "medium";
 
-if ($shop <= 0) {
-    header("Location: shopping_list.php?product_error=shop&shop_id=" . $shop);
-    exit;
-}
-
-if ($product_name === "" || $product_amount_raw === "" || $product_unit === "") {
-    header("Location: shopping_list.php?product_error=required&shop_id=" . $shop);
-    exit;
-}
-
-if ($product_amount <= 0) {
-    header("Location: shopping_list.php?product_error=required&shop_id=" . $shop);
-    exit;
-}
-
-if ($product_quantity <= 0) {
-    header("Location: shopping_list.php?product_error=quantity&shop_id=" . $shop);
-    exit;
-}
-
-if ($product_necessity !== "low" && $product_necessity !== "medium" && $product_necessity !== "high") {
-    header("Location: shopping_list.php?product_error=necessity&shop_id=" . $shop);
+if ($shop <= 0 || $product_name === "" || $product_amount_raw === "" || $product_unit === "" || $product_amount <= 0 || $product_quantity <= 0) {
+    header("Location: shopping_list.php");
     exit;
 }
 
@@ -56,7 +37,8 @@ $stmt->close();
 
 if ($existing_product) {
     $product_id = (int)$existing_product["id"];
-} else {
+} 
+else {
     $sql = "INSERT INTO product (name, amount, unit, family_id)
             VALUES (?, ?, ?, ?);";
     $stmt = $conn->prepare($sql);

@@ -14,7 +14,6 @@ if ($new_shop === "") {
     exit;
 }
 
-// Preveri duplikat
 $sql = "SELECT id FROM shop
         WHERE family_id = ?
           AND LOWER(name) = LOWER(?)
