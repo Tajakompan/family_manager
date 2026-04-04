@@ -1,109 +1,83 @@
 <?php
 require_once __DIR__ . "/../config.php";
 
-function redirect_dashboard_with_upload_error(?string $error = null): void
-{
-    $location = "Location: dashboard.php";
-
-    if ($error !== null) {
-        $location .= "?upload_image_error=" . urlencode($error);
-    }
-
-    header($location);
-    exit;
-}
-
-
 if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
     header("Location: ../entry/login.php");
     exit;
 }
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    http_response_code(405);
-    exit("Napačna metoda.");
+    header("Location: dashboard.php");
+    exit;
 }
 
 $user_id = (int)$_SESSION["user_id"];
 $family_id = (int)$_SESSION["family_id"];
 
 if (!isset($_FILES["profile_image"])) {
-    redirect_dashboard_with_upload_error("missing_file");
+    header("Location: dashboard.php?upload_image_error=missing_file");
+    exit;
 }
 
 if ($_FILES["profile_image"]["error"] !== UPLOAD_ERR_OK) {
-    error_log("Profile image upload error code: " . $_FILES["profile_image"]["error"]);
-    redirect_dashboard_with_upload_error("missing_file");
+    header("Location: dashboard.php?upload_image_error=missing_file");
+    exit;
 }
 
-if (!is_uploaded_file($_FILES["profile_image"]["tmp_name"])) {
-    error_log("Profile image was not uploaded through HTTP POST.");
-    redirect_dashboard_with_upload_error("missing_file");
+$tmp_path = $_FILES["profile_image"]["tmp_name"];
+$file_size = (int)$_FILES["profile_image"]["size"];
+
+if (!is_uploaded_file($tmp_path)) {
+    header("Location: dashboard.php?upload_image_error=missing_file");
+    exit;
 }
 
-
-$tmpPath = $_FILES["profile_image"]["tmp_name"];
-$fileSize = (int)$_FILES["profile_image"]["size"];
-
-if ($fileSize <= 0 || $fileSize > 512 * 1024) {
-    redirect_dashboard_with_upload_error("file_too_large");
+if ($file_size <= 0 || $file_size > 512 * 1024) {
+    header("Location: dashboard.php?upload_image_error=file_too_large");
+    exit;
 }
-
 
 $finfo = new finfo(FILEINFO_MIME_TYPE);
-$mimeType = $finfo->file($tmpPath);
+$mime_type = $finfo->file($tmp_path);
 
-$allowedTypes = [
+$allowed_types = [
     "image/jpeg",
-    "image/jpg",
     "image/png",
-    "image/webp",
-    "image/gif",
-    "image/bmp"
+    "image/webp"
 ];
 
-$imageData = file_get_contents($tmpPath);
-if ($imageData === false) {
-    error_log("Failed to read uploaded profile image.");
-    redirect_dashboard_with_upload_error("read_failed");
+if (!in_array($mime_type, $allowed_types, true)) {
+    header("Location: dashboard.php?upload_image_error=invalid_type");
+    exit;
 }
 
-
-$imageData = file_get_contents($tmpPath);
-if ($imageData === false) {
-    header("Location: dashboard.php");
+$image_data = file_get_contents($tmp_path);
+if ($image_data === false) {
+    header("Location: dashboard.php?upload_image_error=read_failed");
     exit;
 }
 
 $sql = "UPDATE app_user
         SET profile_image = ?, profile_image_type = ?
         WHERE id = ? AND family_id = ?";
-
 $stmt = $conn->prepare($sql);
-if (!$stmt) {
-    error_log("Profile image prepare failed: " . $conn->error);
-    redirect_dashboard_with_upload_error("save_failed");
-}
 
+if (!$stmt) {
+    header("Location: dashboard.php?upload_image_error=save_failed");
+    exit;
+}
 
 $null = null;
-$stmt->bind_param("bsii", $null, $mimeType, $user_id, $family_id);
-$stmt->send_long_data(0, $imageData);
-
-
+$stmt->bind_param("bsii", $null, $mime_type, $user_id, $family_id);
+$stmt->send_long_data(0, $image_data);
 $ok = $stmt->execute();
-
-if (!$ok) {
-    error_log("Profile image save failed: " . $stmt->error);
-    $stmt->close();
-    redirect_dashboard_with_upload_error("save_failed");
-}
-
 $stmt->close();
 
-
+if (!$ok) {
+    header("Location: dashboard.php?upload_image_error=save_failed");
+    exit;
+}
 
 header("Location: dashboard.php");
 exit;
-
 ?>
