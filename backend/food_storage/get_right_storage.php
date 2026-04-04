@@ -7,7 +7,7 @@ if (!isset($_SESSION["user_id"])) {
 }
 
 
-$family_id  = (int)$_SESSION["family_id"];
+$family_id = (int)$_SESSION["family_id"];
 $storage_id = (int)($_GET['storage_id'] ?? 0);
 echo "<!-- storage_id=".$storage_id." family_id=".$family_id." -->";
 
@@ -16,7 +16,6 @@ if ($storage_id <= 0) {
     exit;
 }
 
-// Preveri, da storage pripada tej družini
 $sql = "SELECT id FROM storage_location WHERE id = ? AND family_id = ? LIMIT 1;";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ii", $storage_id, $family_id);

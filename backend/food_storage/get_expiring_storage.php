@@ -7,7 +7,7 @@ if (!isset($_SESSION["user_id"])) {
 }
 
 
-$family_id  = (int)$_SESSION["family_id"];
+$family_id = (int)$_SESSION["family_id"];
 $storage_id = (int)($_GET['storage_id'] ?? 0);
 $expired = (int)($_GET['expired'] ?? 0);
 

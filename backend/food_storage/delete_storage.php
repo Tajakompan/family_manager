@@ -6,7 +6,7 @@ if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
     exit;
 }
 
-$family_id   = (int)$_SESSION["family_id"];
+$family_id = (int)$_SESSION["family_id"];
 $storage_id = trim($_POST["storage_id"] ?? "");
 
 if ($storage_id === "") {
@@ -14,7 +14,6 @@ if ($storage_id === "") {
     exit;
 }
 
-// Preveri, da obstaja 
 $sql = "SELECT id FROM storage_location
         WHERE family_id = ?
           AND id = ?

@@ -6,7 +6,7 @@ if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
     exit;
 }
 
-$family_id   = (int)$_SESSION["family_id"];
+$family_id = (int)$_SESSION["family_id"];
 $id = trim($_POST["id"] ?? "");
 
 if ($id === "") {
@@ -14,7 +14,6 @@ if ($id === "") {
     exit;
 }
 
-// Preveri, da obstaja 
 $sql = "SELECT id FROM food_location
         WHERE family_id = ?
           AND id = ?

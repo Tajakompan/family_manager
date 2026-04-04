@@ -6,7 +6,7 @@ if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
     exit;
 }
 
-$family_id    = (int)$_SESSION["family_id"];
+$family_id = (int)$_SESSION["family_id"];
 $new_category = trim($_POST["new_category"] ?? "");
 
 if ($new_category === "") {
@@ -14,7 +14,7 @@ if ($new_category === "") {
     exit;
 }
 
-// Preveri duplikat
+
 $sql = "SELECT id FROM product_category
         WHERE family_id = ?
           AND LOWER(name) = LOWER(?)

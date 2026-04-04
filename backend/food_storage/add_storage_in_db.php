@@ -6,7 +6,7 @@ if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
     exit;
 }
 
-$family_id   = (int)$_SESSION["family_id"];
+$family_id = (int)$_SESSION["family_id"];
 $new_storage = trim($_POST["new_storage_location"] ?? "");
 
 if ($new_storage === "") {
@@ -14,7 +14,7 @@ if ($new_storage === "") {
     exit;
 }
 
-// Preveri, da ne obstaja (case-insensitive)
+
 $sql = "SELECT id FROM storage_location
         WHERE family_id = ?
           AND LOWER(name) = LOWER(?)

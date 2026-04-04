@@ -9,13 +9,13 @@ if (!isset($_SESSION["user_id"])) {
 $family_id = (int)$_SESSION["family_id"];
 $user_id = (int)$_SESSION["user_id"];
 
-$storage_location   = (int)($_POST["storage_id"] ?? 0);
-$product_name       = trim($_POST["product_name"] ?? "");
+$storage_location = (int)($_POST["storage_id"] ?? 0);
+$product_name = trim($_POST["product_name"] ?? "");
 $product_amount_raw = str_replace(",", ".", trim($_POST["product_amount"] ?? ""));
-$product_amount     = (float)$product_amount_raw;
-$product_unit       = trim($_POST["product_unit"] ?? "");
-$product_quantity   = (int)($_POST["product_quantity"] ?? 0);
-$product_category   = (int)($_POST["product_category"] ?? 0);
+$product_amount = (float)$product_amount_raw;
+$product_unit = trim($_POST["product_unit"] ?? "");
+$product_quantity = (int)($_POST["product_quantity"] ?? 0);
+$product_category = (int)($_POST["product_category"] ?? 0);
 $product_expires_on = trim($_POST["product_expires_on"] ?? "");
 if ($product_expires_on === "") {
     $product_expires_on = null;
@@ -70,17 +70,7 @@ $sql = "INSERT INTO food_location (family_id, storage_location_id, product_id, p
         purchased_on = LEAST(purchased_on, VALUES(purchased_on)),
         app_user_id = VALUES(app_user_id)";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param(
-    "iiissiis",
-    $family_id,
-    $storage_location,
-    $product_id,
-    $purchased_on,
-    $product_expires_on,
-    $product_quantity,
-    $user_id,
-    $product_status
-);
+$stmt->bind_param("iiissiis",$family_id,$storage_location,$product_id,$purchased_on,$product_expires_on,$product_quantity,$user_id,$product_status);
 $stmt->execute();
 $stmt->close();
 

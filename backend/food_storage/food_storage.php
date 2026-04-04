@@ -117,9 +117,7 @@ $chosen_id = isset($_GET['storage_id']) ? (int)$_GET['storage_id'] : 0;
                         $st = 0;
                     foreach($storage_location_table as $k){
                         $is_chosen = ($chosen_id > 0 && (int)$k["id"] === $chosen_id);
-                        // če ni storage_id v URL, izberi prvega
                         if ($chosen_id === 0 && $st === 0) $is_chosen = true;
-
                         $c = $is_chosen ? "chosen_storage" : "";
                         echo "<div class='nav_item $c' id='id_".$k["id"]."' data-storage-id='".$k['id']."'>".$k["name"]."</div>";
                         $st++;
