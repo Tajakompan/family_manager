@@ -1,10 +1,6 @@
 <?php
 require_once __DIR__ . "/../config.php";
 
-/*
-vrne podatke o družini glede na dan family_id
-vrne z jsonom
-*/
 if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
   header("Location: ../entry/login.php");
   exit;

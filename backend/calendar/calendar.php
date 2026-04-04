@@ -55,16 +55,13 @@ while ($row = $user_result->fetch_assoc()) {
 }
 $user_stmt->close();
 
-
 $events_by_date = [];
-// pobere dogodke na datum
-// pobere dogodke na datum
+
 for ($d = 1; $d <= $days_in_month; $d++) {
     $dateKey = sprintf('%04d-%02d-%02d', $year_now, $month_now, $d);
 
     if ($selected_user_id > 0) {
         if ($selected_user_id === $user_id) {
-            // gledam svoje dogodke -> vidim vse svoje
             $sql = "SELECT 
                         e.id,
                         e.name,
@@ -85,7 +82,6 @@ for ($d = 1; $d <= $days_in_month; $d++) {
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("isi", $family_id, $dateKey, $selected_user_id);
         } else {
-            // gledam dogodke druge osebe -> vidim samo javne
             $sql = "SELECT 
                         e.id,
                         e.name,
@@ -108,8 +104,6 @@ for ($d = 1; $d <= $days_in_month; $d++) {
             $stmt->bind_param("isi", $family_id, $dateKey, $selected_user_id);
         }
     } else {
-        // gledam "Dogodki vseh"
-        // svoje vidim vse, od drugih pa samo javne
         $sql = "SELECT 
                     e.id,
                     e.name,
@@ -215,7 +209,6 @@ for ($d = 1; $d <= $days_in_month; $d++) {
                 <?php
                 $day = 1;
 
-                // prazne celice pred 1. v mesecu
                 for ($i = 1; $i < $start_day; $i++) {
                     echo "<td class='prazno outer_td'></td>";
                 }
@@ -248,7 +241,6 @@ for ($d = 1; $d <= $days_in_month; $d++) {
                     $day++;
                 }
 
-                // prazne celice na koncu
                 while ((($day + $start_day - 2) % 7) != 0) {
                     echo "<td class='prazno outer_td'></td>";
                     $day++;
@@ -260,7 +252,6 @@ for ($d = 1; $d <= $days_in_month; $d++) {
     </div>
 </div>
 
-<!-- DESNI PANEL: podrobnosti dneva -->
 <div class="desno active" id="podrobnosti_dneva">
     <div id="view-empty" class="view active tekst">
         <div class="center">Klikni na dan v koledarju.</div>
@@ -276,7 +267,6 @@ for ($d = 1; $d <= $days_in_month; $d++) {
     <div class="add_event">Dodaj dogodek</div>
 </div>
 
-<!-- DESNI PANEL: obrazec -->
 <div class="desno" id="add_event_form">
     <h3>Dodaj dogodek</h3>
 
@@ -334,7 +324,7 @@ for ($d = 1; $d <= $days_in_month; $d++) {
 </div>
 
 <script>
-    window.eventsByDate = <?= json_encode($events_by_date, JSON_UNESCAPED_UNICODE); ?>;
+    window.eventsByDate = <?= json_encode($events_by_date); ?>;
     window.calMonth = <?= (int)$month_now ?>;
     window.calYear  = <?= (int)$year_now ?>;
     window.selectedUserId = <?= (int)$selected_user_id ?>;

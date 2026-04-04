@@ -32,7 +32,7 @@ if ($id <= 0 || $name === "" || $date === "") {
     exit;
 }
 
-// Če celodnevni -> time NULL
+
 if ($whole_day === 1) {
     $time = null;
 } else {
@@ -55,9 +55,9 @@ $oldStmt->execute();
 $oldResult = $oldStmt->get_result()->fetch_assoc();
 $oldStmt->close();
 
-if ($oldResult) {
+if ($oldResult) 
     $currentReminder = $oldResult["reminder"];
-}
+
 
 $reminderChanged = ((string)$currentReminder !== (string)$reminder);
 
@@ -90,21 +90,10 @@ if ($reminderChanged) {
 }
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param(
-    "sssisssiii",
-    $name,
-    $date,
-    $time,
-    $whole_day,
-    $location,
-    $description,
-    $reminder,
-    $just_for_creator,
-    $id,
-    $family_id
-);
+$stmt->bind_param("sssisssiii",$name,$date,$time,$whole_day,$location,$description,$reminder,$just_for_creator,$id,$family_id);
 $stmt->execute();
 $stmt->close();
+
 
 $month_now = (int)($_GET["month"] ?? date("n"));
 $year_now  = (int)($_GET["year"] ?? date("Y"));

@@ -1,7 +1,6 @@
 <?php
 
-function normalizeReminderInput(?string $rawReminder): ?string
-{
+function normalizeReminderInput(?string $rawReminder): ?string {
     $rawReminder = trim((string)$rawReminder);
 
     if ($rawReminder === "") {
@@ -20,8 +19,7 @@ function normalizeReminderInput(?string $rawReminder): ?string
     return null;
 }
 
-function formatReminderForInput(?string $dbValue): string
-{
+function formatReminderForInput(?string $dbValue): string {
     if ($dbValue === null || $dbValue === "") {
         return "";
     }
@@ -30,8 +28,7 @@ function formatReminderForInput(?string $dbValue): string
     return $ts ? date('Y-m-d\TH:i', $ts) : "";
 }
 
-function formatReminderForDisplay(?string $dbValue): string
-{
+function formatReminderForDisplay(?string $dbValue): string {
     if ($dbValue === null || $dbValue === "") {
         return "/";
     }

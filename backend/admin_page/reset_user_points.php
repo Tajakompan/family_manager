@@ -1,11 +1,6 @@
 <?php
 require_once __DIR__ . "/../config.php";
 
-/*
-izbriše vse točke uporabnika
-vrača json (uspešno oz. navede error, ker itak drugega ne vrača)
-*/
-
 header("Content-Type: application/json; charset=UTF-8");
 
 if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {

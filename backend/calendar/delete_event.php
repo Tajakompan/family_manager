@@ -14,7 +14,6 @@ if ($id === "") {
     exit;
 }
 
-// Preveri, da obstaja 
 $sql = "SELECT id FROM event
         WHERE family_id = ?
           AND id = ?

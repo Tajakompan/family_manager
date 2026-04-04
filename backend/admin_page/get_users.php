@@ -1,9 +1,6 @@
 <?php
 require_once __DIR__ . "/../config.php";
-/*
-vrača poln seznam vsseh userjev neke družine,
-vrača ga z jsonom
-*/
+
 if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
   header("Location: ../entry/login.php");
   exit;
