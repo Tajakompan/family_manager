@@ -10,7 +10,8 @@ $user_id = null;
 
 if ($token === "") {
     $error = "Manjka token za ponastavitev gesla.";
-} else {
+} 
+else {
     $token_hash = hash("sha256", $token);
 
     $sql = "SELECT id, password_reset_sent_at
@@ -45,11 +46,14 @@ if ($show_form && $_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($password === "" || $password2 === "") {
         $error = "Obe polji za geslo sta obvezni.";
-    } else if ($password !== $password2) {
+    } 
+    else if ($password !== $password2) {
         $error = "Gesli se ne ujemata.";
-    } else if (mb_strlen($password) < 8) {
+    } 
+    else if (mb_strlen($password) < 8) {
         $error = "Geslo mora vsebovati vsaj 8 znakov.";
-    } else {
+    } 
+    else {
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
         $sql = "UPDATE app_user

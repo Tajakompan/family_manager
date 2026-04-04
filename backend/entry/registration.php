@@ -107,12 +107,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $invalid_fields["code"] = true;
                 $error = "Napačna koda, ta družina ne obstaja.";
             } 
-                        else{
+            else{
                 $family_id = (int)$family["id"];
                 $stmt->close();
                 $stmt = null;
 
-                // dobi id role
                 $sql = "SELECT id FROM user_role WHERE user_role_name = ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("s", $role);
@@ -125,7 +124,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 if (!$role_row) {
                     $invalid_fields["role"] = true;
                     $error = "Izbrana vloga ni veljavna.";
-                } else {
+                } 
+                else {
                     $role_id = (int)$role_row["id"];
 
                     if ($role === "Starš - admin") {
@@ -170,14 +170,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         if ($stmt->execute()) {
                             $verification_mail_sent = sendVerificationEmail($email, $name, $raw_token);
 
-                            if ($verification_mail_sent) {
+                            if ($verification_mail_sent) 
                                 $success = "Registracija uspešna. Na vaš email smo poslali povezavo za potrditev.";
-                            } else {
+                            else 
                                 $success = "Registracija uspešna, vendar pošiljanje potrditvenega emaila ni uspelo. Kontaktirajte skrbnika ali poskusite znova kasneje.";
-                            }
-                        } else {
+                            
+                        } 
+                        else 
                             $error = "Napaka pri registraciji.";
-                        }
 
                         $stmt->close();
                         $stmt = null;
@@ -326,17 +326,16 @@ function update_roles() {
         adult.hidden = true;
         parent.hidden = true;
 
-        if (roleSelect.value !== "Otrok") {
+        if (roleSelect.value !== "Otrok") 
             roleSelect.value = "Otrok";
-        }
-    } else {
+    } 
+    else {
         child.hidden = true;
         adult.hidden = false;
         parent.hidden = false;
 
-        if (roleSelect.value === "Otrok") {
+        if (roleSelect.value === "Otrok") 
             roleSelect.value = "Odrasel";
-        }
     }
 }
 

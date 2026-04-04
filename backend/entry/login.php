@@ -42,13 +42,13 @@ else{
                 WHERE u.email = ?
                 LIMIT 1
             ";
-            //$stmt je prepared statement
-            $stmt = $conn->prepare($sql); //mysql preveri, ce je poizvedba $sql pravilna
-            $stmt->bind_param("s", $email); //s je string, $email bo namesto ?
-            $stmt->execute(); //izvede poizvedbo
-            $result = $stmt->get_result(); //rezultati poizvedbe
-            $user = $result->fetch_assoc(); //spremeni rezultat v asociativno tabelo $user
-            $stmt->close(); //zapre prepared statement
+            
+            $stmt = $conn->prepare($sql); 
+            $stmt->bind_param("s", $email); 
+            $stmt->execute(); 
+            $result = $stmt->get_result(); 
+            $user = $result->fetch_assoc(); 
+            $stmt->close(); 
 
             if (!$user) {
                 $invalid_fields["email"] = true;
@@ -57,7 +57,6 @@ else{
                 $stored_password = $user["password"];
                 $is_password_valid = password_verify($password, $stored_password);
 
-                // Legacy fallback: ce je v bazi se vedno plain-text, ga ob uspesni prijavi pretvorimo v hash.
                 if (
                     !$is_password_valid &&
                     empty(password_get_info($stored_password)["algo"]) &&
@@ -83,7 +82,6 @@ else{
                     $error = "Email še ni potrjen. Preverite svoj inbox in kliknite potrditveno povezavo.";
                 }
                  else {
-                    // SESSION
                     $_SESSION["user_id"]   = $user["id"];
                     $_SESSION["family_id"] = $user["family_id"];
                     $_SESSION["user_role"] = $user["user_role_name"];

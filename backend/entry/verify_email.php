@@ -10,13 +10,15 @@ $token = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $token = trim($_POST["token"] ?? "");
-} else {
+} 
+else {
     $token = trim($_GET["token"] ?? "");
 }
 
 if ($token === "") {
     $message = "Manjka verifikacijski token.";
-} else {
+} 
+else {
     $token_hash = hash("sha256", $token);
 
     $sql = "SELECT id, email_verified
@@ -32,11 +34,13 @@ if ($token === "") {
 
     if (!$user) {
         $message = "Povezava za potrditev ni veljavna ali pa je že uporabljena.";
-    } else if ((int)$user["email_verified"] === 1) {
+    } 
+    else if ((int)$user["email_verified"] === 1) {
         $message = "Email je že potrjen.";
         $message_class = "nice_gray";
         $is_success = true;
-    } else if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    } 
+    else if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $sql = "UPDATE app_user
                 SET email_verified = 1,
                     email_verified_at = NOW(),
@@ -49,14 +53,16 @@ if ($token === "") {
             $message = "Email je uspešno potrjen. Zdaj se lahko prijavite.";
             $message_class = "nice_gray";
             $is_success = true;
-        } else {
+        } 
+        else {
             $message = "Potrditev emaila ni uspela.";
             $show_confirmation = true;
             $message_class = "error";
         }
 
         $stmt->close();
-    } else {
+    } 
+    else {
         $message = "Povezava je veljavna. Za dokončanje registracije kliknite spodnji gumb.";
         $message_class = "nice_gray";
         $show_confirmation = true;

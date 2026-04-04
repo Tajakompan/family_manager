@@ -9,11 +9,11 @@ $email = "";
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $email = trim($_POST["email"] ?? "");
 
-    if ($email === "") {
+    if ($email === "") 
         $error = "Vnesite email.";
-    } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) 
         $error = "Email ni v pravilnem formatu.";
-    } else {
+    else {
         $sql = "SELECT id, name, email_verified
                 FROM app_user
                 WHERE email = ?
@@ -27,9 +27,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if (!$user) {
             $error = "Uporabnik s tem emailom ne obstaja.";
-        } else if ((int)$user["email_verified"] === 1) {
+        } 
+        else if ((int)$user["email_verified"] === 1) {
             $message = "Email je že potrjen.";
-        } else {
+        } 
+        else {
             $raw_token = bin2hex(random_bytes(32));
             $token_hash = hash("sha256", $raw_token);
 
@@ -40,14 +42,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("si", $token_hash, $user["id"]);
 
-                if ($stmt->execute()) {
+                if ($stmt->execute()) 
                     $message = "Nov potrditveni email je bil poslan.";
-                } else {
+                else 
                     $error = "Email je bil poslan, vendar shranjevanje novega tokena ni uspelo.";
-                }
+                
 
                 $stmt->close();
-            } else {
+            } 
+            else {
                 $error = "Pošiljanje emaila ni uspelo. Stara povezava ostaja veljavna.";
             }
         }

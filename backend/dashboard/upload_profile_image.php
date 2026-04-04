@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . "/../config.php";
 
+
+
 if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
     header("Location: ../entry/login.php");
     exit;
@@ -52,6 +54,7 @@ if (!in_array($mime_type, $allowed_types, true)) {
 }
 
 $image_data = file_get_contents($tmp_path);
+
 if ($image_data === false) {
     header("Location: dashboard.php?upload_image_error=read_failed");
     exit;
@@ -80,4 +83,5 @@ if (!$ok) {
 
 header("Location: dashboard.php");
 exit;
+
 ?>
