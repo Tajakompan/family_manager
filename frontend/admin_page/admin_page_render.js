@@ -9,7 +9,7 @@ function renderFamilyInfo(family) {
     const row = document.createElement("tr");
     const cell = document.createElement("td");
     cell.colSpan = 4;
-    cell.textContent = "Ni podatkov o druzini.";
+    cell.textContent = "Ni podatkov o družini.";
     row.appendChild(cell);
     familyInfo.appendChild(row);
     return;
@@ -22,7 +22,7 @@ function renderFamilyInfo(family) {
   cells[0].textContent = family.name ?? "";
   cells[1].textContent = family.code ?? "";
   cells[2].innerHTML = "<div class='btn'>Uredi</div>";
-  cells[3].innerHTML = "<div class='btn warning_btn'>Izbrisi</div>";
+  cells[3].innerHTML = "<div class='btn warning_btn'>Izbriši</div>";
 
   const editButton = cells[2].querySelector(".btn");
   editButton?.addEventListener("click", () => {
@@ -32,7 +32,7 @@ function renderFamilyInfo(family) {
 
   const deleteButton = cells[3].querySelector(".warning_btn");
   deleteButton?.addEventListener("click", () => {
-    if (!window.confirm("Ali si preprican, da zelis izbrisati druzino?")) return;
+    if (!window.confirm("Ali si prepričan, da želiš izbrisati družino?")) return;
     window.location.href = "../entry/delete_family.php";
   });
 
@@ -67,7 +67,7 @@ function renderUsersInfo(users) {
     cells[3].textContent = user.email ?? "";
     cells[4].textContent = user.user_role_name ?? "";
     cells[5].innerHTML = "<div class='btn'>Uredi</div>";
-    cells[6].innerHTML = "<div class='btn warning_btn'>Izbrisi</div>";
+    cells[6].innerHTML = "<div class='btn warning_btn'>Izbriši</div>";
 
     const editButton = cells[5].querySelector(".btn");
     editButton?.addEventListener("click", () => {
@@ -78,7 +78,7 @@ function renderUsersInfo(users) {
     const deleteButton = cells[6].querySelector(".warning_btn");
     deleteButton?.addEventListener("click", () => {
       const userId = encodeURIComponent(user.id ?? 0);
-      if (!window.confirm("Ali si preprican, da zelis izbrisati uporabnika?")) return;
+      if (!window.confirm("Ali si preprican, da želiš izbrisati uporabnika?")) return;
       window.location.href = `../entry/delete_app_user.php?user_id=${userId}`;
     });
 
@@ -105,7 +105,7 @@ function renderPointsInfo(users) {
     const row = document.createElement("tr");
     const cell = document.createElement("td");
     cell.colSpan = 3;
-    cell.textContent = "Ni podatkov o tockah.";
+    cell.textContent = "Ni podatkov o točkah.";
     row.appendChild(cell);
     pointsInfo.appendChild(row);
     return;

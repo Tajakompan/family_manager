@@ -25,19 +25,19 @@ const userErrorMessages = {
   required_fields: "Vsa polja razen gesla so obvezna.",
   invalid_email: "E-mail ni v veljavnem formatu.",
   future_birthdate: "Datum rojstva ne more biti v prihodnosti.",
-  email_taken: "Ta e-mail ze uporablja drug uporabnik.",
+  email_taken: "Ta e-mail že uporablja drug uporabnik.",
   password_mismatch: "Gesli se ne ujemata.",
   password_too_short: "Geslo mora imeti vsaj 8 znakov.",
-  missing_user: "Izbrani uporabnik ne obstaja vec.",
-  too_many_parents: "Druzina ima lahko najvec dva starsa - admina.",
+  missing_user: "Izbrani uporabnik ne obstaja več.",
+  too_many_parents: "Družina ima lahko največ dva starša - admina.",
   minor_must_be_child: "Mladoletni uporabnik je lahko le otrok.",
-  forbidden: "To lahko ureja le stars - admin."
+  forbidden: "To lahko ureja le starš - admin."
 };
 
 const pointsErrorMessages = {
-  missing_user: "Izbrani uporabnik ne obstaja vec.",
-  invalid_points: "Vnesi veljavno stevilo tock 0 ali vec.",
-  forbidden: "To lahko ureja le stars - admin."
+  missing_user: "Izbrani uporabnik ne obstaja več.",
+  invalid_points: "Vnesi veljavno število točk 0 ali več.",
+  forbidden: "To lahko ureja le starš - admin."
 };
 
 function showError(elementId, message = "") {
@@ -65,37 +65,32 @@ function markFieldErrors(form, fieldNames) {
   });
 }
 
-function getFamilyErrorMessage(errorCode) {
-  return familyErrorMessages[errorCode] ?? "Posodobitev druzine ni uspela. Poskusi znova.";
+function getErrorMessage(messages, errorCode) {
+  return messages[errorCode] ?? "Posodobitev neuspešna, poskusi znova.";
 }
 
-function getUserErrorMessage(errorCode) {
-  return userErrorMessages[errorCode] ?? "Posodobitev ni uspela. Poskusi znova.";
-}
+function getErrorFields(type, errorCode) {
+  if (type === "family") {
+    if (errorCode === "required_fields") return ["name", "code"];
+    if (errorCode === "code_taken") return ["code"];
+    return [];
+  }
 
-function getPointsErrorMessage(errorCode) {
-  return pointsErrorMessages[errorCode] ?? "Posodobitev tock ni uspela. Poskusi znova.";
-}
-
-function getFamilyErrorFields(errorCode) {
-  if (errorCode === "required_fields") return ["name", "code"];
-  if (errorCode === "code_taken") return ["code"];
+  if (type === "user") {
+    if (errorCode === "required_fields") return ["name", "surname", "email", "birthdate", "role"];
+    if (errorCode === "invalid_email" || errorCode === "email_taken") return ["email"];
+    if (errorCode === "future_birthdate") return ["birthdate"];
+    if (errorCode === "password_mismatch" || errorCode === "password_too_short") return ["password_1", "password_2"];
+    if (errorCode === "too_many_parents" || errorCode === "minor_must_be_child") return ["role"];
+    return [];
+  }
+  if (type === "points") {
+    if (errorCode === "invalid_points") return ["points"];
+    return [];
+  }
   return [];
 }
 
-function getUserErrorFields(errorCode) {
-  if (errorCode === "required_fields") return ["name", "surname", "email", "birthdate", "role"];
-  if (errorCode === "invalid_email" || errorCode === "email_taken") return ["email"];
-  if (errorCode === "future_birthdate") return ["birthdate"];
-  if (errorCode === "password_mismatch" || errorCode === "password_too_short") return ["password_1", "password_2"];
-  if (errorCode === "too_many_parents" || errorCode === "minor_must_be_child") return ["role"];
-  return [];
-}
-
-function getPointsErrorFields(errorCode) {
-  if (errorCode === "invalid_points") return ["points"];
-  return [];
-}
 
 function openWindow(windowId) {
   const overlay = document.getElementById("add_something_view");
@@ -124,11 +119,9 @@ function calculateAgeFromDate(birthdate) {
   const today = new Date();
   let age = today.getFullYear() - birth.getFullYear();
 
-  if (
-    today.getMonth() < birth.getMonth() ||
-    (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())
-  ) {
-    age--;
+  if (today.getMonth() < birth.getMonth() ||
+    (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) {
+        age--;
   }
 
   return age;

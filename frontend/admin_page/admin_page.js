@@ -9,7 +9,7 @@ function restoreUpdateUserErrorState() {
   if (!user) return;
 
   prefillUpdateUserForm(user);
-  showError("update_user_password_error", getUserErrorMessage(error));
+  showError("update_user_password_error", getErrorMessage(userErrorMessages, error));
   markFieldErrors(
     document.getElementById("update_user_form"),
     getUserErrorFields(error)
@@ -33,8 +33,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const updateUserBirthdateInput = updateUserForm?.querySelector('input[name="birthdate"]');
   updateUserBirthdateInput?.addEventListener("change", syncUpdateUserRoleOptions);
 
-  const family = await fetchJson("get_family.php");
-  const users = await fetchJson("get_users.php");
+  const [family, users] = await Promise.all([
+    fetchJson("get_family.php"),
+    fetchJson("get_users.php")
+  ]);
+
 
   state.family = family;
   state.users = Array.isArray(users) ? users : [];
@@ -97,8 +100,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!result || !response.ok || !result.ok) {
       const errorCode = result?.error ?? "";
-      showError("update_family_error", getFamilyErrorMessage(errorCode));
-      markFieldErrors(updateFamilyForm, getFamilyErrorFields(errorCode));
+      showError("update_family_error", getErrorMessage(familyErrorMessages, errorCode));
+      markFieldErrors(updateFamilyForm, getErrorFields("family", errorCode));
       openWindow("update_family_window");
       if (submitBtn) submitBtn.disabled = false;
       return;
@@ -140,8 +143,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!result || !response.ok || !result.ok) {
       const errorCode = result?.error ?? "";
-      showError("update_user_password_error", getUserErrorMessage(errorCode));
-      markFieldErrors(updateUserForm, getUserErrorFields(errorCode));
+      showError("update_user_password_error", getErrorMessage(userErrorMessages, errorCode));
+      markFieldErrors(updateUserForm, getErrorFields("user", errorCode));
       openWindow("update_user_window");
       if (submitBtn) submitBtn.disabled = false;
       return;
@@ -184,8 +187,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!result || !response.ok || !result.ok) {
       const errorCode = result?.error ?? "";
-      showError("update_points_error", getPointsErrorMessage(errorCode));
-      markFieldErrors(updatePointsForm, getPointsErrorFields(errorCode));
+      showError("update_points_error", getErrorMessage(pointsErrorMessages, errorCode));
+      markFieldErrors(updatePointsForm, getErrorFields("points", errorCode));
       openWindow("update_points_window");
       if (submitBtn) submitBtn.disabled = false;
       return;
