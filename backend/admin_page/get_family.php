@@ -12,7 +12,7 @@ if (($_SESSION["user_role"] ?? "") !== "Starš - admin") {
 
 $family_id = (int)$_SESSION["family_id"];
 
-$sql = "SELECT name, code
+$sql = "SELECT id, name, code
         FROM family
         WHERE id = ?";
 

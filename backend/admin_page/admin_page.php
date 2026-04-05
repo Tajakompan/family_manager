@@ -219,5 +219,8 @@ if ($stmt) {
     </main>
     <script src="../../frontend/common_code/common_js.js"></script>
     <script src="../../frontend/admin_page/admin_page.js"></script>
+    <script src="../../frontend/admin_page/admin_page_render.js"></script>
+    <script src="../../frontend/admin_page/admin_page_common.js"></script>
+
 </body>
 </html>
