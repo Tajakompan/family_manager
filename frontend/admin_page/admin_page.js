@@ -56,23 +56,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     closeAllWindows();
   });
 
-  let overlayPressStarted = false;
-
-  overlay?.addEventListener("mousedown", (e) => {
-    overlayPressStarted = e.target === overlay;
-  });
-
   overlay?.addEventListener("click", (e) => {
-    const shouldClose = overlayPressStarted && e.target === overlay;
-    overlayPressStarted = false;
-
-    if (shouldClose) {
+    if (e.target === overlay) {
       closeAllWindows();
     }
-  });
-
-  document.addEventListener("mouseup", () => {
-    overlayPressStarted = false;
   });
 
   document.addEventListener("keydown", (e) => {
@@ -83,6 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   updateFamilyForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     showError("update_family_error", "");
     clearFieldErrors(updateFamilyForm);
 
@@ -125,6 +113,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   updateUserForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     showError("update_user_password_error", "");
     clearFieldErrors(updateUserForm);
 
@@ -168,6 +157,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   updatePointsForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     showError("update_points_error", "");
     clearFieldErrors(updatePointsForm);
 

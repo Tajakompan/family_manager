@@ -14,6 +14,32 @@ const state = {
   users: []
 };
 
+const familyErrorMessages = {
+  missing_family: "Družina ne obstaja več.",
+  required_fields: "Ime in koda družine sta obvezna.",
+  code_taken: "Ta koda družine je že zasedena.",
+  forbidden: "To lahko ureja le starš - admin."
+};
+
+const userErrorMessages = {
+  required_fields: "Vsa polja razen gesla so obvezna.",
+  invalid_email: "E-mail ni v veljavnem formatu.",
+  future_birthdate: "Datum rojstva ne more biti v prihodnosti.",
+  email_taken: "Ta e-mail ze uporablja drug uporabnik.",
+  password_mismatch: "Gesli se ne ujemata.",
+  password_too_short: "Geslo mora imeti vsaj 8 znakov.",
+  missing_user: "Izbrani uporabnik ne obstaja vec.",
+  too_many_parents: "Druzina ima lahko najvec dva starsa - admina.",
+  minor_must_be_child: "Mladoletni uporabnik je lahko le otrok.",
+  forbidden: "To lahko ureja le stars - admin."
+};
+
+const pointsErrorMessages = {
+  missing_user: "Izbrani uporabnik ne obstaja vec.",
+  invalid_points: "Vnesi veljavno stevilo tock 0 ali vec.",
+  forbidden: "To lahko ureja le stars - admin."
+};
+
 function showError(elementId, message = "") {
   const el = document.getElementById(elementId);
   if (!el) return;
@@ -24,7 +50,10 @@ function showError(elementId, message = "") {
 
 function clearFieldErrors(form) {
   if (!form) return;
-  form.querySelectorAll(".red").forEach((el) => el.classList.remove("red"));
+
+  form.querySelectorAll(".red").forEach((el) => {
+    el.classList.remove("red");
+  });
 }
 
 function markFieldErrors(form, fieldNames) {
@@ -37,110 +66,55 @@ function markFieldErrors(form, fieldNames) {
 }
 
 function getFamilyErrorMessage(errorCode) {
-  switch (errorCode) {
-    case "missing_family":
-      return "Druzina ne obstaja vec.";
-    case "required_fields":
-      return "Ime in koda druzine sta obvezna.";
-    case "code_taken":
-      return "Ta koda druzine je ze zasedena.";
-    case "forbidden":
-      return "To lahko ureja le stars - admin.";
-    default:
-      return "Posodobitev druzine ni uspela. Poskusi znova.";
-  }
-}
-
-function getFamilyErrorFields(errorCode) {
-  switch (errorCode) {
-    case "required_fields":
-      return ["name", "code"];
-    case "code_taken":
-      return ["code"];
-    default:
-      return [];
-  }
+  return familyErrorMessages[errorCode] ?? "Posodobitev druzine ni uspela. Poskusi znova.";
 }
 
 function getUserErrorMessage(errorCode) {
-  switch (errorCode) {
-    case "required_fields":
-      return "Vsa polja razen gesla so obvezna.";
-    case "invalid_email":
-      return "E-mail ni v veljavnem formatu.";
-    case "future_birthdate":
-      return "Datum rojstva ne more biti v prihodnosti.";
-    case "email_taken":
-      return "Ta e-mail ze uporablja drug uporabnik.";
-    case "password_mismatch":
-      return "Gesli se ne ujemata.";
-    case "password_too_short":
-      return "Geslo mora imeti vsaj 8 znakov.";
-    case "missing_user":
-      return "Izbrani uporabnik ne obstaja vec.";
-    case "too_many_parents":
-      return "Druzina ima lahko najvec dva starsa - admina.";
-    case "minor_must_be_child":
-      return "Mladoletni uporabnik je lahko le otrok.";
-    case "forbidden":
-      return "To lahko ureja le stars - admin.";
-    default:
-      return "Posodobitev ni uspela. Poskusi znova.";
-  }
-}
-
-function getUserErrorFields(errorCode) {
-  switch (errorCode) {
-    case "required_fields":
-      return ["name", "surname", "email", "birthdate", "role"];
-    case "invalid_email":
-    case "email_taken":
-      return ["email"];
-    case "future_birthdate":
-      return ["birthdate"];
-    case "password_mismatch":
-    case "password_too_short":
-      return ["password_1", "password_2"];
-    case "too_many_parents":
-    case "minor_must_be_child":
-      return ["role"];
-    default:
-      return [];
-  }
+  return userErrorMessages[errorCode] ?? "Posodobitev ni uspela. Poskusi znova.";
 }
 
 function getPointsErrorMessage(errorCode) {
-  switch (errorCode) {
-    case "missing_user":
-      return "Izbrani uporabnik ne obstaja vec.";
-    case "invalid_points":
-      return "Vnesi veljavno stevilo tock 0 ali vec.";
-    case "forbidden":
-      return "To lahko ureja le stars - admin.";
-    default:
-      return "Posodobitev tock ni uspela. Poskusi znova.";
-  }
+  return pointsErrorMessages[errorCode] ?? "Posodobitev tock ni uspela. Poskusi znova.";
+}
+
+function getFamilyErrorFields(errorCode) {
+  if (errorCode === "required_fields") return ["name", "code"];
+  if (errorCode === "code_taken") return ["code"];
+  return [];
+}
+
+function getUserErrorFields(errorCode) {
+  if (errorCode === "required_fields") return ["name", "surname", "email", "birthdate", "role"];
+  if (errorCode === "invalid_email" || errorCode === "email_taken") return ["email"];
+  if (errorCode === "future_birthdate") return ["birthdate"];
+  if (errorCode === "password_mismatch" || errorCode === "password_too_short") return ["password_1", "password_2"];
+  if (errorCode === "too_many_parents" || errorCode === "minor_must_be_child") return ["role"];
+  return [];
 }
 
 function getPointsErrorFields(errorCode) {
-  switch (errorCode) {
-    case "invalid_points":
-      return ["points"];
-    default:
-      return [];
-  }
+  if (errorCode === "invalid_points") return ["points"];
+  return [];
 }
 
 function openWindow(windowId) {
-  document.getElementById("add_something_view")?.classList.add("active");
-  document.getElementById(windowId)?.classList.add("active");
+  const overlay = document.getElementById("add_something_view");
+  const windowEl = document.getElementById(windowId);
+
+  if (overlay) overlay.classList.add("active");
+  if (windowEl) windowEl.classList.add("active");
 }
 
 function closeAllWindows() {
-  document.getElementById("add_something_view")?.classList.remove("active");
-  document.getElementById("update_family_window")?.classList.remove("active");
-  document.getElementById("update_user_window")?.classList.remove("active");
-  document.getElementById("update_points_window")?.classList.remove("active");
+  const overlay = document.getElementById("add_something_view");
+  const familyWindow = document.getElementById("update_family_window");
+  const userWindow = document.getElementById("update_user_window");
+  const pointsWindow = document.getElementById("update_points_window");
+
+  if (overlay) overlay.classList.remove("active");
+  if (familyWindow) familyWindow.classList.remove("active");
+  if (userWindow) userWindow.classList.remove("active");
+  if (pointsWindow) pointsWindow.classList.remove("active");
 }
 
 function calculateAgeFromDate(birthdate) {
@@ -166,19 +140,12 @@ function syncUpdateUserRoleOptions() {
 
   const birthdateInput = form.querySelector('input[name="birthdate"]');
   const roleInput = form.querySelector('select[name="role"]');
+
   if (!birthdateInput || !roleInput) return;
 
-  const options = Array.from(roleInput.options);
-
-  const parentOption = options.find((option) =>
-    option.textContent.trim() === "Starš - admin"
-  );
-  const adultOption = options.find((option) =>
-    option.textContent.trim() === "Odrasel"
-  );
-  const childOption = options.find((option) =>
-    option.textContent.trim() === "Otrok"
-  );
+  const parentOption = roleInput.querySelector('option[value="1"]');
+  const adultOption = roleInput.querySelector('option[value="2"]');
+  const childOption = roleInput.querySelector('option[value="3"]');
 
   if (!parentOption || !adultOption || !childOption) return;
 
