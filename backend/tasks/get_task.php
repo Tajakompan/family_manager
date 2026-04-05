@@ -7,7 +7,7 @@ if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
 }
 
 $family_id = (int)$_SESSION["family_id"];
-$user_id   = (int)$_SESSION["user_id"];
+$user_id = (int)$_SESSION["user_id"];
 
 $task_id = isset($_GET["task_id"]) ? (int)$_GET["task_id"] : 0;
 if ($task_id > 0) {

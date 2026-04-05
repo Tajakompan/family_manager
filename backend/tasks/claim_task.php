@@ -7,9 +7,9 @@ if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
 }
 
 $family_id = (int)$_SESSION["family_id"];
-$user_id   = (int)$_SESSION["user_id"];
+$user_id = (int)$_SESSION["user_id"];
 
-$task_id   = (int)($_POST["task_id"] ?? 0);
+$task_id = (int)($_POST["task_id"] ?? 0);
 
 if ($task_id <= 0) { http_response_code(400); exit; }
 

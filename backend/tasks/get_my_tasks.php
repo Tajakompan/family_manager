@@ -7,7 +7,7 @@ if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
 }
 
 $family_id = (int)$_SESSION["family_id"];
-$user_id   = (int)$_SESSION["user_id"];
+$user_id = (int)$_SESSION["user_id"];
 
 $sql = "SELECT t.id, t.name, t.to_do_by, points, creator.name AS created_by,
           GROUP_CONCAT(DISTINCT doer.name ORDER BY doer.name SEPARATOR ', ') AS doers
