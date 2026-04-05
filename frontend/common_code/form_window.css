@@ -29,6 +29,7 @@
 .details_frame{
   background-color: white;
   text-align: center;
+  color:#3c3c3c;
 }
 .details_frame .small_title{
   color:#3c3c3c;
@@ -192,7 +193,7 @@ input.red{
 .check_label{
   cursor: pointer;
   user-select: none;
-  color: #ffffff92;
+  color: #ffffffeb;
   font-weight: 600;
   font-size: 14.5px;
 }
