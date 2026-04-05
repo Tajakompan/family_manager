@@ -2,15 +2,18 @@
 require_once __DIR__ . "/../config.php";
 
 if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
-  header("Location: ../entry/login.php");
-  exit;
+    header("Location: ../entry/login.php");
+    exit;
 }
+
 if (($_SESSION["user_role"] ?? "") !== "Starš - admin") {
     header("Location: ../dashboard/dashboard.php");
     exit;
 }
 
 $family_id = (int)$_SESSION["family_id"];
+session_write_close();
+
 
 $sql = "SELECT a.id, name, surname, email, user_role_id, birthdate, user_points, user_role_name
         FROM app_user a INNER JOIN user_role r ON a.user_role_id = r.id
