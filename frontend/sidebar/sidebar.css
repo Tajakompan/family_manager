@@ -7,11 +7,13 @@
 .sidebar {
     position: fixed;
     top: 0;
+    bottom: -2px;
     left: 0;
     width: var(--sidebar-width);
     bottom: 0;
     height: auto;
     min-height: 0;
+    will-change: transform;
     background: radial-gradient(#323232 0%, #1e1e1e 100%);
     display: flex;
     flex-direction: column;
@@ -20,6 +22,8 @@
     overflow-x: hidden;
     overflow-y: auto;
     z-index: 1000;
+    transform: translateZ(0);
+    backface-visibility: hidden;
     transition: width 220ms ease, box-shadow 220ms ease;
     box-sizing: border-box;
 }
