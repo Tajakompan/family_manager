@@ -1,195 +1,245 @@
-//MENJANJE POGLEDOV DESNE STRANI
-//menja view za obliko prikaza desne strani, v okviru za informacije z gumbom add_event
-function showView(id){
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+function showView(id) {
+  document.querySelectorAll(".view").forEach((view) => {
+    view.classList.remove("active");
+  });
+
+  const target = document.getElementById(id);
+  if (target) {
+    target.classList.add("active");
+  }
 }
-//menja prikaz med okvirom za informaije z gumbom add_event in okvirom s formo brez tega gumba
-function showDesno(id){
-    document.querySelectorAll('.desno').forEach(v => v.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+
+function showDesno(id) {
+  document.querySelectorAll(".desno").forEach((section) => {
+    section.classList.remove("active");
+  });
+
+  const target = document.getElementById(id);
+  if (target) {
+    target.classList.add("active");
+  }
 }
 
+function setFormError(errorId, message) {
+  const errorEl = document.getElementById(errorId);
+  if (errorEl) {
+    errorEl.textContent = message;
+  }
+}
 
-//VALIDACIJA FORME
-const add_event_form = document.querySelector('#add_event_form form');
-if (add_event_form) {
-  add_event_form.addEventListener('submit', (e) => {
-    let ok = true;
-    //preverja nujen vpis
-    const name = add_event_form.querySelector('input[name="name"]');
-    const date = add_event_form.querySelector('input[name="date"]');
-    const time = add_event_form.querySelector('input[name="time"]');
-    const whole_day = add_event_form.querySelector('input[name="whole_day"]');
+function clearFormErrors() {
+  setFormError("error_name", "");
+  setFormError("error_date", "");
+  setFormError("error_time", "");
+}
 
-    // name
-    if (!name || name.value.trim() === "") {
-      document.getElementById("error_name").innerHTML = "Obvezen vpis naziva dogodka!";
-      ok = false;
-    } else {
-      document.getElementById("error_name").innerHTML = "";
+function validateEventForm(form) {
+  let isValid = true;
+
+  const nameInput = form.querySelector('input[name="name"]');
+  const dateInput = form.querySelector('input[name="date"]');
+  const timeInput = form.querySelector('input[name="time"]');
+  const wholeDayInput = form.querySelector('input[name="whole_day"]');
+
+  clearFormErrors();
+
+  if (!nameInput || nameInput.value.trim() === "") {
+    setFormError("error_name", "Obvezen vpis naziva dogodka!");
+    isValid = false;
+  }
+
+  if (!dateInput || dateInput.value.trim() === "") {
+    setFormError("error_date", "Obvezen vpis datuma dogodka!");
+    isValid = false;
+  }
+
+  const wholeDayChecked = wholeDayInput ? wholeDayInput.checked : false;
+
+  if (!wholeDayChecked) {
+    if (!timeInput || timeInput.value.trim() === "") {
+      setFormError("error_time", "Obvezen vpis ure dogodka!");
+      isValid = false;
     }
+  }
 
-    // date
-    if (!date || date.value.trim() === "") {
-      document.getElementById("error_date").innerHTML = "Obvezen vpis datuma dogodka!";
-      ok = false;
+  return isValid;
+}
+
+function fillEventForm(eventData) {
+  const form = document.querySelector("#add_event_form form");
+  if (!form || !eventData) return;
+
+  const nameInput = form.querySelector('input[name="name"]');
+  const dateInput = form.querySelector('input[name="date"]');
+  const wholeDayInput = form.querySelector('input[name="whole_day"]');
+  const timeInput = form.querySelector('input[name="time"]');
+  const locationInput = form.querySelector('input[name="location"]');
+  const descriptionInput = form.querySelector('input[name="description"]');
+  const reminderInput = form.querySelector('input[name="reminder"]');
+  const justForCreatorInput = form.querySelector('input[name="just_for_creator"]');
+
+  if (nameInput) nameInput.value = eventData.name || "";
+  if (dateInput) dateInput.value = selectedDate || "";
+  if (wholeDayInput) wholeDayInput.checked = Number(eventData.whole_day) === 1;
+
+  if (timeInput) {
+    if (Number(eventData.whole_day) === 1) {
+      timeInput.value = "";
     } else {
-      document.getElementById("error_date").innerHTML = "";
+      timeInput.value = eventData.event_time_raw || "";
     }
+  }
 
-    // time oziroma whole_day
-    const wholeDayChecked = whole_day ? whole_day.checked : false;
+  if (locationInput) locationInput.value = eventData.location && eventData.location !== "/" ? eventData.location : "";
+  if (descriptionInput) descriptionInput.value = eventData.description && eventData.description !== "/" ? eventData.description : "";
+  if (reminderInput) reminderInput.value = eventData.reminder_input || "";
+  if (justForCreatorInput) justForCreatorInput.checked = Number(eventData.just_for_creator) === 1;
+}
 
-    if (!wholeDayChecked) {
-      if (!time || time.value.trim() === "") {
-        document.getElementById("error_time").innerHTML = "Obvezen vpis ure dogodka!";
-        ok = false;
-      } else {
-        document.getElementById("error_time").innerHTML = "";
-      }
-    } else {
-      document.getElementById("error_time").innerHTML = "";
+function resetCalendarFormToAddMode() {
+  switchEventToAddMode(window.calMonth, window.calYear);
+  clearFormErrors();
+}
+
+function restoreRightPanelAfterCancel() {
+  showDesno("podrobnosti_dneva");
+
+  if (selectedDate) {
+    showView("view-day-selected");
+    renderEventsForDate(selectedDate);
+  } else {
+    showView("view-empty");
+    if (thisDayEventsContainer) {
+      thisDayEventsContainer.replaceChildren();
     }
+  }
+}
 
-    if (!ok) e.preventDefault();
+const addEventForm = document.querySelector("#add_event_form form");
+
+if (addEventForm) {
+  addEventForm.addEventListener("submit", (e) => {
+    const isValid = validateEventForm(addEventForm);
+    if (!isValid) e.preventDefault();
   });
 }
 
-//ZAPIRANJE FORME
-const cancel_btn = document.getElementById("cancel_btn");
-if (cancel_btn) {
-  cancel_btn.addEventListener("click", (e) => {
+const cancelBtn = document.getElementById("cancel_btn");
+
+if (cancelBtn) {
+  cancelBtn.addEventListener("click", (e) => {
     e.preventDefault();
-
-    // vrni formo v ADD mode - da ni slučajno edit
-    switchEventToAddMode(window.calMonth, window.calYear);
-
-    // počisti errorje za validacijo vpisa
-    document.getElementById("error_name").innerHTML = "";
-    document.getElementById("error_date").innerHTML = "";
-    document.getElementById("error_time").innerHTML = "";
-
-    showDesno('podrobnosti_dneva');
-
-    if (selectedDate) {
-      showView('view-day-selected');
-      renderEventsForDate(selectedDate);
-    } else {
-      showView('view-empty');
-      if (thisDayEventsContainer) thisDayEventsContainer.innerHTML = "";
-    }
+    resetCalendarFormToAddMode();
+    restoreRightPanelAfterCancel();
   });
 }
 
-
-// MENU ... za dodatne možnsti
 document.addEventListener("click", (e) => {
-  //najde klik
-  const btn = e.target.closest(".event_menu_btn");
-  const actionBtn = e.target.closest(".event_action");
+  const menuButton = e.target.closest(".event_menu_btn");
+  const actionButton = e.target.closest(".event_action");
 
-  // klik na ⋯
-  if (btn) {
+  if (menuButton) {
     e.stopPropagation();
-    const card = btn.closest(".one_event");
-    // zapri ostale odprte menije v tem viewju
-    document.querySelectorAll(".one_event.menu-open").forEach(x => {
-      if (x !== card) x.classList.remove("menu-open");
+
+    const card = menuButton.closest(".one_event");
+    if (!card) return;
+
+    document.querySelectorAll(".one_event.menu-open").forEach((openCard) => {
+      if (openCard !== card) {
+        openCard.classList.remove("menu-open");
+      }
     });
+
     card.classList.toggle("menu-open");
     return;
   }
 
-  // klik na akcijo v meniju - kar želiš da naredi
-  if (actionBtn) {
+  if (actionButton) {
     e.stopPropagation();
-    const card = actionBtn.closest(".one_event");
+
+    const card = actionButton.closest(".one_event");
     const eventId = card?.dataset?.id;
-    //pogleda, kater je pritisnjen
-    const action = actionBtn.dataset.action;
-    //ugasne meni
-    card.classList.remove("menu-open");
+    const action = actionButton.dataset.action;
+
+    if (card) card.classList.remove("menu-open");
 
     if (!eventId) return;
 
     if (action === "delete") {
-        if (!confirm("Res želiš izbrisati dogodek?")) return;
-        //pošlje v delete_event.php s potrebnimi atributi za poizvedbo
-        fetch("delete_event.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `id=${encodeURIComponent(eventId)}`
+      const confirmed = window.confirm("Res želiš izbrisati dogodek?");
+      if (!confirmed) return;
+
+      fetch("delete_event.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `id=${encodeURIComponent(eventId)}`
+      })
+        .then((response) => {
+          if (response.ok) {
+            location.reload();
+          } else {
+            alert("Brisanje dogodka ni uspelo.");
+          }
         })
-        .then(() => location.reload());
-    } 
-    else if (action === "edit") {
-        const arr = window.eventsByDate[selectedDate] || [];
-        //V arrayu arr sepravi desni prikaz dogodkov, najde pravega(id) in ga shrani v ev
-        const ev = arr.find(x => String(x.id) === String(eventId));
-        if (!ev) return;
+        .catch(() => {
+          alert("Brisanje dogodka ni uspelo.");
+        });
 
-        showDesno('add_event_form');
-        switchEventToUpdateMode(ev.id, window.calMonth, window.calYear);
-
-        //napolni formo z enakimi informacijami
-        const form = document.querySelector('#add_event_form form');
-        form.querySelector('input[name="name"]').value = ev.name || "";
-        form.querySelector('input[name="date"]').value = selectedDate;
-
-        const wholeDayCb = form.querySelector('input[name="whole_day"]');
-        const timeInp = form.querySelector('input[name="time"]');
-
-        if (wholeDayCb) wholeDayCb.checked = (ev.whole_day === 1);
-        if (timeInp) {
-          timeInp.value = (ev.whole_day === 0) ? (ev.event_time_raw || "") : "";
-        }
-
-        form.querySelector('input[name="location"]').value = (ev.location && ev.location !== "/") ? ev.location : "";
-        form.querySelector('input[name="description"]').value = (ev.description && ev.description !== "/") ? ev.description : "";
-        form.querySelector('input[name="reminder"]').value = ev.reminder_input || "";
-        form.querySelector('input[name="just_for_creator"]').checked = (ev.just_for_creator === 1);
+      return;
     }
+
+    if (action === "edit") {
+      const events = window.eventsByDate[selectedDate] || [];
+      const eventData = events.find((eventItem) => String(eventItem.id) === String(eventId));
+
+      if (!eventData) return;
+
+      showDesno("add_event_form");
+      switchEventToUpdateMode(eventData.id, window.calMonth, window.calYear);
+      clearFormErrors();
+      fillEventForm(eventData);
+    }
+
+    return;
   }
 
-  // klik kjerkoli drugje zapre vse menije
-  document.querySelectorAll(".one_event.menu-open").forEach(x => x.classList.remove("menu-open"));
+  document.querySelectorAll(".one_event.menu-open").forEach((openCard) => {
+    openCard.classList.remove("menu-open");
+  });
 });
 
-//forma namenjena dodajanju dogodka
 function switchEventToAddMode(month, year) {
-  const form = document.querySelector('#add_event_form form');
+  const form = document.querySelector("#add_event_form form");
   if (!form) return;
 
   const selectedUserId = window.selectedUserId || 0;
+  const eventIdInput = document.getElementById("event_id");
+  const submitButton = form.querySelector('button[type="submit"]');
+  const title = document.querySelector("#add_event_form h3");
 
   form.dataset.mode = "add";
   form.action = `add_event.php?month=${encodeURIComponent(month)}&year=${encodeURIComponent(year)}&user_id=${encodeURIComponent(selectedUserId)}`;
 
-  const hid = document.getElementById("event_id");
-  if (hid) hid.value = "";
-
-  form.querySelector('button[type="submit"]').textContent = "Shrani";
-  const h3 = document.querySelector('#add_event_form h3');
-  if (h3) h3.textContent = "Dodaj dogodek:";
+  if (eventIdInput) eventIdInput.value = "";
+  if (submitButton) submitButton.textContent = "Shrani";
+  if (title) title.textContent = "Dodaj dogodek:";
 }
 
-
-//forma namenjena updejtu dogodka
 function switchEventToUpdateMode(eventId, month, year) {
-  const form = document.querySelector('#add_event_form form');
+  const form = document.querySelector("#add_event_form form");
   if (!form) return;
 
   const selectedUserId = window.selectedUserId || 0;
+  const eventIdInput = document.getElementById("event_id");
+  const submitButton = form.querySelector('button[type="submit"]');
+  const title = document.querySelector("#add_event_form h3");
 
   form.dataset.mode = "update";
   form.action = `update_event.php?month=${encodeURIComponent(month)}&year=${encodeURIComponent(year)}&user_id=${encodeURIComponent(selectedUserId)}`;
 
-  const hid = document.getElementById("event_id");
-  if (hid) hid.value = eventId;
-
-  form.querySelector('button[type="submit"]').textContent = "Posodobi";
-  const h3 = document.querySelector('#add_event_form h3');
-  if (h3) h3.textContent = "Uredi dogodek:";
+  if (eventIdInput) eventIdInput.value = eventId;
+  if (submitButton) submitButton.textContent = "Posodobi";
+  if (title) title.textContent = "Uredi dogodek:";
 }
-

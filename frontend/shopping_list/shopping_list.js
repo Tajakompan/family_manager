@@ -1,128 +1,161 @@
-//odpira formo
 function showWindow(id) {
-  document.querySelectorAll(".window").forEach(w => w.classList.remove("active"));
-  document.getElementById(id)?.classList.add("active");
+  const windows = document.querySelectorAll(".window");
+
+  for (let i = 0; i < windows.length; i++) {
+    windows[i].classList.remove("active");
+  }
+
+  const windowElement = document.getElementById(id);
+  if (windowElement) {
+    windowElement.classList.add("active");
+  }
 }
-//zapira formo
+
 function closeWindows() {
-  document.querySelectorAll(".window").forEach(w => w.classList.remove("active"));
+  const windows = document.querySelectorAll(".window");
+  for (let i = 0; i < windows.length; i++) {
+    windows[i].classList.remove("active");
+  }
 }
 
-//odpiranje, zapiranje form
-document.addEventListener("DOMContentLoaded", () => {
-  const add_shop_btn = document.getElementById("add_shop_btn");
-  const cancel_shop_btn = document.getElementById("cancel_shop_btn");
-  const cancel_product_btn = document.getElementById("cancel_product_btn");
-  const add_shop_window = document.getElementById("add_shop_window");
-  const add_product_window = document.getElementById("add_product_window");
-  const add_something_view = document.getElementById("add_something_view");
+function hideProductError() {
+  const productError = document.getElementById("add_product_error");
 
-  //odpre ADD SHOP
-  if (add_shop_btn) {
-    add_shop_btn.addEventListener("click", (e) => {
+  if (productError) {
+    productError.textContent = "";
+    productError.hidden = true;
+  }
+}
+
+function closeShoppingWindows() {
+  const addSomethingView = document.getElementById("add_something_view");
+  const addShopForm = document.getElementById("add_shop_form");
+  const addProductForm = document.getElementById("add_product_form");
+
+  if (addShopForm) addShopForm.reset();
+  if (addProductForm) addProductForm.reset();
+  
+  hideProductError();
+  closeWindows();
+
+  if (addSomethingView) addSomethingView.classList.remove("active");
+}
+
+function getProductErrorMessage(errorCode) {
+  if (errorCode === "required") return "Vsa polja so obvezna.";
+  if (errorCode === "quantity") return "Kvantiteta mora biti vsaj 1.";
+  if (errorCode === "necessity") return "Nujnost ni pravilna.";
+  if (errorCode === "shop") return "Seznam ni izbran.";
+  return "Napaka pri vnosu.";
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const addShopButton = document.getElementById("add_shop_btn");
+  const cancelShopButton = document.getElementById("cancel_shop_btn");
+  const cancelProductButton = document.getElementById("cancel_product_btn");
+  const addShopWindow = document.getElementById("add_shop_window");
+  const addProductWindow = document.getElementById("add_product_window");
+  const addSomethingView = document.getElementById("add_something_view");
+  const addProductForm = document.getElementById("add_product_form");
+  const productError = document.getElementById("add_product_error");
+
+  if (addShopButton) {
+    addShopButton.addEventListener("click", function (e) {
       e.preventDefault();
       showWindow("add_shop_window");
-      add_something_view.classList.add("active");
+
+      if (addSomethingView) {
+        addSomethingView.classList.add("active");
+      }
     });
   }
 
-  // zapre ADD SHOP in resetira input
-  if (cancel_shop_btn) {
-    cancel_shop_btn.addEventListener("click", (e) => {
+  if (cancelShopButton) {
+    cancelShopButton.addEventListener("click", function (e) {
       e.preventDefault();
-      document.getElementById("add_shop_form")?.reset();
-      closeWindows();
-      add_something_view.classList.remove("active");
+      closeShoppingWindows();
     });
   }
 
-
-  // zapre PRODUCT ADD in resetira
-  if (cancel_product_btn) {
-    cancel_product_btn.addEventListener("click", (e) => {
+  if (cancelProductButton) {
+    cancelProductButton.addEventListener("click", function (e) {
       e.preventDefault();
-      document.getElementById("add_product_form")?.reset();
-      closeWindows();
-      add_something_view.classList.remove("active");
+      closeShoppingWindows();
     });
   }
 
-  // ESC isto zapre window in resetira
-  document.addEventListener("keydown", (e) => {
+  document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") {
-      closeWindows();
-      add_something_view.classList.remove("active");
-      document.getElementById("add_shop_form")?.reset();
-      document.getElementById("add_product_form")?.reset();
+      closeShoppingWindows();
     }
   });
 
-  // da klik v window ne pobegne
-  add_shop_window?.addEventListener("click", (e) => e.stopPropagation());
-  add_product_window?.addEventListener("click", (e) => e.stopPropagation());
-
-  const add_product_form = document.getElementById("add_product_form");
-  const product_error = document.getElementById("add_product_error");
-
-if (add_product_form) {
-  add_product_form.addEventListener("submit", function (e) {
-    const product_name = add_product_form.product_name.value.trim();
-    const product_amount = add_product_form.product_amount.value.trim();
-    const product_unit = add_product_form.product_unit.value.trim();
-    const product_quantity = Number(add_product_form.product_quantity.value);
-
-    product_error.innerHTML = "";
-    product_error.hidden = true;
-
-    if (product_name === "" || product_amount === "" || product_unit === "") {
-      e.preventDefault();
-      product_error.innerHTML = "Vsa polja so obvezna.";
-      product_error.hidden = false;
-      return;
-    }
-
-    if (product_quantity <= 0) {
-      e.preventDefault();
-      product_error.innerHTML = "Kvantiteta mora biti vsaj 1.";
-      product_error.hidden = false;
-      return;
-    }
-  });
-}
-
-const params = new URLSearchParams(window.location.search);
-const product_error_code = params.get("product_error");
-const shop_id = params.get("shop_id");
-
-if (product_error_code && product_error) {
-  showWindow("add_product_window");
-  document.getElementById("add_something_view")?.classList.add("active");
-
-  if (shop_id) {
-    document.getElementById("product_shop_id").value = shop_id;
+  if (addShopWindow) {
+    addShopWindow.addEventListener("click", function (e) {
+      e.stopPropagation();
+    });
   }
 
-  if (product_error_code === "required") {
-    product_error.innerHTML = "Vsa polja so obvezna.";
-  } else if (product_error_code === "quantity") {
-    product_error.innerHTML = "Kvantiteta mora biti vsaj 1.";
-  } else if (product_error_code === "necessity") {
-    product_error.innerHTML = "Nujnost ni pravilna.";
-  } else if (product_error_code === "shop") {
-    product_error.innerHTML = "Seznam ni izbran.";
-  } else {
-    product_error.innerHTML = "Napaka pri vnosu.";
+  if (addProductWindow) {
+    addProductWindow.addEventListener("click", function (e) {
+      e.stopPropagation();
+    });
   }
 
-  product_error.hidden = false;
+  if (addProductForm) {
+    addProductForm.addEventListener("submit", function (e) {
+      const productName = addProductForm.product_name.value.trim();
+      const productAmount = addProductForm.product_amount.value.trim();
+      const productUnit = addProductForm.product_unit.value.trim();
+      const productQuantity = Number(addProductForm.product_quantity.value);
 
-  params.delete("product_error");
-  params.delete("shop_id");
-  const new_url = `${window.location.pathname}${params.toString() ? "?" + params.toString() : ""}`;
-  window.history.replaceState({}, "", new_url);
-}
+      if (productError) {
+        productError.textContent = "";
+        productError.hidden = true;
+      }
 
+      if (productName === "" || productAmount === "" || productUnit === "") {
+        e.preventDefault();
+        if (productError) {
+          productError.textContent = "Vsa polja so obvezna.";
+          productError.hidden = false;
+        }
+        return;
+      }
+
+      if (productQuantity <= 0) {
+        e.preventDefault();
+        if (productError) {
+          productError.textContent = "Kvantiteta mora biti vsaj 1.";
+          productError.hidden = false;
+        }
+      }
+    });
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const productErrorCode = params.get("product_error");
+  const shopId = params.get("shop_id");
+
+  if (productErrorCode && productError) {
+    showWindow("add_product_window");
+
+    if (addSomethingView) {
+      addSomethingView.classList.add("active");
+    }
+
+    if (shopId) {
+      const shopIdInput = document.getElementById("product_shop_id");
+      if (shopIdInput) shopIdInput.value = shopId;
+    }
+
+    productError.textContent = getProductErrorMessage(productErrorCode);
+    productError.hidden = false;
+
+    params.delete("product_error");
+    params.delete("shop_id");
+
+    const newUrl = window.location.pathname + (params.toString() ? "?" + params.toString() : "");
+    window.history.replaceState({}, "", newUrl);
+  }
 });
-
-
-

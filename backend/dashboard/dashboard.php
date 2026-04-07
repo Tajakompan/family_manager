@@ -20,6 +20,7 @@ else
 <html lang="sl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Familoop - dashboard</title>
     <link rel="stylesheet" href="../../frontend/dashboard/dashboard.css">
     <link rel="stylesheet" href="../../frontend/sidebar/sidebar.css">
@@ -34,7 +35,6 @@ else
         <main class="horizontal_flex">
             <div class="content">
                 <div class="gray grid">
-                    <div class="col">
                         <div class="pin" id="task_pin">
                             <div class="small_pin_title">moja opravila</div>
                             <div class="mini_main">
@@ -48,9 +48,7 @@ else
                                 <ul id="shopping_list"></ul>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="col">
                         <div class="pin" id="day_time">
                             <div class="clock_layout" id="clock_layout">
                                 <div class="clock_face" aria-label="Analogna ura">
@@ -73,9 +71,7 @@ else
                                 <ul id="storage_list"></ul>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="col">
                         <div class="pin" id="events_pin">
                             <div class="small_pin_title">današnji dogodki</div>
                             <div class="mini_main">
@@ -89,7 +85,7 @@ else
                                 <ul id="meals_list"></ul>
                             </div>
                         </div>
-                    </div>
+
                 </div>
             </div>
             <div class="left profile_card">

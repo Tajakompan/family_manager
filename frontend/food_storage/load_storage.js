@@ -1,5 +1,7 @@
-function update_storage_id_in_url() {
+function updateStorageIdInUrl() {
   const chosen = document.querySelector(".chosen_storage");
+  if (!chosen) return;
+
   const storageId = chosen.dataset.storageId;
   const url = new URL(window.location.href);
   url.searchParams.set("storage_id", storageId);
@@ -7,9 +9,16 @@ function update_storage_id_in_url() {
 }
 
 async function fetchJson(url, options = {}) {
-  const res = await fetch(url, { credentials: "same-origin", ...options });
-  if (!res.ok) throw new Error(url + " HTTP " + res.status);
-  return await res.json();
+  const response = await fetch(url, {
+    credentials: "same-origin",
+    ...options
+  });
+
+  if (!response.ok) {
+    throw new Error(url + " HTTP " + response.status);
+  }
+
+  return await response.json();
 }
 
 function createOnRightGroup(storageName, productNames) {
@@ -23,20 +32,22 @@ function createOnRightGroup(storageName, productNames) {
   const list = document.createElement("ul");
   list.className = "eat_soon_items";
 
-  for (const name of productNames) {
+  productNames.forEach((name) => {
     const item = document.createElement("li");
     item.textContent = name;
     list.appendChild(item);
-  }
+  });
 
   group.appendChild(title);
   group.appendChild(list);
+
   return group;
 }
 
-async function loadEatSoonPanel() {
-  const listEl = document.getElementById("eat_soon_list");
-  const emptyEl = document.getElementById("eat_soon_empty");
+async function loadExpirePanel(listId, emptyId, expiredValue) {
+  const listEl = document.getElementById(listId);
+  const emptyEl = document.getElementById(emptyId);
+
   if (!listEl || !emptyEl) return;
 
   listEl.innerHTML = "";
@@ -46,11 +57,18 @@ async function loadEatSoonPanel() {
   let hasItems = false;
 
   for (const storage of storages) {
-    const products = await fetchJson(`get_expiring_storage.php?storage_id=${storage.id}&expired=${0}`);
-    if (!products.length) continue;
+    const products = await fetchJson(
+      `get_expiring_storage.php?storage_id=${storage.id}&expired=${expiredValue}`
+    );
+
+    if (!Array.isArray(products) || products.length === 0) {
+      continue;
+    }
 
     hasItems = true;
-    listEl.appendChild(createOnRightGroup(storage.name, products.map(product => product.name)));
+    listEl.appendChild(
+      createOnRightGroup(storage.name, products.map((product) => product.name))
+    );
   }
 
   if (!hasItems) {
@@ -58,98 +76,67 @@ async function loadEatSoonPanel() {
   }
 }
 
-async function loadExpiredPanel() {
-  const listEl = document.getElementById("expired_list");
-  const emptyEl = document.getElementById("expired_empty");
-  if (!listEl || !emptyEl) return;
+function switchChosenStorage(id) {
+  document.querySelectorAll(".chosen_storage").forEach((item) => {
+    item.classList.remove("chosen_storage");
+  });
 
-  listEl.innerHTML = "";
-  emptyEl.hidden = true;
+  const chosen = document.getElementById(id);
+  if (!chosen) return;
 
-  const storages = await fetchJson("get_storage_locations.php");
-  let hasItems = false;
+  chosen.classList.add("chosen_storage");
 
-  for (const storage of storages) {
-    const products = await fetchJson(`get_expiring_storage.php?storage_id=${storage.id}&expired=${1}`);
-    if (!products.length) continue;
-
-    hasItems = true;
-    listEl.appendChild(createOnRightGroup(storage.name, products.map(product => product.name)));
+  const storageInput = document.getElementById("storage_id_input");
+  if (storageInput) {
+    storageInput.value = chosen.dataset.storageId;
   }
 
-  if (!hasItems) {
-    emptyEl.hidden = false;
-  }
-}
-
-function switch_chosen_storage(id){
-    document.querySelectorAll('.chosen_storage').forEach(v => v.classList.remove('chosen_storage'));
-    document.getElementById(id).classList.add('chosen_storage');
-    document.getElementById('storage_id_input').value = document.getElementById(id).dataset.storageId;
-    update_storage_id_in_url();
+  updateStorageIdInUrl();
 }
 
 function loadFood(storageId) {
-  fetch(`get_right_storage.php?storage_id=${storageId}`)
-    .then(r => r.text())
-    .then(html => {
-      const tbody = document.getElementById('storage_table_body');
-      const content = document.querySelector('.content');
-      const emptyText = document.getElementById('storage_empty_text');
+  fetch(`get_right_storage.php?storage_id=${storageId}`, {
+    credentials: "same-origin"
+  })
+    .then((response) => response.text())
+    .then((html) => {
+      const tbody = document.getElementById("storage_table_body");
+      const content = document.querySelector(".content");
+      const emptyText = document.getElementById("storage_empty_text");
+
+      if (!tbody || !content || !emptyText) return;
 
       tbody.innerHTML = html;
-      const hasRows = tbody.querySelector('tr') !== null;
 
-      content.classList.toggle('is-empty', !hasRows);
-      if (emptyText) emptyText.hidden = hasRows;
+      const hasRows = tbody.querySelector("tr") !== null;
+      content.classList.toggle("is-empty", !hasRows);
+      emptyText.hidden = hasRows;
 
-      colorExpireDates(5); 
+      colorExpireDates(5);
+    })
+    .catch((error) => {
+      console.error("loadFood failed:", error);
     });
 }
 
-
-document.querySelectorAll('.nav_item').forEach(btn => {
-    btn.addEventListener('click', () => {
-        switch_chosen_storage(btn.id);
-        const storageId = Number(btn.dataset.storageId);
-        loadFood(storageId);
-    })
-})
-
-window.addEventListener('DOMContentLoaded', () => {
-  const chosen = document.querySelector('.nav_item.chosen_storage');
-  loadEatSoonPanel().catch(console.error);
-  loadExpiredPanel().catch(console.error);
-  if (!chosen) return;
-  const storageId = chosen.dataset.storageId;
-  document.getElementById('storage_id_input').value = document.querySelector('.nav_item.chosen_storage').dataset.storageId;
-  update_storage_id_in_url();
-  loadFood(storageId);
-});
-
 function colorExpireDates(colIndex) {
-  const tbody = document.querySelector("#storage_table_body");
+  const tbody = document.getElementById("storage_table_body");
   if (!tbody) return;
 
   const now = new Date();
-  now.setHours(0, 0, 0, 0); // danes ob polnoči
+  now.setHours(0, 0, 0, 0);
 
-  tbody.querySelectorAll("tr").forEach(row => {
+  tbody.querySelectorAll("tr").forEach((row) => {
     const cell = row.children[colIndex];
     if (!cell) return;
 
-    const txt = cell.innerText.trim();
-    const time = parseDate(txt);
+    const text = cell.innerText.trim();
+    const time = parseDate(text);
     if (time === null) return;
 
     const diffDays = Math.ceil((time - now.getTime()) / (1000 * 60 * 60 * 24));
 
-    cell.classList.remove(
-      "expired",
-      "expiring-soon",
-      "expiring-warning",
-      "fresh"
-    );
+    cell.classList.remove("expired", "expiring-soon", "expiring-warning", "fresh");
 
     if (diffDays < 0) {
       cell.classList.add("expired");
@@ -163,4 +150,26 @@ function colorExpireDates(colIndex) {
   });
 }
 
+document.querySelectorAll(".nav_item").forEach((button) => {
+  button.addEventListener("click", () => {
+    switchChosenStorage(button.id);
+    loadFood(button.dataset.storageId);
+  });
+});
 
+window.addEventListener("DOMContentLoaded", async () => {
+  const chosen = document.querySelector(".nav_item.chosen_storage");
+  const storageInput = document.getElementById("storage_id_input");
+
+  loadExpirePanel("eat_soon_list", "eat_soon_empty", 0).catch(console.error);
+  loadExpirePanel("expired_list", "expired_empty", 1).catch(console.error);
+
+  if (!chosen) return;
+
+  if (storageInput) {
+    storageInput.value = chosen.dataset.storageId;
+  }
+
+  updateStorageIdInUrl();
+  loadFood(chosen.dataset.storageId);
+});

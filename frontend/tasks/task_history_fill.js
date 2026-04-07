@@ -2,41 +2,44 @@ async function loadTaskHistory() {
   const container = document.getElementById("task_history_list");
   if (!container) return;
 
-
-  const res = await fetch("get_task_history.php", {
+  const response = await fetch("get_task_history.php", {
     method: "GET",
-    headers: { "Accept": "application/json" },
+    headers: {
+        Accept: "application/json"
+    },
     credentials: "same-origin"
   });
 
-  if (!res.ok) {
-    container.innerHTML = `<div class="history_empty">Napaka (${res.status})</div>`;
+  if (!response.ok) {
+    container.innerHTML = '<div class="history_empty">Napaka (' + response.status + ")</div>";
     return;
   }
 
-  const data = await res.json();
+  const data = await response.json();
 
   if (!Array.isArray(data) || data.length === 0) {
-    container.innerHTML = `<div class="history_empty">Ni opravil v zadnjih 7 dneh.</div>`;
+    container.innerHTML = '<div class="history_empty">Ni opravil v zadnjih 7 dneh.</div>';
     return;
   }
 
   container.innerHTML = "";
 
-  for (const user of data) {
+  for (let i = 0; i < data.length; i++) {
+    const user = data[i];
     const block = document.createElement("div");
-    block.className = "history_user";
-
     const title = document.createElement("div");
-    title.className = "history_user_name";
-    title.textContent = user.name ?? "";
-
     const list = document.createElement("ul");
+    const tasks = user.tasks || [];
+
+    block.className = "history_user";
+    title.className = "history_user_name";
     list.className = "history_tasks";
 
-    for (const task of user.tasks ?? []) {
+    title.textContent = user.name ?? "";
+
+    for (let j = 0; j < tasks.length; j++) {
       const li = document.createElement("li");
-      li.textContent = task.task_name ?? "";
+      li.textContent = tasks[j].task_name ?? "";
       list.appendChild(li);
     }
 
@@ -45,4 +48,3 @@ async function loadTaskHistory() {
     container.appendChild(block);
   }
 }
-

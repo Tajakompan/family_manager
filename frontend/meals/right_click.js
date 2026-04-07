@@ -1,128 +1,133 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
   const table = document.getElementById("table_1");
-  const row_menu = document.getElementById("row_menu"); // Uredi/Izbriši zapis
+  const rowMenu = document.getElementById("row_menu");
 
-  let rightClickedMealId = null;
+  let selectedMealId = "";
+  let selectedMealElement = null;
 
-  if (!table || !row_menu) return;
+  if (!table || !rowMenu) return;
 
-  function hideMenus() {
-    row_menu.style.display = "none";
-    table.querySelectorAll(".context-active").forEach(el => el.classList.remove("context-active"));
-    table.querySelectorAll(".context-active-row").forEach(el => el.classList.remove("context-active-row"));
+  function hideMenu() {
+    rowMenu.style.display = "none";
+    selectedMealId = "";
+
+    if (selectedMealElement) {
+      selectedMealElement.classList.remove("context-active");
+      selectedMealElement = null;
+    }
   }
 
-  function positionMenu(menu, e) {
-    menu.style.display = "flex";
+  function positionMenu(event) {
+    rowMenu.style.display = "flex";
 
-    const w = menu.offsetWidth;
-    const h = menu.offsetHeight;
+    const menuWidth = rowMenu.offsetWidth;
+    const menuHeight = rowMenu.offsetHeight;
 
-    let x = e.clientX;
-    let y = e.clientY;
+    let x = event.clientX;
+    let y = event.clientY;
 
-    if (x + w > window.innerWidth) x = window.innerWidth - w - 5;
-    if (y + h > window.innerHeight) y = window.innerHeight - h - 5;
-
-    menu.style.left = `${x}px`;
-    menu.style.top = `${y}px`;
-  }
-
-    function openMealEditFromMeal(meal) {
-        const add_something_view = document.getElementById("add_something_view");
-        const add_meal_window = document.getElementById("add_meal_window");
-        const form = document.getElementById("add_meal_form");
-        if (!form || !add_meal_window || !add_something_view) return;
-
-        // title + gumb
-        add_meal_window.querySelector(".title").textContent = "Uredi obrok:";
-        const submitBtn = document.getElementById("add_new_meal_btn");
-        if (submitBtn) submitBtn.textContent = "Posodobi";
-
-        // hidden task_id
-        let mealIdInput = form.querySelector('input[name="meal_id"]');
-        if (!mealIdInput) {
-            mealIdInput = document.createElement("input");
-            mealIdInput.type = "hidden";
-            mealIdInput.name = "meal_id";
-            form.appendChild(mealIdInput);
-        }
-        mealIdInput.value = String(meal.id ?? "");
-
-        // IMPORTANT: nastavi endpoint za update (ustvari ga na backendu)
-        form.action = "update_meal_in_db.php";
-
-        // fill fields
-        const nameInput = form.querySelector('input[name="new_meal"]');
-
-        if (nameInput) nameInput.value = meal.name ?? "";
-
-        // odpri modal
-        showWindow("add_meal_window");
-        add_something_view.classList.add("active");
+    if (x + menuWidth > window.innerWidth) {
+      x = window.innerWidth - menuWidth - 5;
     }
 
-//DESNI KLIK NA OBROK
-// KLIK NA OBROK
-table.addEventListener("click", (e) => {
-  const chosen = e.target.closest(".has_meal");
-  if (!chosen) return;
+    if (y + menuHeight > window.innerHeight) {
+      y = window.innerHeight - menuHeight - 5;
+    }
 
-  e.preventDefault();
-  e.stopPropagation();
-  hideMenus();
+    rowMenu.style.left = x + "px";
+    rowMenu.style.top = y + "px";
+  }
 
-  rightClickedMealId = chosen.dataset.mealId || chosen.closest(".has_meal")?.dataset.mealId;
-  if (!rightClickedMealId) return;
+  table.addEventListener("contextmenu", function (event) {
+    const clickedMeal = event.target.closest(".has_meal");
 
-  chosen.classList.add("context-active");
-  positionMenu(row_menu, e);
-});
+    if (!clickedMeal) return;
 
-  // zapiranje
-  document.addEventListener("click", hideMenus);
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") hideMenus(); });
-  window.addEventListener("scroll", hideMenus, { passive: true });
-  window.addEventListener("resize", hideMenus);
+    event.preventDefault();
+    event.stopPropagation();
 
-  // da se ne odpre browser default meni na meniju
-  row_menu.addEventListener("contextmenu", (e) => e.preventDefault());
+    hideMenu();
 
-  // klik v meniju naj ne zapre
-  row_menu.addEventListener("click", (e) => e.stopPropagation());
+    selectedMealId = clickedMeal.dataset.mealId || "";
+    selectedMealElement = clickedMeal;
 
-  //DELETE
-  row_menu.querySelector(".delete")?.addEventListener("click", () => {
-    if (!rightClickedMealId) return;
-    if (!confirm("Izbrišem ta obrok?")) return;
+    if (!selectedMealId) {
+      hideMenu();
+      return;
+    }
 
-    fetch("delete_meal.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `meal_id=${encodeURIComponent(rightClickedMealId)}`
-    }).then(() => location.reload());
+    selectedMealElement.classList.add("context-active");
+    positionMenu(event);
   });
 
-  //EDIT
-  row_menu?.querySelector(".edit")?.addEventListener("click", async () => {
-    if (!rightClickedMealId) return;
+  document.addEventListener("click", function () {
+    hideMenu();
+  });
 
-    try {
-      const res = await fetch(`get_meal.php?meal_id=${encodeURIComponent(rightClickedMealId)}`);
-        const data = await res.json();
-
-
-      if (!data.ok || !data.meal) {
-        alert("Napaka pri nalaganju obroka");
-        return;
+  document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        hideMenu();
       }
+  });
 
-      openMealEditFromMeal(data.meal);
-      hideMenus();
+  window.addEventListener("scroll", hideMenu, { passive: true });
+  window.addEventListener("resize", hideMenu);
 
-    } catch (err) {
-      console.error(err);
-      alert("Napaka pri povezavi s strežnikom");
-    }
+  rowMenu.addEventListener("click", function (event) {
+    event.stopPropagation();
+  });
+
+  rowMenu.addEventListener("contextmenu", function (event) {
+    event.preventDefault();
+  });
+
+  const deleteButton = rowMenu.querySelector(".delete");
+
+  if (deleteButton) {
+    deleteButton.addEventListener("click", function () {
+      if (!selectedMealId) return;
+      if (!confirm("Izbrišem ta obrok?")) return;
+      
+      fetch("delete_meal.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "meal_id=" + encodeURIComponent(selectedMealId)
+      }).then(function () {
+        location.reload();
+      });
+    });
+  }
+
+  const editButton = rowMenu.querySelector(".edit");
+  if(!editButton) return;
+  
+  editButton.addEventListener("click", function () {
+    if (!selectedMealId) return;
+
+    fetch("get_meal.php?meal_id=" + encodeURIComponent(selectedMealId))
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        if (!data.ok || !data.meal) {
+         alert("Napaka pri nalaganju obroka");
+          return;
+        }
+
+        hideMenu();
+
+        openMealWindow("edit", {
+          name: data.meal.name || "",
+          date: data.meal.date || "",
+          type: data.meal.meal_category || "",
+          id: data.meal.id || ""
+        });
+      })
+      .catch(function (error) {
+        console.error(error);
+        alert("Napaka pri povezavi s strežnikom");
+      });
   });
 });

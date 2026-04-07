@@ -1,20 +1,13 @@
-body{
-    margin: 0;
-}
-
-.layout{
-    display: flex;
-}
-
 .vertical_flex{
     display: flex;
     flex-direction: column;
-    margin-left: 15vw;
-    width: calc(100% - 15vw);
+    margin-left: var(--sidebar-width, 15vw);
+    width: calc(100% - var(--sidebar-width, 15vw));
     min-height: 100vh;
     height: fit-content;
     background-color: #3c3c3c;
 }
+
 .horizontal_flex{
     display: flex;
     flex-direction: row;
@@ -45,24 +38,28 @@ body{
     border-radius: 10px;
     align-items: start;
 }
-.grid{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-    gap: 20px;
+
+.gray.grid {
+    column-count: 3;
+    column-gap: 20px;
+    display: block;
 }
+
 
 .profile_card{
     background: linear-gradient(165deg, #666666 0%, #575757 100%);
     border-radius: 14px;
-    padding: 22px 18px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 16px;
     border: 1px solid #ffffff10;
-    box-shadow: 0 14px 28px#00000026;
+    box-shadow: 0 14px 28px #00000026;
     transition: box-shadow 240ms ease;
+    box-sizing: border-box;
 }
+
 
 .profile_card:hover{
     box-shadow: 0 20px 32px #00000030;
@@ -84,26 +81,27 @@ body{
 
 .profile_field{
     width: 100%;
-    max-width: 250px;
+    max-width: none;
     min-height: 42px;
     background: #efefef;
     color: #282828;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     align-items: center;
     padding: 16px 14px;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     font-size: 13px;
     text-align: center;
     border-radius: 13px;
     box-shadow: 0 7px 16px #00000014;
+    box-sizing: border-box;
 }
 
 .profile_field .name{
-    font-size: 33px;
+    font-size: 24px;
     font-weight: 600;
-    line-height: 1.05;
+    line-height: 1.08;
     max-width: 230px;
 }
 
@@ -117,29 +115,31 @@ body{
 }
 
 .profile_field .email{
-    font-size: 18px;
-    line-height: 1.2;
+    font-size: 15px;
+    line-height: 1.25;
     overflow-wrap: anywhere;
     word-break: break-word;
-    color:#474747;
+    color: #474747;
 }
 
 .profile_btn{
-    margin-top: 14px;
-    width: 60%;
-    max-width: 250px;
-    min-height: 40px;
+    margin-top: 4px;
+    width: fit-content;
+    min-width: 180px;
+    max-width: 100%;
+    min-height: 42px;
+    padding: 0 18px;
+    box-sizing: border-box;
     border: 0;
     background: linear-gradient(180deg, #b6ea6b 0%, #b6ea6b 100%);
     color: #2f2f2f;
-    font-size: 20px;
+    font-size: 16px;
     border-radius: 13px;
     cursor: pointer;
     text-transform: uppercase;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: auto;
     font-weight: 600;
     box-shadow: 0 8px 16px #00000022;
     transition: transform 180ms ease, box-shadow 220ms ease, filter 220ms ease;
@@ -166,8 +166,8 @@ body{
 
 .update_user .two_columns{
     display: grid;
-    grid-template-columns: 1fr 1fr;
     gap: 12px 16px;
+    grid-template-columns: 1fr 1fr;
 }
 
 .update_user .field{
@@ -199,17 +199,20 @@ body{
     font-weight: 600;
 }
 
-.pin{
-  height: fit-content;
-  min-height: 170px;
-  width: 100%;
-  background-color: white;
-  margin-bottom: 20px;
-  border: none;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
+.pin {
+    display: inline-flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 170px;
+    margin: 0 0 20px 0;
+    background-color: white;
+    border: none;
+    border-radius: 8px;
+    box-sizing: border-box;
+    break-inside: avoid;
+    page-break-inside: avoid;
 }
+
 
 #day_time{
     justify-content: center;
@@ -220,7 +223,7 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 20px;
 }
 
 .clock_layout.is-column{
@@ -315,11 +318,6 @@ body{
 .clock_date{
     font-size: 15px;
     color: #4a4a4a;
-}
-
-.col{
-    display: flex;
-    flex-direction: column;
 }
 
 .small_pin_title{
@@ -448,18 +446,92 @@ body{
     opacity: 0.8;
 }
 
-@media (max-width: 1200px){
-    .gray{
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+#day_time .clock_layout{
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+}
+
+#day_time .clock_meta{
+    min-width: 122px;
+    text-align: left;
+}
+
+
+@media (max-width: 1350px){
+    .gray.grid {
+        column-count: 2;
+    }
+
+    .left.profile_card{
+        padding: 18px 14px;
+        gap: 14px;
+    }
+
+    .avatar{
+        width: min(100px, 100%);
+    }
+
+    .profile_field{
+        max-width: 100%;
+        padding: 14px 12px;
+        gap: 8px;
+    }
+
+    .profile_field .name{
+        font-size: 24px;
+        line-height: 1.1;
+        max-width: 100%;
+    }
+
+    .profile_field .role{
+        max-width: 100%;
+        font-size: 15px;
+    }
+
+    .profile_field .email{
+        font-size: 15px;
+        line-height: 1.3;
+    }
+
+    .profile_btn{
+        width: 100%;
+        max-width: none;
+        min-height: 42px;
+        font-size: 17px;
+        padding: 0 12px;
     }
 }
 
-@media (max-width: 800px){
-    .gray{
-        grid-template-columns: 1fr;
+
+@media (max-width: 1200px){
+    .horizontal_flex{
+        flex-direction: column;
+        gap: 20px;
+        align-items: stretch;
     }
 
-    .update_user .two_columns{
-        grid-template-columns: 1fr;
+    .content{
+        width: auto;
+        margin: 2vh 2vw 0 2vw;
+    }
+
+    .left.profile_card{
+        width: min(420px, calc(100% - 4vw));
+        margin: 0 2vw 2vh 2vw;
+    }
+    
+}
+
+@media (max-width: 700px){
+    .gray.grid {
+        column-count: 1;
+    }
+}
+
+@media (max-width: 500px){
+    .clock_layout {
+        gap: 10px;
     }
 }

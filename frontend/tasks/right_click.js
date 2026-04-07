@@ -1,164 +1,133 @@
-const my_tasks_container = document.getElementById("my_tasks_container");
-const other_tasks_container = document.getElementById("other_tasks_container");
-const container = document.getElementById("big_container");
-const row_menu = document.getElementById("row_menu"); 
-const add_something_view = document.getElementById("add_something_view");
+document.addEventListener("DOMContentLoaded", function () {
+  const myTasksContainer = document.getElementById("my_tasks_container");
+  const otherTasksContainer = document.getElementById("other_tasks_container");
+  const container = document.getElementById("big_container");
+  const rowMenu = document.getElementById("row_menu");
 
+  let selectedTaskId = "";
+  let selectedPin = null;
 
-let rightClickedPinId = null;
+  if (!myTasksContainer || !otherTasksContainer || !container || !rowMenu) return;
 
-function hideMenus() {
-  if (row_menu) row_menu.style.display = "none";
-  my_tasks_container.querySelectorAll(".context-active").forEach(el => el.classList.remove("context-active"));
-  my_tasks_container.querySelectorAll(".context-active-row").forEach(el => el.classList.remove("context-active-row"));
-  other_tasks_container.querySelectorAll(".context-active").forEach(el => el.classList.remove("context-active"));
-  other_tasks_container.querySelectorAll(".context-active-row").forEach(el => el.classList.remove("context-active-row"));
-}
+  function hideMenu() {
+    rowMenu.style.display = "none";
+    selectedTaskId = "";
 
-document.addEventListener("DOMContentLoaded", () => {
-  container.addEventListener("contextmenu", (e) => {
-    const pin = e.target.closest(".pin");
-    if (!pin) return;
+    if (selectedPin) {
+      selectedPin.classList.remove("context-active");
+      selectedPin = null;
+    }
+  }
 
-    e.preventDefault();
-    hideMenus();
+  function getTaskFormData(task) {
+    return {
+      id: task.id ?? "",
+      name: task.name ?? "",
+      details: task.details ?? "",
+      date: task.to_do_by ?? "",
+      points: task.points ?? 2,
+      noDate: String(task.no_date ?? "0") === "1" || !task.to_do_by
+    };
+  }
 
-    rightClickedPinId = pin.dataset.pinId;
-    if (!rightClickedPinId) return;
+  container.addEventListener("contextmenu", function (e) {
+      const pin = e.target.closest(".pin");
+      if (!pin) return;
 
-    pin.classList.add("context-active");
-    if (row_menu) positionMenu(row_menu, e);
+      e.preventDefault();
+      hideMenu();
+
+      selectedTaskId = pin.dataset.pinId || "";
+
+      if (!selectedTaskId) return;
+
+      selectedPin = pin;
+      selectedPin.classList.add("context-active");
+
+      if (typeof positionMenu === "function") {
+        positionMenu(rowMenu, e);
+      } 
+      else {
+        rowMenu.style.display = "flex";
+        rowMenu.style.left = e.clientX + "px";
+        rowMenu.style.top = e.clientY + "px";
+      }
   });
 
-  //zapiranje menija
-  document.addEventListener("click", hideMenus);
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") hideMenus(); });
-  window.addEventListener("scroll", hideMenus, { passive: true });
-  window.addEventListener("resize", hideMenus);
+  document.addEventListener("click", hideMenu);
 
-  //IZBRIŠI - v meniju
-  row_menu?.querySelector(".delete")?.addEventListener("click", () => {
-    if (!rightClickedPinId) return;
-
-    if (!confirm("Ali si prepričan, da želiš izbrisati to opravilo?")) {
-      return;
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+        hideMenu();
     }
+  });
 
+  window.addEventListener("scroll", hideMenu, { passive: true });
+  window.addEventListener("resize", hideMenu);
+
+  rowMenu.addEventListener("click", function (e) {
+    e.stopPropagation();
+  });
+
+  rowMenu.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+  });
+
+  rowMenu.querySelector(".delete")?.addEventListener("click", function () {
+    if (!selectedTaskId) return;
+
+    if (!confirm("Ali si prepričan, da želiš izbrisati to opravilo?")) return;
+    
     fetch("delete_pin.php", {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `task_id=${encodeURIComponent(rightClickedPinId)}`
-    })
-      .then(() => location.reload());
+      headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: "task_id=" + encodeURIComponent(selectedTaskId)
+    }).then(function () {
+      location.reload();
+    });
   });
 
-  //UREDI - v meniju
-  row_menu?.querySelector(".edit")?.addEventListener("click", async () => {
-    if (!rightClickedPinId) return;
+  rowMenu.querySelector(".edit")?.addEventListener("click", async function () {
+    if (!selectedTaskId) return;
 
     try {
-      const res = await fetch(`get_task.php?task_id=${encodeURIComponent(rightClickedPinId)}`);
-      const data = await res.json();
+      const response = await fetch("get_task.php?task_id=" + encodeURIComponent(selectedTaskId));
+      const data = await response.json();
 
       if (!data.ok || !data.task) {
         alert("Napaka pri nalaganju opravila");
         return;
       }
 
-      openTaskEditFromTask(data.task);
-      hideMenus();
-
-    } catch (err) {
-      console.error(err);
+      hideMenu();
+      openTaskWindow("edit", getTaskFormData(data.task));
+    } 
+    catch (error) {
+      console.error(error);
       alert("Napaka pri povezavi s strežnikom");
     }
   });
 
-  //PODROBNOSTI - v meniju
-  row_menu?.querySelector(".details")?.addEventListener("click", async () => {
-    if (!rightClickedPinId) return;
+  rowMenu.querySelector(".details")?.addEventListener("click", async function () {
+    if (!selectedTaskId) return;
 
     try {
-      const res = await fetch(`get_task.php?task_id=${encodeURIComponent(rightClickedPinId)}`);
-      const data = await res.json();
+      const response = await fetch("get_task.php?task_id=" + encodeURIComponent(selectedTaskId));
+      const data = await response.json();
 
       if (!data.ok || !data.task) {
         alert("Napaka pri nalaganju opravila");
         return;
       }
-      openDetails(data.task);
-      hideMenus();
 
-    } catch (err) {
-      console.error(err);
+      hideMenu();
+      openDetailsWindow(data.task);
+    } 
+    catch (error) {
+      console.error(error);
       alert("Napaka pri povezavi s strežnikom");
     }
   });
-});  
-
-//izpolni podatke v formo
-function openTaskEditFromTask(task) {
-  const add_something_view = document.getElementById("add_something_view");
-  const add_task_window = document.getElementById("add_task_window");
-  const form = document.getElementById("add_task_form");
-  if (!form || !add_task_window || !add_something_view) return;
-
-  //drug naslov in drug gumb
-  add_task_window.querySelector(".title").textContent = "Uredi opravilo:";
-  const submitBtn = document.getElementById("add_new_task_btn");
-  submitBtn.textContent = "Posodobi";
-
-  //hidden task id set
-  let taskIdInput = form.querySelector('input[name="task_id"]');
-  taskIdInput.value = String(task.id ?? "");
-
-  //spremeni cilj forme
-  form.action = "update_task_in_db.php";
-
-  form.querySelector('input[name="new_task"]').value = task.name ?? "";
-  form.querySelector('[name="details"]').value = task.details ?? "";
-  const pointsInput = form.querySelector('input[name="points"]');
-  if (pointsInput) {
-    pointsInput.value = task.points ?? 2;
-    if (window.currentUserRole === "Otrok") {
-      pointsInput.readOnly = true;
-      pointsInput.title = "Otrok ne more spreminjati tock opravila.";
-    } else {
-      pointsInput.readOnly = false;
-      pointsInput.title = "";
-    }
-  }
-
-
-  const dateInput = form.querySelector('input[name="to_do_by"]');
-  const noDateCheckbox = form.querySelector('input[name="no_date"]');
-
-  noDateCheckbox.checked = String(task.no_date ?? "0") === "1" || !task.to_do_by;
-
-  if (dateInput) {
-    if (noDateCheckbox.checked) {
-      dateInput.value = "";
-      dateInput.disabled = true;
-    } else {
-      dateInput.disabled = false;
-      dateInput.value = task.to_do_by ?? "";
-    }
-  }
-
-  showWindow("add_task_window");
-  add_something_view.classList.add("active");
-}
-
-//odpre podrobnosti
-function openDetails(task) {
-  const frame = document.getElementById("details_frame");
-  if (!frame) return;
-
-  const details = frame.querySelector(".details");
-  details.textContent = task.details?.trim() || "Ni podrobnosti.";
-
-  showWindow("details_frame");
-  add_something_view.classList.add("active");
-}
-
-
+});

@@ -1,148 +1,187 @@
-// polnjenje pinov s seznami
+function openProductWindowForShop(shopId) {
+  const addSomethingView = document.getElementById("add_something_view");
+  const form = document.getElementById("add_product_form");
+  const shopIdInput = document.getElementById("product_shop_id");
+  const productError = document.getElementById("add_product_error");
+
+  if (!form || !shopIdInput) return;
+  
+  form.reset();
+  shopIdInput.value = String(shopId);
+
+  if (productError) {
+    productError.textContent = "";
+    productError.hidden = true;
+  }
+
+  showWindow("add_product_window");
+
+  if (addSomethingView) {
+    addSomethingView.classList.add("active");
+  }
+}
+
 async function loadShoppingPins() {
   const container = document.getElementById("pins_container");
   const template = document.getElementById("shopping_pin_template");
-  
+
+  if (!container || !template) return;
 
   container.innerHTML = "";
+  const response = await fetch("get_shops.php");
 
-  //dobi trgovine
-  const res = await fetch("get_shops.php");
-  if (!res.ok) throw new Error("get_shops.php HTTP " + res.status);
-  const shops = await res.json();
-  //če ni nobene
-  if (shops.length === 0) {
+  if (!response.ok) {
+    throw new Error("get_shops.php HTTP " + response.status);
+  }
+
+  const shops = await response.json();
+
+  if (!Array.isArray(shops) || shops.length === 0) {
     container.innerHTML = "<p>Ni dodanih trgovin.</p>";
     return;
   }
 
-  //za vsako trgovino nardi pin
-  for (const shop of shops) {
+  for (let i = 0; i < shops.length; i++) {
+    const shop = shops[i];
     const clone = template.content.cloneNode(true);
 
     const pin = clone.querySelector(".pin");
-    if (pin) pin.dataset.shopId = shop.id;
-
-    const shopNameEl = clone.querySelector(".shop_name");
+    const shopNameElement = clone.querySelector(".shop_name");
     const tbody = clone.querySelector(".shopping_list_table_body");
-    const addBtn = clone.querySelector(".add_btn");
+    const addButton = clone.querySelector(".add_btn");
 
-    shopNameEl.textContent = shop.name;
-    shopNameEl.dataset.shopId = shop.id;
-    tbody.id = `shop_${shop.id}_tbody`;
-
-    addBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-
-      showWindow("add_product_window");
-      document.getElementById("add_something_view")?.classList.add("active");
-
-      const form = document.getElementById("add_product_form");
-      if (!form) return;
-
-      form.reset();
-
-      const hidden = form.querySelector("input[name='shop_id']");
-      if (!hidden) return;
-
-      hidden.value = String(shop.id);
-      console.log("hidden shop set to:", hidden.value);
-    });
-
+    if (pin) pin.dataset.shopId = shop.id;
+    if (shopNameElement) {
+      shopNameElement.textContent = shop.name;
+      shopNameElement.dataset.shopId = shop.id;
+    }
+    if (tbody) tbody.id = "shop_" + shop.id + "_tbody";
+    if (addButton) {
+      addButton.addEventListener("click", function (e) {
+        e.preventDefault();
+        openProductWindowForShop(shop.id);
+      });
+    }
     container.appendChild(clone);
     loadShoppingListForShop(shop.id);
   }
 }
 
-function loadShoppingListForShop(shop_id) {
-  fetch(`get_shopping_list.php?shop_id=${shop_id}`)
-    .then(r => r.ok ? r.text() : Promise.reject("HTTP " + r.status))
-    .then(html => {
-      const tbody = document.getElementById(`shop_${shop_id}_tbody`);
-      if (tbody) {
-        tbody.innerHTML = html || `<tr><td colspan="4" style="text-align: center; border: none; height: 200px">Prazen seznam</td></tr>`;
-      }
+function loadShoppingListForShop(shopId) {
+  fetch("get_shopping_list.php?shop_id=" + encodeURIComponent(shopId))
+    .then(function (response) {
+        if (!response.ok) {
+            throw new Error("HTTP " + response.status);
+        }
+        return response.text();
     })
-    .catch(err => {
-      console.error("Napaka pri shop_id", shop_id, err);
-      const tbody = document.getElementById(`shop_${shop_id}_tbody`);
-      if (tbody) {
-        tbody.innerHTML = `<tr><td colspan="4">Napaka pri nalaganju.</td></tr>`;
-      }
+    .then(function (html) {
+        const tbody = document.getElementById("shop_" + shopId + "_tbody");
+
+        if (!tbody) return;
+        if (html) tbody.innerHTML = html;
+        else tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; border: none; height: 200px">Prazen seznam</td></tr>';
+    })
+    .catch(function (error) {
+        console.error("Napaka pri shop_id", shopId, error);
+        const tbody = document.getElementById("shop_" + shopId + "_tbody");
+        if (tbody) tbody.innerHTML = '<tr><td colspan="4">Napaka pri nalaganju.</td></tr>';
     });
 }
 
-document.addEventListener("change", async (e) => {
+document.addEventListener("change", async function (e) {
   if (!e.target.classList.contains("check-item")) return;
+  
+  const checkbox = e.target;
+  const id = checkbox.dataset.id;
+  const purchased = checkbox.checked ? 1 : 0;
+  const row = checkbox.closest("tr");
 
-  const cb = e.target;
-  const id = cb.dataset.id;
-  const purchased = cb.checked ? 1 : 0;
-
-  const res = await fetch("update_item_purchased.php", {
+  if (!id || !row) return;
+  
+  await fetch("update_item_purchased.php", {
     method: "POST",
-    headers: {"Content-Type": "application/x-www-form-urlencoded"},
-    body: `id=${id}&purchased=${purchased}`
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: "id=" + encodeURIComponent(id) + "&purchased=" + encodeURIComponent(purchased)
   });
 
-  const row = cb.closest("tr");
   row.classList.toggle("done", purchased === 1);
 
   const tbody = row.parentElement;
-  if (purchased === 1) {
-    tbody.appendChild(row);
-  } else {
-    tbody.prepend(row);
-  }
-  if (typeof loadStorePins === "function") {
-    loadStorePins().catch(console.error);
-  }
+
+  if (!tbody) return;
+
+  if (purchased === 1) tbody.appendChild(row);
+  else tbody.prepend(row);
+
+  if (typeof loadStorePins === "function") loadStorePins().catch(console.error);
 });
 
 const qtyTimers = new Map();
 
-document.addEventListener("input", (e) => {
+document.addEventListener("input", function (e) {
   if (!e.target.classList.contains("qty-input")) return;
-
-  const inp = e.target;
-  const id = inp.dataset.id;
-  const val = parseInt(inp.value, 10);
+  
+  const input = e.target;
+  const id = input.dataset.id;
 
   if (!id) return;
+  
+  if (qtyTimers.has(id)) {
+      clearTimeout(qtyTimers.get(id));
+  }
 
-  // basic clamp
-  if (Number.isNaN(val) || val < 1) return;
+  qtyTimers.set(
+    id,
+    setTimeout(async function () {
+      const quantity = parseInt(input.value, 10);
 
-  // debounce na isti id
-  if (qtyTimers.has(id)) clearTimeout(qtyTimers.get(id));
+      if (Number.isNaN(quantity) || quantity < 1) return;
 
-  qtyTimers.set(id, setTimeout(async () => {
-    try {
-      const res = await fetch("update_quantity.php", {
-        method: "POST",
-        headers: {"Content-Type": "application/x-www-form-urlencoded"},
-        body: `id=${encodeURIComponent(id)}&quantity=${encodeURIComponent(val)}`
-      });
+      try {
+        const response = await fetch("update_quantity.php", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body:
+              "id=" +
+              encodeURIComponent(id) +
+              "&quantity=" +
+              encodeURIComponent(quantity)
+        });
 
-      const text = await res.text();
-      if (!res.ok) throw new Error(`HTTP ${res.status}: ${text}`);
+        const text = await response.text();
 
-      let data;
-      try { data = JSON.parse(text); } catch { throw new Error("Invalid JSON: " + text); }
-      if (!data.ok) throw new Error(data.error || "Update failed");
+        if (!response.ok) {
+            throw new Error("HTTP " + response.status + ": " + text);
+        }
 
-      // optional: mali “saved” feedback
-      inp.classList.add("saved");
-      setTimeout(() => inp.classList.remove("saved"), 300);
-    } catch (err) {
-      console.error(err);
-      inp.classList.add("save-error");
-      setTimeout(() => inp.classList.remove("save-error"), 800);
-    }
-  }, 350));
+        const data = JSON.parse(text);
+
+        if (!data.ok) {
+            throw new Error(data.error || "Update failed");
+        }
+
+        input.classList.add("saved");
+
+        setTimeout(function () {
+            input.classList.remove("saved");
+        }, 300);
+      } 
+      catch (error) {
+        console.error(error);
+        input.classList.add("save-error");
+
+        setTimeout(function () {
+            input.classList.remove("save-error");
+        }, 800);
+      }
+    }, 350));
 });
 
-
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", function () {
   loadShoppingPins().catch(console.error);
 });

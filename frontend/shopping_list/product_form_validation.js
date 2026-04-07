@@ -1,69 +1,76 @@
-// --- SHOPPING LIST: auto-fill amount + unit po product_name (enako kot ti dela drugje) ---
+document.addEventListener("DOMContentLoaded", function () {
+  const nameInput = document.querySelector('#add_product_form input[name="product_name"]');
+  const amountInput = document.querySelector('#add_product_form input[name="product_amount"]');
+  const unitInput = document.querySelector('#add_product_form input[name="product_unit"]');
 
-const slNameInp   = document.querySelector('#add_product_form input[name="product_name"]');
-const slAmountInp = document.querySelector('#add_product_form input[name="product_amount"]');
-const slUnitInp   = document.querySelector('#add_product_form input[name="product_unit"]');
+  let timer = null;
 
-let slT = null;
+  if (!nameInput) return;
 
-function slSetHint(msg, isOk=true){
-  if(!slNameInp) return;
+  function setHint(message, isOk) {
+    let hint = document.getElementById("sl_product_hint");
 
-  let el = document.getElementById("sl_product_hint");
-  if(!el){
-    el = document.createElement("div");
-    el.id = "sl_product_hint";
-    el.style.marginTop = "6px";
-    slNameInp.insertAdjacentElement("afterend", el);
-  }
-  el.textContent = msg;
-  el.classList.toggle("warn", !isOk);
-  el.style.display = msg ? "block" : "none";
-}
+    if (!hint) {
+      hint = document.createElement("div");
+      hint.id = "sl_product_hint";
+      hint.style.marginTop = "6px";
+      nameInput.insertAdjacentElement("afterend", hint);
+    }
 
-function slDebouncedCheck(){
-  if(slT) clearTimeout(slT);
-  slT = setTimeout(slCheckName, 250);
-}
-
-async function slCheckName(){
-  if(!slNameInp) return;
-
-  const name = slNameInp.value.trim();
-  if(name.length < 2){
-    slSetHint("");
-    return;
+    hint.textContent = message;
+    hint.classList.toggle("warn", !isOk);
+    hint.style.display = message ? "block" : "none";
   }
 
-  // IMPORTANT: pot mora biti pravilna glede na shopping_list.php!
-  // Če je check_product.php v ISTI mapi kot shopping_list.php, pusti "check_product.php".
-  // Če je v drugi mapi, popravi npr. "../food/check_product.php"
-  const url = new URL("../food_storage/check_product.php", window.location.href);
-  url.searchParams.set("name", name);
+  async function checkName() {
+    const name = nameInput.value.trim();
 
-  const res = await fetch(url.toString());
-  if(!res.ok){
-    slSetHint("Napaka pri preverjanju izdelka.", false);
-    return;
+    if (name.length < 2) {
+      setHint("", true);
+      return;
+    }
+
+    const url = new URL("../food_storage/check_product.php", window.location.href);
+    url.searchParams.set("name", name);
+
+    try {
+      const response = await fetch(url.toString());
+
+      if (!response.ok) {
+        setHint("Napaka pri preverjanju izdelka.", false);
+        return;
+      }
+
+      const data = await response.json();
+
+      if (!data.ok) {
+        setHint("Napaka pri preverjanju izdelka.", false);
+        return;
+      }
+
+      if (data.exists) {
+        if (amountInput && amountInput.value.trim() === "") {
+            amountInput.value = data.product.amount ?? "";
+        }
+
+        if (unitInput && unitInput.value.trim() === "") {
+          unitInput.value = data.product.unit ?? "";
+        }
+      }
+      setHint("", true);
+    } 
+    catch (error) {
+      setHint("Napaka pri preverjanju izdelka.", false);
+    }
   }
 
-  const data = await res.json();
-  if(!data.ok){
-    slSetHint("Napaka pri preverjanju izdelka.", false);
-    return;
+  function debouncedCheck() {
+      if (timer) {
+        clearTimeout(timer);
+      }
+      timer = setTimeout(checkName, 250);
   }
 
-  if(data.exists){
-    // predizpolni samo, če je prazno (da ne prepiše uporabnice)
-    if (slAmountInp && slAmountInp.value.trim() === "") slAmountInp.value = data.product.amount ?? "";
-    if (slUnitInp && slUnitInp.value.trim() === "") slUnitInp.value = data.product.unit ?? "";
-
-  }
-}
-
-// listenerji (isto kot pri tebi)
-slNameInp?.addEventListener("input", slDebouncedCheck);
-slNameInp?.addEventListener("blur", slCheckName);
-
-
-
+  nameInput.addEventListener("input", debouncedCheck);
+  nameInput.addEventListener("blur", checkName);
+});

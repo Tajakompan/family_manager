@@ -7,16 +7,16 @@ function escapeHtml(s) {
     .replaceAll("'", "&#039;");
 }
 
-//odpira formo
+
 function showWindow(id) {
   document.querySelectorAll(".window").forEach(w => w.classList.remove("active"));
   document.getElementById(id)?.classList.add("active");
 }
-//zapira formo
+
 function closeWindows() {
   document.querySelectorAll(".window").forEach(w => w.classList.remove("active"));
 }
-//pozicija menija right click contextmenu
+
 function positionMenu(menu, e) {
   menu.style.display = "flex";
 

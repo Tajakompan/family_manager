@@ -2,43 +2,45 @@ async function loadPoints() {
   const tbody = document.getElementById("points_tbody");
   if (!tbody) return;
 
-  const res = await fetch("get_points.php", {
+  const response = await fetch("get_points.php", {
     method: "GET",
-    headers: { "Accept": "application/json" },
+    headers: {
+        Accept: "application/json"
+    },
     credentials: "same-origin"
   });
 
-  if (!res.ok) {
-    tbody.innerHTML = `<tr><td colspan="2">Napaka (${res.status})</td></tr>`;
+  if (!response.ok) {
+    tbody.innerHTML = "<tr><td colspan='2'>Napaka (" + response.status + ")</td></tr>";
     return;
   }
 
-  const data = await res.json();
+  const data = await response.json();
 
   if (!Array.isArray(data) || data.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="2">Ni podatkov</td></tr>`;
+    tbody.innerHTML = "<tr><td colspan='2'>Ni podatkov</td></tr>";
     return;
   }
 
   tbody.innerHTML = "";
 
   for (let i = 0; i < data.length; i++) {
-    let row = data[i];
+    const row = data[i];
+    const tr = document.createElement("tr");
+    const nameTd = document.createElement("td");
+    const pointsTd = document.createElement("td");
 
-    let tr = document.createElement("tr");
+    nameTd.textContent = row.name ?? "";
+    pointsTd.textContent = row.points ?? 0;
 
-    let tdName = document.createElement("td");
-    tdName.textContent = row.name ?? "";
-
-    let tdPoints = document.createElement("td");
-    tdPoints.textContent = row.points ?? 0;
-
-    tr.appendChild(tdName);
-    tr.appendChild(tdPoints);
+    tr.appendChild(nameTd);
+    tr.appendChild(pointsTd);
     tbody.appendChild(tr);
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadPoints().catch(err => console.error(err));
+document.addEventListener("DOMContentLoaded", function () {
+  loadPoints().catch(function (error) {
+    console.error(error);
+  });
 });

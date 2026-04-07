@@ -12,7 +12,7 @@ body.loading {
   visibility: hidden;
 }
 
-/* Enoten videz gumbov: subtilna senca + mini hover animacija (brez spremembe velikosti) */
+/*vsi gumbi*/
 button,
 .button_space,
 .btn,
@@ -30,7 +30,7 @@ button,
 }
 
 button:hover,
-.button_space,
+.button_space:hover,
 .btn:hover,
 .store_btn:hover,
 .add_btn:hover,

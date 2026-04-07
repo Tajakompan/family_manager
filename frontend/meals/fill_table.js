@@ -1,145 +1,155 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const DAYS = ["NED", "PON", "TOR", "SRE", "ČET", "PET", "SOB"];
+    const MEAL_COLUMNS = {
+        breakfast: 1,
+        lunch: 2,
+        dinner: 3
+    };
 
-    let DAYS = ["NED", "PON", "TOR", "SRE", "ČET", "PET", "SOB"];
-    let tbody = document.getElementById("tbody");
+    const tbody = document.getElementById("tbody");
+
+    if (!tbody) {
+        return;
+    }
 
     function toISODate(date) {
-        let d = new Date(date);
-        d.setHours(0, 0, 0, 0);
+        const newDate = new Date(date);
+        newDate.setHours(0, 0, 0, 0);
 
-        let year = d.getFullYear();
-        let month = String(d.getMonth() + 1).padStart(2, "0");
-        let day = String(d.getDate()).padStart(2, "0");
+        const year = newDate.getFullYear();
+        const month = String(newDate.getMonth() + 1).padStart(2, "0");
+        const day = String(newDate.getDate()).padStart(2, "0");
 
         return year + "-" + month + "-" + day;
     }
 
-    function formatSlDate(date) {
-        let dayName = DAYS[date.getDay()];
-        let day = date.getDate();
-        let month = date.getMonth() + 1;
-        let year = date.getFullYear();
-        if(date.getDay() == 0 || date.getDay() == 6)
-            return "<span class='weekend'>" + dayName + ", " + day + ". " + month + ". " + year + "</span>";
-        else
-            return dayName + ", " + day + ". " + month + ". " + year;
+    function createAddImage() {
+        const image = document.createElement("img");
+        image.src = "../img/add_circle_24dp_3F3F3F_FILL0_wght400_GRAD0_opsz24.svg";
+        image.alt = "Dodaj obrok";
+        return image;
     }
 
-    function createAddLink(dateISO, mealType) {
-        let a = document.createElement("div");
-        a.className = "hover_add add_meal_btn";
-        a.dataset.date = dateISO;
-        a.dataset.mealType = mealType;
-        a.innerHTML = "<img src='../img/add_circle_24dp_3F3F3F_FILL0_wght400_GRAD0_opsz24.svg' alt='Dodaj obrok'>";
-        return a;
+    function getSlDateText(date) {
+        const dayName = DAYS[date.getDay()];
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+
+        return dayName + ", " + day + ". " + month + ". " + year;
     }
 
-    function createMealCell(dateISO, mealType, mealName = "", mealId) {
-    const el = document.createElement("div");
-    el.className = "meal_cell add_meal_btn";
-    el.dataset.date = dateISO;
-    el.dataset.mealType = mealType;
-    el.dataset.mealId = mealId;
+    function createDayCell(date) {
+        const td = document.createElement("td");
+        const text = getSlDateText(date);
 
-    if (mealName) {
-        el.classList.add("has_meal", "hover_add");
-        el.textContent = mealName;
-    } else {
-        el.classList.add("empty", "hover_add");
-        el.innerHTML = "<img src='../img/add_circle_24dp_3F3F3F_FILL0_wght400_GRAD0_opsz24.svg' alt='Dodaj obrok'>";
+        if (date.getDay() === 0 || date.getDay() === 6) {
+            const span = document.createElement("span");
+            span.className = "weekend";
+            span.textContent = text;
+            td.appendChild(span);
+        } else {
+            td.textContent = text;
+        }
+
+        return td;
     }
 
-    return el;
-}
+    function createMealButton(dateISO, mealType, mealName, mealId) {
+        const button = document.createElement("div");
+        button.className = "meal_cell add_meal_btn hover_add";
+        button.dataset.date = dateISO;
+        button.dataset.mealType = mealType;
 
+        if (mealId !== undefined && mealId !== null && mealId !== "") {
+            button.dataset.mealId = mealId;
+        }
 
-    // =============================
-    // 1) Vedno naredimo 10 vrstic
-    // =============================
-    tbody.innerHTML = "";
+        if (mealName) {
+            button.classList.add("has_meal");
+            button.textContent = mealName;
+        } else {
+            button.classList.add("empty");
+            button.appendChild(createAddImage());
+        }
 
-    let today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    for (let i = 0; i < 10; i++) {
-        let d = new Date(today);
-        d.setDate(today.getDate() + i);
-
-        let dateISO = toISODate(d);
-
-        let tr = document.createElement("tr");
-        tr.setAttribute("data-date", dateISO);
-
-        // Dan
-        let tdDay = document.createElement("td");
-        tdDay.innerHTML = formatSlDate(d);
-        tr.appendChild(tdDay);
-
-        // Zajtrk
-        let tdB = document.createElement("td");
-        tdB.appendChild(createAddLink(dateISO, "breakfast"));
-        tr.appendChild(tdB);
-
-        // Kosilo
-        let tdL = document.createElement("td");
-        tdL.appendChild(createAddLink(dateISO, "lunch"));
-        tr.appendChild(tdL);
-
-        // Večerja
-        let tdD = document.createElement("td");
-        tdD.appendChild(createAddLink(dateISO, "dinner"));
-        tr.appendChild(tdD);
-
-        tbody.appendChild(tr);
+        return button;
     }
 
-    // =============================
-    // 2) Preberemo obroke iz get_meals.php (POST)
-    // =============================
-    // get_meals.php bere $_POST["meal_id"], čeprav ga ne rabiš za ta query.
-    // Da ne bo notice/undefined, mu pošljemo meal_id=0.
-    let formData = new FormData();
-    formData.append("meal_id", "0");
+    function createMealCell(dateISO, mealType) {
+        const td = document.createElement("td");
+        td.appendChild(createMealButton(dateISO, mealType, "", ""));
+        return td;
+    }
+
+    function createRow(date) {
+        const tr = document.createElement("tr");
+        const dateISO = toISODate(date);
+
+        tr.dataset.date = dateISO;
+        tr.appendChild(createDayCell(date));
+        tr.appendChild(createMealCell(dateISO, "breakfast"));
+        tr.appendChild(createMealCell(dateISO, "lunch"));
+        tr.appendChild(createMealCell(dateISO, "dinner"));
+
+        return tr;
+    }
+
+    function fillEmptyTable() {
+        tbody.innerHTML = "";
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        for (let i = 0; i < 10; i++) {
+            const date = new Date(today);
+            date.setDate(today.getDate() + i);
+            tbody.appendChild(createRow(date));
+        }
+    }
+
+    function showMeals(meals) {
+        for (let i = 0; i < meals.length; i++) {
+            const meal = meals[i];
+
+            if (!meal.date || !meal.meal_category || !meal.name) {
+                continue;
+            }
+
+            const tr = tbody.querySelector('tr[data-date="' + meal.date + '"]');
+
+            if (!tr) {
+                continue;
+            }
+
+            const columnIndex = MEAL_COLUMNS[meal.meal_category];
+
+            if (!columnIndex) {
+                continue;
+            }
+
+            const cells = tr.getElementsByTagName("td");
+            cells[columnIndex].innerHTML = "";
+            cells[columnIndex].appendChild(
+                createMealButton(meal.date, meal.meal_category, meal.name, meal.id)
+            );
+        }
+    }
+
+    fillEmptyTable();
 
     fetch("get_meals.php")
         .then(function (response) {
             return response.json();
         })
         .then(function (data) {
-            // data = [{id, name, meal_category, date}, ...]
-
-            for (let i = 0; i < data.length; i++) {
-                let row = data[i];
-                let id = row.id;
-                let date = row.date;                 // "2026-02-26"
-                let category = row.meal_category;    // "breakfast" / "lunch" / "dinner"
-                let name = row.name;                 // "kosmiči"
-
-                if (!date || !category || !name) continue;
-
-                let tr = tbody.querySelector('tr[data-date="' + date + '"]');
-                if (!tr) continue;
-
-                let cells = tr.getElementsByTagName("td");
-
-                // 0=Dan, 1=Zajtrk, 2=Kosilo, 3=Večerja
-                if (category === "breakfast") {
-                    cells[1].innerHTML = "";
-                    cells[1].appendChild(createMealCell(date, "breakfast", name, id));
-                }
-                if (category === "lunch") {
-                    cells[2].innerHTML = "";
-                    cells[2].appendChild(createMealCell(date, "lunch", name, id));
-                }
-                if (category === "dinner") {
-                    cells[3].innerHTML = "";
-                    cells[3].appendChild(createMealCell(date, "dinner", name, id));
-                }
-
+            if (!Array.isArray(data)) {
+                return;
             }
+
+            showMeals(data);
         })
         .catch(function (error) {
             console.log("Napaka pri branju obrokov:", error);
         });
-
 });

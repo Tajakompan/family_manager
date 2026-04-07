@@ -7,10 +7,10 @@ body {
     display: flex;
     width: 100vw;
     min-height: 100vh;
+    height: 100%;
     flex-direction: row;
     font-family: 'Open Sans', sans-serif;
     background: #f3f6ef;
-    overflow: hidden;
 }
 
 .left {

@@ -1,59 +1,118 @@
-const new_storage_btn = document.getElementById("add_storage_location");
-const new_product_btn = document.getElementById("add_product");
-const new_category_btn = document.getElementById("add_category");
+const newStorageBtn = document.getElementById("add_storage_location");
+const newProductBtn = document.getElementById("add_product");
+const newCategoryBtn = document.getElementById("add_category");
 
-const cancel_new_storage_btn = document.getElementById("cancel_new_storage_btn");
-const cancel_new_product_btn = document.getElementById("cancel_new_product_btn");
-const cancel_category_btn = document.getElementById("cancel_category_btn");
+const cancelNewStorageBtn = document.getElementById("cancel_new_storage_btn");
+const cancelNewProductBtn = document.getElementById("cancel_new_product_btn");
+const cancelCategoryBtn = document.getElementById("cancel_category_btn");
 
-const add_something_view = document.getElementById("add_something_view");
+const overlay = document.getElementById("add_something_view");
 
-const add_storage_location_window = document.querySelector(".add_storage_location_window");
-const add_product_window = document.querySelector(".add_product_window");
-const add_category_window = document.querySelector(".add_category_window");
+const addStorageWindow = document.querySelector(".add_storage_location_window");
+const addProductWindow = document.querySelector(".add_product_window");
+const addCategoryWindow = document.querySelector(".add_category_window");
 
+const addStorageForm = document.getElementById("add_storage_form");
+const addProductForm = document.getElementById("add_product_form");
+const addCategoryForm = document.getElementById("add_category_form");
 
-new_storage_btn.addEventListener("click", () =>{
-    add_something_view.classList.add("active");
-    if(add_product_window.classList.contains("active")) add_product_window.classList.remove("active");
-    if(add_category_window.classList.contains("active")) add_category_window.classList.remove("active");
-    add_storage_location_window.classList.add("active");
-})
+function clearRedFields(form) {
+  if (!form) return;
 
-new_product_btn.addEventListener("click", () =>{
-    add_something_view.classList.add("active");
-    if(add_storage_location_window.classList.contains("active")) add_storage_location_window.classList.remove("active");
-    if(add_category_window.classList.contains("active")) add_category_window.classList.remove("active");
-    add_product_window.classList.add("active");
-})
+  form.querySelectorAll(".red").forEach((field) => {
+    field.classList.remove("red");
+  });
+}
 
-new_category_btn.addEventListener("click", () =>{
-    add_something_view.classList.add("active");
-    if(add_storage_location_window.classList.contains("active")) add_storage_location_window.classList.remove("active");
-    if(add_product_window.classList.contains("active")) add_product_window.classList.remove("active");
-    add_category_window.classList.add("active");
-})
+function clearProductHint() {
+  const hint = document.getElementById("fs_product_hint");
+  if (!hint) return;
 
-cancel_new_storage_btn.addEventListener("click", () =>{
-    add_something_view.classList.remove("active");
-    add_storage_location_input.classList.remove("red");
-    add_storage_location_input.placeholder = "";
-    add_storage_location_window.classList.remove("active");
-})
+  hint.textContent = "";
+  hint.style.display = "none";
+  hint.classList.remove("warn");
+}
 
-cancel_new_product_btn.addEventListener("click", () =>{
-    add_something_view.classList.remove("active");
-    add_product_input.forEach(one => {
-        one.classList.remove("red");
-        one.placeholder = "";
-    })
-    add_product_window.classList.remove("active");
-    switchToAddMode();
-})
+function closeAllWindows() {
+  overlay?.classList.remove("active");
+  addStorageWindow?.classList.remove("active");
+  addProductWindow?.classList.remove("active");
+  addCategoryWindow?.classList.remove("active");
+}
 
-cancel_category_btn.addEventListener("click", () =>{
-    add_something_view.classList.remove("active");
-    add_category_input.classList.remove("red");
-    add_category_input.placeholder = "";
-    add_category_window.classList.remove("active");
-})
+function openWindow(windowEl) {
+  closeAllWindows();
+  overlay?.classList.add("active");
+  windowEl?.classList.add("active");
+}
+
+function getChosenStorageId() {
+  const chosen = document.querySelector(".nav_item.chosen_storage");
+  return chosen?.dataset.storageId || "";
+}
+
+function switchToAddMode() {
+  if (!addProductForm) return;
+
+  const title = document.querySelector(".add_product_window .title");
+  const submitBtn = document.getElementById("add_new_product_btn");
+  const foodLocationInput = addProductForm.querySelector('input[name="food_location_id"]');
+  const storageInput = addProductForm.querySelector('input[name="storage_id"]');
+  const existingProductInput = addProductForm.querySelector('input[name="product_id_existing"]');
+
+  addProductForm.action = "add_product_in_db.php";
+
+  if (title) title.textContent = "Dodaj nov izdelek v zalogo:";
+  if (submitBtn) submitBtn.textContent = "Dodaj";
+  if (foodLocationInput) foodLocationInput.value = "";
+  if (storageInput) storageInput.value = getChosenStorageId();
+  if (existingProductInput) existingProductInput.value = "";
+
+  clearProductHint();
+}
+
+window.switchToAddMode = switchToAddMode;
+
+newStorageBtn?.addEventListener("click", () => {
+  clearRedFields(addStorageForm);
+  openWindow(addStorageWindow);
+});
+
+newProductBtn?.addEventListener("click", () => {
+  clearRedFields(addProductForm);
+  switchToAddMode();
+  openWindow(addProductWindow);
+});
+
+newCategoryBtn?.addEventListener("click", () => {
+  clearRedFields(addCategoryForm);
+  openWindow(addCategoryWindow);
+});
+
+cancelNewStorageBtn?.addEventListener("click", () => {
+  clearRedFields(addStorageForm);
+  closeAllWindows();
+});
+
+cancelNewProductBtn?.addEventListener("click", () => {
+  clearRedFields(addProductForm);
+  switchToAddMode();
+  closeAllWindows();
+});
+
+cancelCategoryBtn?.addEventListener("click", () => {
+  clearRedFields(addCategoryForm);
+  closeAllWindows();
+});
+
+overlay?.addEventListener("click", (e) => {
+  if (e.target === overlay) {
+    closeAllWindows();
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeAllWindows();
+  }
+});

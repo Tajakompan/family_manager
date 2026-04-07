@@ -1,86 +1,102 @@
 function parseNumber(txt) {
-  // podpira "1,5" in "1.5" in "1 200"
-  const cleaned = txt.replace(/\s/g, "").replace(",", ".");
-  const n = Number(cleaned);
-  return Number.isFinite(n) ? n : null;
-}
-
-function parseDate(txt) {
-  // podpira ISO: 2026-01-30
-  if (/^\d{4}-\d{2}-\d{2}/.test(txt)) {
-    const t = Date.parse(txt);
-    return Number.isNaN(t) ? null : t;
+  txt = txt.replace(/\s/g, "");
+  txt = txt.replace(",", ".");
+  
+  const number = Number(txt);
+  if (Number.isFinite(number)) {
+    return number;
   }
-
-  // podpira: dd.mm.yyyy ali d.m.yyyy (tudi z presledki)
-  const m = txt.match(/^(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})$/);
-  if (m) {
-    const d = Number(m[1]), mo = Number(m[2]), y = Number(m[3]);
-    const t = new Date(y, mo - 1, d).getTime();
-    return Number.isNaN(t) ? null : t;
-  }
-
   return null;
 }
 
+
+function parseDate(txt) {
+  if (/^\d{4}-\d{2}-\d{2}/.test(txt)) {
+    const time = Date.parse(txt);
+    if (Number.isNaN(time)) {
+      return null;
+    }
+    return time;
+  }
+
+  const parts = txt.match(/^(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})$/);
+  if (parts) {
+    const day = Number(parts[1]);
+    const month = Number(parts[2]);
+    const year = Number(parts[3]);
+    const time = new Date(year, month - 1, day).getTime();
+    if (Number.isNaN(time)) {
+      return null;
+    }
+    return time;
+  }
+  return null;
+}
+
+
+function compareValues(type, aTxt, bTxt, aSortValue, bSortValue) {
+  if (type === "number") {
+    const aNumber = parseNumber(aTxt);
+    const bNumber = parseNumber(bTxt);
+
+    if (aNumber === null && bNumber === null) return 0;
+    if (aNumber === null) return 1;
+    if (bNumber === null) return -1;
+
+    return aNumber - bNumber;
+  }
+
+  if (type === "date") {
+    const aDate = parseDate(aTxt);
+    const bDate = parseDate(bTxt);
+
+    if (aDate === null && bDate === null) return 0;
+    if (aDate === null) return 1;
+    if (bDate === null) return -1;
+
+    return aDate - bDate;
+  }
+
+  if (type === "necessity") {
+    const aNumber = Number(aSortValue || 0);
+    const bNumber = Number(bSortValue || 0);
+
+    return aNumber - bNumber;
+  }
+
+  return aTxt.localeCompare(bTxt, "sl", { sensitivity: "base" });
+}
+
 document.addEventListener("click", (e) => {
-  const el = e.target.closest(".sortable");
-  if(!el) return;
-
-  const table = el.closest("table");
-  const tbody = table?.querySelector("tbody");
-  if(!tbody) return;
-
-  const colIndex = Number(el.dataset.col);
-  const type = el.dataset.type || "text";
-
-  // asc per tabela+stolpec
+  const sortButton = e.target.closest(".sortable");
+  const table = sortButton.closest("table");
+  const tbody = table.querySelector("tbody");
+  const colIndex = Number(sortButton.dataset.col);
+  const type = sortButton.dataset.type || "text";
   const key = "sortAsc_" + colIndex;
-  const asc = table.dataset[key] !== "0";
-
+  const ascending = table.dataset[key] !== "0";
   const rows = Array.from(tbody.querySelectorAll("tr"));
 
-  rows.sort((a, b) => {
-    const aCell = a.children[colIndex];
-    const bCell = b.children[colIndex];
+  rows.sort((rowA, rowB) => {
+    const cellA = rowA.children[colIndex];
+    const cellB = rowB.children[colIndex];
 
-    const aTxt = aCell?.innerText.trim() ?? "";
-    const bTxt = bCell?.innerText.trim() ?? "";
+    const textA = cellA?.innerText.trim() ?? "";
+    const textB = cellB?.innerText.trim() ?? "";
 
-    const aSortValue = aCell?.dataset.sortValue ?? "";
-    const bSortValue = bCell?.dataset.sortValue ?? "";
+    const sortValueA = cellA?.dataset.sortValue ?? "";
+    const sortValueB = cellB?.dataset.sortValue ?? "";
 
-    let cmp = 0;
+    const result = compareValues(type, textA, textB, sortValueA, sortValueB);
 
-    if (type === "number") {
-      const A = (typeof parseNumber === "function") ? parseNumber(aTxt) : null;
-      const B = (typeof parseNumber === "function") ? parseNumber(bTxt) : null;
-      if (A === null && B === null) cmp = 0;
-      else if (A === null) cmp = 1;
-      else if (B === null) cmp = -1;
-      else cmp = A - B;
-
-    } else if (type === "date") {
-      const A = (typeof parseDate === "function") ? parseDate(aTxt) : null;
-      const B = (typeof parseDate === "function") ? parseDate(bTxt) : null;
-      if (A === null && B === null) cmp = 0;
-      else if (A === null) cmp = 1;
-      else if (B === null) cmp = -1;
-      else cmp = A - B;
-
-    } else if (type === "necessity") {
-      const A = Number(aSortValue || 0);
-      const B = Number(bSortValue || 0);
-      cmp = A - B;
-
-    } else {
-      cmp = aTxt.localeCompare(bTxt, "sl", { sensitivity: "base" });
-    }
-
-    return asc ? cmp : -cmp;
+    if (ascending) return result;
+    else return -result;
   });
 
+  table.dataset[key] = ascending ? "0" : "1";
 
-  table.dataset[key] = asc ? "0" : "1";
-  rows.forEach(r => tbody.appendChild(r));
+  rows.forEach((row) => {
+    tbody.appendChild(row);
+  });
 });
+

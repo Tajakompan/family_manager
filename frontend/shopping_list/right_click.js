@@ -1,102 +1,148 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
   const pinsContainer = document.getElementById("pins_container");
-  const row_menu = document.getElementById("row_menu"); // Uredi/Izbriši zapis
+  const navMenu = document.getElementById("nav_menu");
+  const rowMenu = document.getElementById("row_menu");
 
-  let rightClickedShopId = null;
-  let rightClickedRowId = null;
+  let selectedShopId = "";
+  let selectedRowId = "";
 
-  if (!pinsContainer || !nav_menu || !row_menu) return;
-
+  if (!pinsContainer || !navMenu || !rowMenu) return;
+  
   function hideMenus() {
-    row_menu.style.display = "none";
-    pinsContainer.querySelectorAll(".context-active").forEach(el => el.classList.remove("context-active"));
-    pinsContainer.querySelectorAll(".context-active-row").forEach(el => el.classList.remove("context-active-row"));
+    navMenu.style.display = "none";
+    rowMenu.style.display = "none";
+
+    selectedShopId = "";
+    selectedRowId = "";
+
+    const activeTitles = pinsContainer.querySelectorAll(".context-active");
+    const activeRows = pinsContainer.querySelectorAll(".context-active-row");
+
+    for (let i = 0; i < activeTitles.length; i++) {
+      activeTitles[i].classList.remove("context-active");
+    }
+
+    for (let i = 0; i < activeRows.length; i++) {
+      activeRows[i].classList.remove("context-active-row");
+    }
   }
 
   function positionMenu(menu, e) {
     menu.style.display = "flex";
 
-    const w = menu.offsetWidth;
-    const h = menu.offsetHeight;
+    const menuWidth = menu.offsetWidth;
+    const menuHeight = menu.offsetHeight;
 
     let x = e.clientX;
     let y = e.clientY;
 
-    if (x + w > window.innerWidth) x = window.innerWidth - w - 5;
-    if (y + h > window.innerHeight) y = window.innerHeight - h - 5;
+    if (x + menuWidth > window.innerWidth) {
+      x = window.innerWidth - menuWidth - 5;
+    }
 
-    menu.style.left = `${x}px`;
-    menu.style.top = `${y}px`;
+    if (y + menuHeight > window.innerHeight) {
+      y = window.innerHeight - menuHeight - 5;
+    }
+
+    menu.style.left = x + "px";
+    menu.style.top = y + "px";
   }
 
-  // ✅ SHOP MENU: SAMO če je desni klik direktno na .shop_name
-  pinsContainer.addEventListener("contextmenu", (e) => {
-    const title = e.target.closest(".shop_name");
-    if (!title) return;
-
-    // če si kliknila na vrstico (tbody tr), naj to NE odpre shop menija
-    if (e.target.closest("tbody tr")) return;
-
-    e.preventDefault();
-    hideMenus();
-
-    rightClickedShopId = title.dataset.shopId || title.closest(".pin")?.dataset.shopId;
-    if (!rightClickedShopId) return;
-
-    title.classList.add("context-active");
-    positionMenu(nav_menu, e);
-  });
-
-  // ✅ ROW MENU: samo če je desni klik na tbody tr
-  pinsContainer.addEventListener("contextmenu", (e) => {
+  pinsContainer.addEventListener("contextmenu", function (e) {
     const row = e.target.closest("tbody tr");
-    if (!row || !row.dataset.rowId) return;
 
+    if (row && row.dataset.rowId) {
+      e.preventDefault();
+      hideMenus();
+
+      selectedRowId = row.dataset.rowId;
+      row.classList.add("context-active-row");
+      positionMenu(rowMenu, e);
+      return;
+    }
+
+    const title = e.target.closest(".shop_name");
+
+    if (!title) return;
+    
     e.preventDefault();
     hideMenus();
 
-    rightClickedRowId = row.dataset.rowId;
-    rightClickedShopId = row.dataset.shopId;
-    row.classList.add("context-active-row");
-    positionMenu(row_menu, e);
+    selectedShopId = title.dataset.shopId || "";
+
+    if (!selectedShopId) {
+      const pin = title.closest(".pin");
+
+      if (pin) selectedShopId = pin.dataset.shopId || "";
+    }
+    if (!selectedShopId) return;
+    
+    title.classList.add("context-active");
+    positionMenu(navMenu, e);
   });
 
-  // zapiranje
   document.addEventListener("click", hideMenus);
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") hideMenus(); });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      hideMenus();
+    }
+  });
+
   window.addEventListener("scroll", hideMenus, { passive: true });
   window.addEventListener("resize", hideMenus);
 
-  // da se ne odpre browser default meni na meniju
-  nav_menu.addEventListener("contextmenu", (e) => e.preventDefault());
-  row_menu.addEventListener("contextmenu", (e) => e.preventDefault());
-
-  // klik v meniju naj ne zapre
-  nav_menu.addEventListener("click", (e) => e.stopPropagation());
-  row_menu.addEventListener("click", (e) => e.stopPropagation());
-
-  // SHOP delete
-  nav_menu.querySelector(".delete")?.addEventListener("click", () => {
-    if (!rightClickedShopId) return;
-    if (!confirm("Ali si prepričan, da želiš izbrisati ta seznam? S tem boš iz seznama odstranil tudi vse izdelke.")) return;
-
-    fetch("delete_shop.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `shop_id=${encodeURIComponent(rightClickedShopId)}`
-    }).then(() => location.reload());
+  navMenu.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
   });
 
-  // ROW delete 
-
-  row_menu.querySelector(".delete")?.addEventListener("click", () => {
-    if (!rightClickedRowId) return;
-    if (!confirm("Izbrišem ta zapis?")) return;
-
-    fetch("delete_item_from_list.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `id=${encodeURIComponent(rightClickedRowId)}`
-    }).then(() => location.reload());
+  rowMenu.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
   });
+
+  navMenu.addEventListener("click", function (e) {
+    e.stopPropagation();
+  });
+
+  rowMenu.addEventListener("click", function (e) {
+    e.stopPropagation();
+  });
+
+  const deleteShopButton = navMenu.querySelector(".delete");
+
+  if (deleteShopButton) {
+    deleteShopButton.addEventListener("click", function () {
+      if (!selectedShopId) return;
+      if (!confirm("Ali si prepričan, da želiš izbrisati ta seznam? S tem boš iz seznama odstranil tudi vse izdelke.")) return;
+
+      fetch("delete_shop.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "shop_id=" + encodeURIComponent(selectedShopId)
+      }).then(function () {
+        location.reload();
+      });
+    });
+  }
+
+  const deleteRowButton = rowMenu.querySelector(".delete");
+
+  if (deleteRowButton) {
+    deleteRowButton.addEventListener("click", function () {
+        if (!selectedRowId) return;
+        if (!confirm("Izbrišem ta zapis?")) return;
+        
+        fetch("delete_item_from_list.php", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: "id=" + encodeURIComponent(selectedRowId)
+        }).then(function () {
+          location.reload();
+        });
+    });
+  }
 });

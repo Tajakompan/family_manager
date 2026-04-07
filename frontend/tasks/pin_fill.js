@@ -1,111 +1,135 @@
-const myContainer = document.getElementById("my_tasks_container");
-const otherContainer = document.getElementById("other_tasks_container");
-const temp = document.getElementById("pin_template");
-
-
-function fmtDate(d) {
-  if (!d) return "~ ni časovne omejitve ~";
-  return d;
+function formatTaskDate(date) {
+  if (!date) return "~ ni časovne omejitve ~";
+  return date;
 }
 
-function makePin(task, mode) { //mode je my ali other
-    const clone = temp.content.cloneNode(true);
-    const pin = clone.querySelector(".pin");
-    pin.dataset.pinId = task.id ?? 0;
-    pin.dataset.task = JSON.stringify(task);
+function createTaskPin(task, mode) {
+  const template = document.getElementById("pin_template");
+  if (!template) return null;
 
-    clone.querySelector(".task_title").textContent = task.name ?? "";
-    clone.querySelector(".created_by").textContent = task.created_by ?? "";
-    clone.querySelector(".to_do_by").textContent = fmtDate(task.to_do_by);
-    clone.querySelector(".points").textContent = task.points ?? "";
+  const clone = template.content.cloneNode(true);
+  const pin = clone.querySelector(".pin");
+  const title = clone.querySelector(".task_title");
+  const createdBy = clone.querySelector(".created_by");
+  const toDoBy = clone.querySelector(".to_do_by");
+  const points = clone.querySelector(".points");
+  const doers = clone.querySelector(".doers");
+  const button = clone.querySelector(".action_btn");
+  const icon = clone.querySelector(".icon_img");
 
-    const doers = clone.querySelector(".doers");
-    doers.textContent = task.doers || " —";
-  
-    const btn = clone.querySelector(".action_btn");
-    const icon = clone.querySelector(".icon_img");
-
+  if (pin) pin.dataset.pinId = task.id ?? "";
+  if (title) title.textContent = task.name ?? "";
+  if (createdBy) createdBy.textContent = task.created_by ?? "";
+  if (toDoBy) toDoBy.textContent = formatTaskDate(task.to_do_by);
+  if (points) points.textContent = task.points ?? "";
+  if (doers) doers.textContent = task.doers || " -";
+  if (button && icon) {
     if (mode === "my") {
-        icon.src = "../img/done_all_24dp_3F3F3F_FILL0_wght400_GRAD0_opsz24.svg";
-        icon.alt = "Označi kot opravljeno";
-        btn.title = "Označi kot opravljeno";
-        btn.addEventListener("click", async () => {
-            await markDone(task.id);
-            await loadAll();
-        });
-    } else {
-        icon.src = "../img/add_24dp_3F3F3F_FILL0_wght400_GRAD0_opsz24.svg";
-        icon.alt = "Prevzemi opravilo";
-        btn.title = "Prevzemi opravilo";
-        btn.addEventListener("click", async () => {
-            await claimTask(task.id);
-            await loadAll();
-        });
+      icon.src = "../img/done_all_24dp_3F3F3F_FILL0_wght400_GRAD0_opsz24.svg";
+      icon.alt = "Označi kot opravljeno";
+      button.title = "Označi kot opravljeno";
+
+      button.addEventListener("click", async function () {
+          await markDone(task.id);
+          await loadAll();
+      });
+    } 
+    else {
+      icon.src = "../img/add_24dp_3F3F3F_FILL0_wght400_GRAD0_opsz24.svg";
+      icon.alt = "Prevzemi opravilo";
+      button.title = "Prevzemi opravilo";
+
+      button.addEventListener("click", async function () {
+          await claimTask(task.id);
+          await loadAll();
+      });
     }
-    return clone;
+  }
+
+  return clone;
 }
 
 async function fetchJson(url) {
-  const res = await fetch(url, { credentials: "same-origin" });
-  if (!res.ok) throw new Error(url + " HTTP " + res.status);
-  return await res.json();
+  const response = await fetch(url, {
+      credentials: "same-origin"
+  });
+
+  if (!response.ok) {
+      throw new Error(url + " HTTP " + response.status);
+  }
+  return response.json();
+}
+
+async function loadTaskList(containerId, url, mode, emptyMessage) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const tasks = await fetchJson(url);
+
+  if (!Array.isArray(tasks) || tasks.length === 0) {
+    container.innerHTML ="<p style='color:white;opacity:.8; margin-left: 15px'>" + emptyMessage + "</p>";
+    return;
+  }
+
+  for (let i = 0; i < tasks.length; i++) {
+      const pin = createTaskPin(tasks[i], mode);
+      if (pin) container.appendChild(pin);
+  }
 }
 
 async function loadMyTasks() {
-  myContainer.innerHTML = "";
-  const tasks = await fetchJson("get_my_tasks.php");
-
-  if (!tasks.length) {
-    myContainer.innerHTML = "<p style='color:white;opacity:.8; margin-left: 15px'>Ni mojih opravil.</p>";
-    return;
-  }
-
-  for (const t of tasks) {
-    myContainer.appendChild(makePin(t, "my"));
-  }
+  await loadTaskList("my_tasks_container", "get_my_tasks.php", "my", "Ni mojih opravil.");
 }
 
 async function loadOtherTasks() {
-  otherContainer.innerHTML = "";
-  const tasks = await fetchJson("get_other_tasks.php");
-
-  if (!tasks.length) {
-    otherContainer.innerHTML = "<p style='color:white;opacity:.8; margin-left: 15px'>Ni ostalih opravil.</p>";
-    return;
-  }
-
-  for (const t of tasks) {
-    otherContainer.appendChild(makePin(t, "other"));
-  }
+  await loadTaskList("other_tasks_container", "get_other_tasks.php", "other", "Ni ostalih opravil.");
 }
 
 async function loadAll() {
-  await Promise.all([loadMyTasks(), loadOtherTasks(), loadPoints(), loadTaskHistory()]);
+  await Promise.all([
+      loadMyTasks(),
+      loadOtherTasks(),
+      loadPoints(),
+      loadTaskHistory()
+  ]);
 }
 
-
 async function markDone(taskId) {
-  const res = await fetch("mark_task_done.php", {
+  const response = await fetch("mark_task_done.php", {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({ task_id: taskId }),
+    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+    body: new URLSearchParams({
+        task_id: taskId
+    }),
     credentials: "same-origin"
   });
-  if (!res.ok) throw new Error("mark_task_done.php HTTP " + res.status);
+
+  if (!response.ok) {
+    throw new Error("mark_task_done.php HTTP " + response.status);
+  }
 }
 
 async function claimTask(taskId) {
-  const res = await fetch("claim_task.php", {
+  const response = await fetch("claim_task.php", {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({ task_id: taskId }),
+    headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: new URLSearchParams({
+        task_id: taskId
+    }),
     credentials: "same-origin"
   });
-  if (!res.ok) throw new Error("claim_task.php HTTP " + res.status);
+
+  if (!response.ok) {
+    throw new Error("claim_task.php HTTP " + response.status);
+  }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadAll().catch(err => console.error(err));
+document.addEventListener("DOMContentLoaded", function () {
+  loadAll().catch(function (error) {
+    console.error(error);
+  });
 });
-
-

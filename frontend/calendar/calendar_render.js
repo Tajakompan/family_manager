@@ -1,143 +1,204 @@
-//oblikovanje izpisa Date
 function formatDateSI(isoDate) {
-  const [y, m, d] = isoDate.split('-').map(Number);
-  const date = new Date(y, m - 1, d);
+  const [year, month, day] = isoDate.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
 
-  return new Intl.DateTimeFormat('sl-SI', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
+  return new Intl.DateTimeFormat("sl-SI", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
   }).format(date);
 }
 
-//RISANJE DESNE STRANI
+const dateAndDay = document.getElementById("date_and_day");
+const thisDayEventsContainer = document.querySelector(".this_day_events");
+const dayNames = [
+  "Nedelja",
+  "Ponedeljek",
+  "Torek",
+  "Sreda",
+  "Četrtek",
+  "Petek",
+  "Sobota"
+];
 
-//oblikovanje izpisa dneva
-const date_and_day = document.getElementById('date_and_day');
-const days_in_week = ['Nedelja', 'Ponedeljek', 'Torek', 'Sreda', 'Četrtek', 'Petek', 'Sobota'];
-
-//funkcija, ki v js preverja vpis znakov
-function escapeHtml(str) {
-    return String(str ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
-
-//polnjenje thisDayEventContainer, ki izpisuje desno stran, seprvi kateri dogodki so ta dan
-const thisDayEventsContainer = document.querySelector('.this_day_events');
-function renderEventsForDate(dateStr){
-    if (!thisDayEventsContainer) return;
-
-    //vzemanje tabele php urejenih dogodkov po datumu
-    const eventsByDate = window.eventsByDate || {};
-    //vzemanje enega dneva
-    const events = eventsByDate[dateStr] || [];
-
-    thisDayEventsContainer.innerHTML = "";
-
-    if (events.length === 0) {
-        thisDayEventsContainer.innerHTML = "<div class='one_event'>Ni dogodkov.</div>";
-        return;
-    }
-
-    // izpiše dogodke za željen dan
-    events.forEach(e => {
-        const div = document.createElement("div");
-        div.className = "one_event";
-        div.innerHTML =
-            `<div class="event_head">
-                <div class="event_title">${escapeHtml(e.name)}</div>
-                <button class="event_menu_btn" type="button" aria-label="Meni">⋯</button>
-                <div class="event_menu">
-                    <button type="button" class="event_action" data-action="edit">Uredi</button>
-                    <button type="button" class="event_action danger" data-action="delete">Izbriši</button>
-                </div>
-            </div>
-            <div class="event_body">
-                <div><b>Ura: </b>${escapeHtml(e.event_time)}</div>
-                <div><b>Lokacija: </b>${escapeHtml(e.location)}</div>
-                <div><b>Opis: </b>${escapeHtml(e.description)}</div>
-                <div><b>Ustvaril: </b>${escapeHtml(e.user_name)}</div>
-                <div><b>Opomnik: </b>${escapeHtml(e.reminder_display)}</div>
-            </div>`;
-        //doda id na okvirček z informacijami o dogodku
-        div.dataset.id = e.id;
-        //večjemu okvirju doda noter okvirček dogodka
-        thisDayEventsContainer.appendChild(div);
-    });
-}
-
-
-//RISANJE KOLEDARJA
 let selectedDate = null;
 
-//gre po celi tabeli koledarja, da ikoncam spreminja ozadje
-document.querySelectorAll('.dan').forEach(cell => {
-    cell.addEventListener('click', () => {
-        // če klikneš na že selectan dan, se označba skrije in se pokaže označba to_Select
-        if (cell.classList.contains('selected')) {
-            cell.classList.remove('selected');
-            selectedDate = null;
-            cell.classList.add('to_select');
-            showView('view-empty');
-            
-            if (thisDayEventsContainer) thisDayEventsContainer.innerHTML = "";
-            return;
-        }
+function createEventInfoRow(label, value) {
+  const row = document.createElement("div");
+  const strong = document.createElement("b");
 
-        // če imaš selectanega, pa klikneš drugega, se pri prvem select odstrani
-        const prevSelected = document.querySelector('.dan.selected');
-        if (prevSelected) prevSelected.classList.remove('selected');
+  strong.textContent = `${label}: `;
+  row.appendChild(strong);
+  row.appendChild(document.createTextNode(value ?? ""));
 
-        // na drugem se select doda
-        cell.classList.add('selected');
-        cell.classList.remove('to_select');
-        selectedDate = cell.dataset.date;
-        showView('view-day-selected');
-        const [y, m, d] = cell.dataset.date.split('-').map(Number);
-        const dateObj = new Date(y, m - 1, d);
-        const dayName = days_in_week[dateObj.getDay()];
-        date_and_day.innerHTML = `<div class="datum">${dayName}<br>${formatDateSI(cell.dataset.date)}</div>`;
-        //napolni se z dogodki tega dne
-        renderEventsForDate(selectedDate);
-    });
+  return row;
+}
 
-    //okno obarva na to_select samo, če ni že selectan
-    cell.addEventListener('mouseenter', () => {
-        if (cell.classList.contains('selected')) 
-            return;
-        cell.classList.add('to_select');
-    });
+function createEventCard(eventData) {
+  const card = document.createElement("div");
+  card.className = "one_event";
+  card.dataset.id = eventData.id ?? "";
 
-    //če zapustiš polje, daš stran to_select
-    cell.addEventListener('mouseleave', () => {
-        cell.classList.remove('to_select');
-    });
+  const head = document.createElement("div");
+  head.className = "event_head";
 
+  const title = document.createElement("div");
+  title.className = "event_title";
+  title.textContent = eventData.name ?? "";
+
+  const menuButton = document.createElement("button");
+  menuButton.className = "event_menu_btn";
+  menuButton.type = "button";
+  menuButton.setAttribute("aria-label", "Meni");
+  menuButton.textContent = "...";
+
+  const menu = document.createElement("div");
+  menu.className = "event_menu";
+
+  const editButton = document.createElement("button");
+  editButton.type = "button";
+  editButton.className = "event_action";
+  editButton.dataset.action = "edit";
+  editButton.textContent = "Uredi";
+
+  const deleteButton = document.createElement("button");
+  deleteButton.type = "button";
+  deleteButton.className = "event_action danger";
+  deleteButton.dataset.action = "delete";
+  deleteButton.textContent = "Izbri\u0161i";
+
+  menu.appendChild(editButton);
+  menu.appendChild(deleteButton);
+
+  head.appendChild(title);
+  head.appendChild(menuButton);
+  head.appendChild(menu);
+
+  const body = document.createElement("div");
+  body.className = "event_body";
+  body.appendChild(createEventInfoRow("Ura", eventData.event_time));
+  body.appendChild(createEventInfoRow("Lokacija", eventData.location));
+  body.appendChild(createEventInfoRow("Opis", eventData.description));
+  body.appendChild(createEventInfoRow("Ustvaril", eventData.user_name));
+  body.appendChild(createEventInfoRow("Opomnik", eventData.reminder_display));
+
+  card.appendChild(head);
+  card.appendChild(body);
+
+  return card;
+}
+
+function updateSelectedDayHeader(dateStr) {
+  if (!dateAndDay) return;
+
+  const [year, month, day] = dateStr.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+  const dayName = dayNames[date.getDay()];
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "datum";
+  wrapper.appendChild(document.createTextNode(dayName));
+  wrapper.appendChild(document.createElement("br"));
+  wrapper.appendChild(document.createTextNode(formatDateSI(dateStr)));
+
+  dateAndDay.replaceChildren(wrapper);
+}
+
+function clearSelectedDay() {
+  const selectedCell = document.querySelector(".dan.selected");
+  if (selectedCell) {
+    selectedCell.classList.remove("selected");
+  }
+
+  selectedDate = null;
+  showView("view-empty");
+
+  if (dateAndDay) {
+    dateAndDay.replaceChildren();
+  }
+
+  if (thisDayEventsContainer) {
+    thisDayEventsContainer.replaceChildren();
+  }
+}
+
+function renderEventsForDate(dateStr) {
+  if (!thisDayEventsContainer) return;
+
+  const eventsByDate = window.eventsByDate || {};
+  const events = eventsByDate[dateStr] || [];
+
+  thisDayEventsContainer.replaceChildren();
+
+  if (events.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "one_event";
+    empty.textContent = "Ni dogodkov.";
+    thisDayEventsContainer.appendChild(empty);
+    return;
+  }
+
+  events.forEach((eventData) => {
+    thisDayEventsContainer.appendChild(createEventCard(eventData));
+  });
+}
+
+function selectDay(cell) {
+  const previousSelected = document.querySelector(".dan.selected");
+  if (previousSelected && previousSelected !== cell) {
+    previousSelected.classList.remove("selected");
+  }
+
+  cell.classList.add("selected");
+  cell.classList.remove("to_select");
+
+  selectedDate = cell.dataset.date || null;
+
+  if (!selectedDate) return;
+
+  showView("view-day-selected");
+  updateSelectedDayHeader(selectedDate);
+  renderEventsForDate(selectedDate);
+}
+
+document.querySelectorAll(".dan").forEach((cell) => {
+  cell.addEventListener("click", () => {
+    if (cell.classList.contains("selected")) {
+      clearSelectedDay();
+      cell.classList.add("to_select");
+      return;
+    }
+
+    selectDay(cell);
+  });
+
+  cell.addEventListener("mouseenter", () => {
+    if (!cell.classList.contains("selected")) {
+      cell.classList.add("to_select");
+    }
+  });
+
+  cell.addEventListener("mouseleave", () => {
+    cell.classList.remove("to_select");
+  });
 });
 
-//isto za dodaj dogodek gumb - barvanje s to_select
-document.querySelectorAll('.add_event').forEach(btn => {
-    btn.addEventListener('mouseenter', () => {
-        if (!btn.classList.contains('to_select')) 
-            btn.classList.add('to_select');
-    });
-    btn.addEventListener('mouseleave', () => {
-        if (btn.classList.contains('to_select')) 
-        btn.classList.remove('to_select');
-    });
-})
+document.querySelectorAll(".add_event").forEach((button) => {
+  button.addEventListener("mouseenter", () => {
+    button.classList.add("to_select");
+  });
 
-//če pa dejansko klikneš na gumb, pa se spremeni prikaz desnega
-document.querySelectorAll('.add_event').forEach(btn => {
-    btn.addEventListener('click', () => {
-    showDesno('add_event_form');
+  button.addEventListener("mouseleave", () => {
+    button.classList.remove("to_select");
+  });
+
+  button.addEventListener("click", () => {
+    showDesno("add_event_form");
     switchEventToAddMode(window.calMonth, window.calYear);
-    const date_input = document.getElementById('date_input');
-    if(date_input && selectedDate)
-        date_input.value = selectedDate;
-    })
-})
+
+    const dateInput = document.getElementById("date_input");
+    if (dateInput && selectedDate) {
+      dateInput.value = selectedDate;
+    }
+  });
+});
