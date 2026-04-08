@@ -143,5 +143,16 @@ td{
         height: 42px;
         font-size: 16px;
     }
+
+    .title{
+        font-size: 28px;
+        text-align: center;
+        padding: 20px 0;
+    }
+
+    .small_title.left{
+        font-size: 20px;
+        margin-top:10px;
+    }
 }
 

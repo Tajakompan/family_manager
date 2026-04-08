@@ -108,6 +108,10 @@ td:nth-child(1), td:nth-child(2), td:nth-child(3){
     min-width: 680px;
   }
 
+  .top_row .title h2{
+    font-size: 35px;
+  }
+
 }
 
 

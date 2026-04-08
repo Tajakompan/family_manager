@@ -87,7 +87,7 @@ if ($show_form && $_SERVER["REQUEST_METHOD"] === "POST") {
 </head>
 <body>
 <div class="left image_placeholder">
-    <img src="../img/login_page.png.png" alt="Login ilustracija">
+    <img src="../img/login_page.png" alt="Login ilustracija">
 </div>
 <div class="right">
     <div class="login_panel">
