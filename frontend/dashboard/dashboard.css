@@ -528,7 +528,67 @@
     .gray.grid {
         column-count: 1;
     }
+
+    .title_left{
+        display: block;
+        margin: 20px 14px 10px;
+    }
+
+    .title_left h2{
+        margin: 12px 0 8px 0;
+        font-size: clamp(28px, 8vw, 40px);
+        line-height: 1.08;
+        text-wrap: balance;
+    }
+
+    .content{
+        margin: 12px 10px 0;
+    }
+
+    .gray{
+        padding: 12px 12px 0 12px;
+    }
+
+    .left.profile_card{
+        width: auto;
+        margin: 0 10px 12px;
+        padding: 14px 12px;
+        gap: 12px;
+    }
+
+    .small_pin_title{
+        font-size: 22px;
+        margin: 4px 10px;
+    }
+
+    .mini_main{
+        padding: 6px 8px 10px;
+    }
+
+    .mini_main .dashboard-item{
+        font-size: 15px;
+        padding: 7px 9px 7px 22px;
+    }
+
+    .profile_field .name{font-size: 20px;}
+    .profile_field .role{font-size: 14px;}
+    .profile_field .email{font-size: 13px;}
+
+    .profile_btn{
+        min-height: 38px;
+        font-size: 15px;
+    }
+
+    .clock_face{
+        width: 92px;
+        height: 92px;
+    }
+
+    .clock_digital{font-size: 24px;}
+    .clock_day{font-size: 14px;}
+    .clock_date{font-size: 13px;}
 }
+
 
 @media (max-width: 500px){
     .clock_layout {

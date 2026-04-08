@@ -7,6 +7,10 @@ main{
   flex-direction: column;
   background-color: #3c3c3c;
   overflow: hidden;
+
+  --shop-outer-gap: clamp(14px, 1.8vw, 20px);
+  --shop-inner-gap: clamp(14px, 1.8vw, 20px);
+  --shop-card-min: 300px;
 }
 
 .content{
@@ -17,17 +21,16 @@ main{
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  gap: var(--shop-outer-gap);
+  padding: var(--shop-outer-gap);
 }
 
-
 #scheduling_container{
-  flex: 0 0 17vw;
-  width: 17vw;
-  height: fit-content;
+  flex: 0 0 clamp(260px, 17vw, 320px);
+  width: clamp(260px, 17vw, 320px);
   min-height: 100px;
-  margin: 2vh 2vw 2vh 0;
-  padding-bottom: 15px;
-  padding-right: 15px;
+  margin: 0;
+  padding: var(--shop-inner-gap);
   background-color: #5e5e5e;
   border: 1px solid #ffffff08;
   border-radius: 10px;
@@ -35,9 +38,16 @@ main{
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  gap: var(--shop-inner-gap);
 }
 #scheduling_container.is-empty{
   min-height: 100px;
+}
+
+.item_pins{
+  display: flex;
+  flex-direction: column;
+  gap: var(--shop-inner-gap);
 }
 
 .store_pin{
@@ -45,9 +55,6 @@ main{
   border: 1px solid #e6e6e6;
   border-radius: 10px;
   box-shadow: 0 6px 14px #00000014;
-  margin-left: 10px;
-  margin-top: 10px;
-  margin-right: 2px;
   padding: 5px 7px;
 }
 
@@ -133,29 +140,29 @@ main{
 
 #pins_container{
   flex: 1 1 auto;
-  width: auto;
   min-width: 0;
   height: fit-content;
-  margin: 2vh 2vw;
-  padding-bottom: 14px;
-  padding-right: 14px;
+  margin: 0;
+  padding: var(--shop-inner-gap);
   background-color: #5e5e5e;
   border: 1px solid #ffffff08;
   border-radius: 10px;
   box-shadow: 0 14px 30px #00000026;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--shop-card-min), 100%), 1fr));
+  gap: var(--shop-inner-gap);
+  align-content: start;
   overflow-y: auto;
   overflow-x: hidden;
 }
-.pin{  
+.pin{
   min-height: 300px;
   max-height: 500px;
   height: fit-content;
+  margin: 0;
+  min-width: 0;
   background: linear-gradient(180deg, #fcfcfc 0%, #f2f2f2 100%);
   border: 1px solid #e2e2e2;
-  margin-top: 20px;
-  margin-left: 20px;
   border-radius: 12px;
   box-shadow: 0 10px 22px #00000014;
   overflow-y: auto;
@@ -351,6 +358,9 @@ tr.done {
     height: auto;
     min-height: 100vh;
     overflow: visible;
+    --shop-outer-gap: 18px;
+    --shop-inner-gap: 18px;
+    --shop-card-min: 280px;
   }
 
   .top_row{
@@ -386,18 +396,14 @@ tr.done {
 
   #pins_container{
     width: auto;
-    margin: 2vh 18px 12px;
-    padding-right: 0;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    margin: 0;
   }
 
   #scheduling_container{
     width: auto;
     flex: 1 1 auto;
-    min-height: 0;
     max-height: none;
-    margin: 0 18px 18px;
-    padding-right: 15px;
+    margin: 0;
   }
 }
 
@@ -406,6 +412,9 @@ tr.done {
     width: calc(100% - var(--sidebar-collapsed-width));
     margin-left: var(--sidebar-collapsed-width);
     margin-top: 4px;
+    --shop-outer-gap: 10px;
+    --shop-inner-gap: 10px;
+    --shop-card-min: 100%;
   }
 
   .top_row{
@@ -431,13 +440,13 @@ tr.done {
   }
 
   #pins_container{
-    margin: 0 5px 5px;
+    margin: 0;
   }
 
   .pin{
     min-height: 120px;
     max-height: none;
-    margin: 7px 5px 0 5px;
+    margin: 0;
     overflow-x: auto;
     overflow-y: auto;
   }
@@ -484,7 +493,7 @@ tr.done {
   }
 
   .store_pin{
-    margin: 10px 0 0;
+    margin: 0;
   }
 
   .store_pin .pname{

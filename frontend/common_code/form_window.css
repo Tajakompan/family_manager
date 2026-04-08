@@ -24,6 +24,7 @@
   border: 1px solid #ffffff08;
   height: auto;               
   gap: 8px; 
+  box-sizing: border-box;
 }
 
 .details_frame{
@@ -246,6 +247,14 @@ input.red{
   border-color: #fd684d;
   box-shadow: 0 0 0 3px rgba(253, 104, 77, 0.12);
 }
+
+@media (max-width: 640px){
+  .add_something_view .window{
+    width: min(520px, calc(100vw - 24px));
+    max-width: calc(100vw - 24px);
+  }
+}
+
 
 
 

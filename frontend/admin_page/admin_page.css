@@ -99,3 +99,49 @@ td{
     background-color: #3c3c3c;
     color: white;
 }
+
+@media (max-width: 1100px){
+    main{
+        width: calc(100% - var(--sidebar-collapsed-width));
+        margin-left: var(--sidebar-collapsed-width);
+    }
+
+    .content.small,
+    .content.smaller,
+    .content.smallest{
+        width: auto;
+    }
+
+    .pin_row{
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .content{
+        overflow: visible;
+    }
+
+    .content.smaller table{
+        min-width: 520px;
+    }
+
+    .content.small table{
+        min-width: 980px;
+    }
+
+    .content.smallest table{
+        min-width: 420px;
+    }
+
+    th{
+        height: 42px;
+        font-size: 18px;
+    }
+
+    td{
+        height: 42px;
+        font-size: 16px;
+    }
+}
+

@@ -1,7 +1,8 @@
 main {
-    width: calc(100% - 15vw);
+    width: calc(100% - var(--sidebar-width));
     height: 100vh;
-    margin-left: 15vw;
+    min-height: 100vh;
+    margin-left: var(--sidebar-width);
     display: flex;
     flex-direction: row;
     background-color: #3c3c3c;
@@ -10,7 +11,8 @@ main {
 }
 
 .center {
-    flex: 3.5;
+    flex: 1 1 auto;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     margin-left: 2vw;
@@ -25,6 +27,7 @@ main {
     flex-wrap: wrap;
     gap: 8px;
     min-height: 5vh;
+    max-width: 100%;
     width: fit-content;
     flex: 0 0 auto;
     padding: 8px;
@@ -67,14 +70,16 @@ main {
     background: linear-gradient(180deg, #b6ea6b 0%, #b6ea6b 100%);
 }
 
-.content{
+.content {
     width: 100%;
+    min-width: 0;
     height: fit-content;
     min-height: 30vh;
     margin-bottom: 1vh;
     background-color: white;
     border-radius: 10px;
     overflow-y: auto;
+    overflow-x: hidden;
     position: relative;
 }
 
@@ -144,7 +149,8 @@ td.sortable:hover{
 }
 
 .right {
-    flex: 1;
+    flex: 0 0 280px;
+    min-width: 260px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -215,9 +221,14 @@ td.sortable:hover{
 .storage_toolbar_actions{
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 12px;
-    margin-left: auto;
+    margin-left: 0;
+    margin-bottom: 10px;
     flex: 0 0 auto;
+    flex-wrap: wrap;
+    width: fit-content;
+    max-width: 100%;
 }
 
 .storage_toolbar_action{
@@ -349,35 +360,145 @@ td.sortable:hover{
 
 .storage_toolbar{
     display: flex;
-    align-items: center;
-    gap: 16px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
     width: 100%;
-    margin-bottom: 1vh;
+}
+
+.storage_toolbar_actions{
+    display: flex;
+    gap: 12px;
+    margin-left: 0;
+    justify-content: flex-start;
     flex-wrap: wrap;
+    width: 100%;
+}
+
+.storage_toolbar_action{
+    flex: 0 0 auto;
+    max-width: 180px;
+}
+
+@media (max-width: 1250px){
+    main{
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
+        gap: 16px;
+    }
+
+    .center{
+        margin: 0 18px;
+    }
+
+    .content{
+        overflow-x: auto;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .food_table{
+        min-width: 860px;
+    }
+
+    .right{
+        flex: none;
+        width: auto;
+        min-width: 0;
+        margin: 0 18px 18px;
+        padding-right: 0;
+        align-items: stretch;
+    }
+
+    .on_right_panel{
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+    }
+
 }
 
 
-@media (max-width: 1100px){
+@media (max-width: 900px){
+    main{
+        width: calc(100% - var(--sidebar-collapsed-width));
+        margin-left: var(--sidebar-collapsed-width);
+        height: auto;
+        min-height: 100vh;
+        flex-direction: column;
+        gap: 16px;
+        overflow: visible;
+    }
+
+    .center{
+        margin: 0 18px;
+    }
+
+    .content{
+        overflow-x: auto;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .food_table{
+        width: 100%;
+        min-width: 860px;
+    }
+
+    .right{
+        flex: none;
+        width: auto;
+        min-width: 0;
+        margin: 0 18px 18px;
+        padding-right: 0;
+        align-items: stretch;
+    }
+
+    .on_right_panel{
+        width: 100%;
+        max-height: none;
+        margin-top: 0;
+    }
+
     .storage_toolbar{
         flex-direction: column;
-        align-items: stretch;
+        align-items: center;
     }
 
     .storage_toolbar_actions{
         margin-left: 0;
-        justify-content: flex-end;
+        justify-content: center;
         flex-wrap: wrap;
     }
 }
 
+
 @media (max-width: 700px){
+    .center{
+        margin: 0 10px;
+    }
+
+    .right{
+        margin: 0 10px 10px;
+        gap: 12px;
+    }
+
+    .food_table{
+        min-width: 760px;
+    }
+
     .storage_toolbar_actions{
         width: 100%;
     }
 
     .storage_toolbar_action{
-        flex: 1 1 auto;
+        flex: 1 1 0;
     }
+
+
 }
+
 
 

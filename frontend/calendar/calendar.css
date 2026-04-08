@@ -598,8 +598,8 @@ body{
   .sredina{
     width: calc(100% - var(--sidebar-collapsed-width));
     margin-left: var(--sidebar-collapsed-width);
-    padding: 14px 10px 12px;
-    gap: 12px;
+    padding: 18px 10px 12px;
+    gap: 16px;
   }
 
   .desno{
@@ -609,15 +609,19 @@ body{
     padding: 12px 10px 14px;
   }
 
+  .title{
+    margin-bottom: 10px;
+  }
+
   .title h2{
     font-size: clamp(28px, 9vw, 40px);
-    line-height: 1;
+    line-height: 1.1;
     margin: 0;
   }
 
   .mesec{
     justify-content: center;
-    gap: 6px;
+    gap: 10px;
   }
 
   .mesec .nav-btn{
@@ -680,5 +684,18 @@ body{
 
   .desno .add_event{
     height: 48px;
+  }
+
+  #view-empty.view.active{
+    flex: 0 0 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  #view-empty .center{
+    height: auto;
+    padding: 6px 10px;
   }
 }
