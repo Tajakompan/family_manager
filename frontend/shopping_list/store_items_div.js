@@ -60,9 +60,14 @@ async function loadStorePins() {
   const items = await itemsResponse.json();
 
   if (!Array.isArray(items) || items.length === 0) {
+    const container = document.getElementById("scheduling_container");
+    if (container) container.classList.add("is-empty");
     pins.innerHTML = '<div class="empty_list_warning">Prazno.</div>';
     return;
   }
+
+  const container = document.getElementById("scheduling_container");
+  if (container) container.classList.remove("is-empty");
 
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
@@ -134,6 +139,15 @@ document.addEventListener("click", async function (e) {
     }
 
     pin.remove();
+    
+    const pinsContainer = document.querySelector("#scheduling_container .item_pins");
+    const schedulingContainer = document.getElementById("scheduling_container");
+
+    if (pinsContainer && !pinsContainer.querySelector(".store_pin")) {
+      if (schedulingContainer) schedulingContainer.classList.add("is-empty");
+      pinsContainer.innerHTML = '<div class="empty_list_warning">Prazno.</div>';
+    }
+
   } 
   catch (error) {
     alert("NETWORK ERROR: " + error.message);

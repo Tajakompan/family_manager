@@ -14,9 +14,9 @@ $family_id = (int)$_SESSION["family_id"];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Familoop - Nakupovalni seznami</title>
+    <link rel="stylesheet" href="../../frontend/common_code/common_css.css">
     <link rel="stylesheet" href="../../frontend/shopping_list/shopping_list.css">
     <link rel="stylesheet" href="../../frontend/sidebar/sidebar.css">
-    <link rel="stylesheet" href="../../frontend/common_code/common_css.css">
     <link rel="stylesheet" href="../../frontend/common_code/open_space_settings.css">
     <link rel="stylesheet" href="../../frontend/common_code/form_window.css">
 </head>

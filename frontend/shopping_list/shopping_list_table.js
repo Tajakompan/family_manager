@@ -80,7 +80,7 @@ function loadShoppingListForShop(shopId) {
 
         if (!tbody) return;
         if (html) tbody.innerHTML = html;
-        else tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; border: none; height: 200px">Prazen seznam</td></tr>';
+        else tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; border: none; height: 60px">Prazen seznam</td></tr>';
     })
     .catch(function (error) {
         console.error("Napaka pri shop_id", shopId, error);

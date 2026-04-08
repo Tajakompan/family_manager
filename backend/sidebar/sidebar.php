@@ -14,11 +14,11 @@ $currentScript = basename($_SERVER["SCRIPT_NAME"] ?? "");
         <li class="sidebar-item interactive <?= $currentScript === "calendar.php" ? "sidebar-item-active" : "" ?>">
             <a href="../calendar/calendar.php" <?= $currentScript === "calendar.php" ? 'aria-current="page"' : "" ?>><span class="sidebar-link-text">Koledar</span></a>
         </li>
-        <li class="sidebar-item interactive <?= $currentScript === "shopping_list.php" ? "sidebar-item-active" : "" ?>">
-            <a href="../shopping_list/shopping_list.php" <?= $currentScript === "shopping_list.php" ? 'aria-current="page"' : "" ?>><span class="sidebar-link-text">Nakupovalni seznami</span></a>
-        </li>
         <li class="sidebar-item interactive <?= $currentScript === "tasks.php" ? "sidebar-item-active" : "" ?>">
             <a href="../tasks/tasks.php" <?= $currentScript === "tasks.php" ? 'aria-current="page"' : "" ?>><span class="sidebar-link-text">Opravila</span></a>
+        </li>
+        <li class="sidebar-item interactive <?= $currentScript === "shopping_list.php" ? "sidebar-item-active" : "" ?>">
+            <a href="../shopping_list/shopping_list.php" <?= $currentScript === "shopping_list.php" ? 'aria-current="page"' : "" ?>><span class="sidebar-link-text">Nakupovalni seznami</span></a>
         </li>
         <li class="sidebar-item interactive <?= $currentScript === "food_storage.php" ? "sidebar-item-active" : "" ?>">
             <a href="../food_storage/food_storage.php" <?= $currentScript === "food_storage.php" ? 'aria-current="page"' : "" ?>><span class="sidebar-link-text">Zaloga hrane</span></a>

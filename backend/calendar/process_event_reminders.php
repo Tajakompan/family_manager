@@ -8,33 +8,18 @@ if (PHP_SAPI !== 'cli') {
     exit("CLI only");
 }
 
-$sql = "SELECT
-            e.id,
-            e.name,
-            e.event_date,
-            e.event_time,
-            e.whole_day,
-            e.location,
-            e.description,
-            e.reminder,
-            u.email,
-            u.name AS user_name,
-            u.surname AS user_surname
+$sql = "SELECT e.id, e.name, e.event_date, e.event_time, e.whole_day, e.location, e.description, e.reminder, u.email, u.name AS user_name, u.surname AS user_surname
         FROM event e
         INNER JOIN app_user u ON u.id = e.created_by_app_user_id
-        WHERE e.reminder IS NOT NULL
-          AND e.reminder_sent_at IS NULL
-          AND u.email <> ''
-          AND u.email_verified = 1
-          AND e.reminder <= NOW()
+        WHERE e.reminder IS NOT NULL AND e.reminder_sent_at IS NULL
+          AND u.email <> '' AND u.email_verified = 1 AND e.reminder <= NOW()
         ORDER BY e.reminder ASC
         LIMIT 50";
 
 $result = $conn->query($sql);
 
-if (!$result) {
-    exit("Query failed.\n");
-}
+if (!$result) exit("Query failed.\n");
+
 file_put_contents(__DIR__ . '/cron_test.log', date('Y-m-d H:i:s') . " query executed\n", FILE_APPEND);
 
 while ($row = $result->fetch_assoc()) {
@@ -56,22 +41,16 @@ while ($row = $result->fetch_assoc()) {
 
     if ($sent) {
         $updateSql = "UPDATE event
-                      SET reminder_sent_at = NOW(),
-                          reminder_last_attempt_at = NOW(),
-                          reminder_error = NULL
-                      WHERE id = ? AND reminder_sent_at IS NULL";
-        $stmt = $conn->prepare($updateSql);
-        $stmt->bind_param("i", $row["id"]);
+                    SET reminder_sent_at = NOW(),
+                        reminder_last_attempt_at = NOW()
+                    WHERE id = ? AND reminder_sent_at IS NULL";
     } else {
-        $errorText = "Pošiljanje reminder emaila ni uspelo.";
         $updateSql = "UPDATE event
-                      SET reminder_last_attempt_at = NOW(),
-                          reminder_error = ?
-                      WHERE id = ?";
-        $stmt = $conn->prepare($updateSql);
-        $stmt->bind_param("si", $errorText, $row["id"]);
+                    SET reminder_last_attempt_at = NOW()
+                    WHERE id = ?";
     }
-
+    $stmt = $conn->prepare($updateSql);
+    $stmt->bind_param("i", $row["id"]);
     $stmt->execute();
     $stmt->close();
 }
