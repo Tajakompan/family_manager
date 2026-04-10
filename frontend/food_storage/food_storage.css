@@ -110,8 +110,9 @@ main {
     border-collapse: collapse;
 }
 
-.food_table thead{
-    color: #747474;
+.food_table thead td{
+    background-color: #e5e5e5;
+    color: rgb(93, 93, 93);
 }
 .food_table td{
     padding: 10px;
@@ -125,7 +126,7 @@ td.sortable{
 }
 
 td.sortable:hover{
-  background-color: #e0e0e0;
+  background-color: #cbcbcb;
 }
 
 .expired {
