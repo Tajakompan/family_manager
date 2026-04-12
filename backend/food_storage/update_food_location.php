@@ -197,15 +197,11 @@ if ($ok && $conflict) {
             WHERE id = ? AND family_id = ?";
     $stmt = $conn->prepare($sql);
 
-    if (!$stmt) {
-        $ok = false;
-    } else {
+    if (!$stmt) $ok = false;
+    
+    else {
         $stmt->bind_param("isisi", $product_quantity, $product_status, $current_purchased_on, $target_id, $family_id);
-
-        if (!$stmt->execute()) {
-            $ok = false;
-        }
-
+        if (!$stmt->execute()) $ok = false;
         $stmt->close();
     }
 
@@ -214,15 +210,10 @@ if ($ok && $conflict) {
                 WHERE id = ? AND family_id = ?";
         $stmt = $conn->prepare($sql);
 
-        if (!$stmt) {
-            $ok = false;
-        } else {
+        if (!$stmt) $ok = false;
+        else {
             $stmt->bind_param("ii", $id, $family_id);
-
-            if (!$stmt->execute()) {
-                $ok = false;
-            }
-
+            if (!$stmt->execute()) $ok = false;
             $stmt->close();
         }
     }
@@ -238,24 +229,17 @@ if ($ok && !$conflict) {
             WHERE id = ? AND family_id = ?";
     $stmt = $conn->prepare($sql);
 
-    if (!$stmt) {
-        $ok = false;
-    } else {
+    if (!$stmt) $ok = false;
+    else {
         $stmt->bind_param("iisisii", $storage_location, $product_id, $product_expires_on, $product_quantity, $product_status, $id, $family_id);
-
-        if (!$stmt->execute()) {
-            $ok = false;
-        }
-
+        if (!$stmt->execute()) $ok = false;
         $stmt->close();
     }
 }
 
-if ($ok) {
-    $conn->commit();
-} else {
-    $conn->rollback();
-}
+if ($ok) $conn->commit();
+else $conn->rollback();
+
 
 header($redirect);
 exit;

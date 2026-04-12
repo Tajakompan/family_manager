@@ -1,7 +1,12 @@
 function formatTaskDate(date) {
   if (!date) return "~ ni časovne omejitve ~";
-  return date;
+
+  const [year, month, day] = String(date).split("-");
+  if (!year || !month || !day) return date;
+
+  return `${Number(day)}. ${Number(month)}. ${year}`;
 }
+
 
 function createTaskPin(task, mode) {
   const template = document.getElementById("pin_template");
