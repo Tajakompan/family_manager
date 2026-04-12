@@ -76,9 +76,9 @@ $chosen_id = isset($_GET['storage_id']) ? (int)$_GET['storage_id'] : 0;
                             <input type="hidden" name="food_location_id" value="">
                             <input type="hidden" name="storage_id" id="storage_id_input">
                             <label>Ime izdelka:</label> <input type="text" name="product_name">
-                            <label>Količina:</label> <input type="number" name="product_amount" step="0.01" min="0.01">
-                            <label>Enota:</label> <input type="text" name="product_unit">
-                            <label>Kos:</label> <input type="number" name="product_quantity" step="1" min="1">
+                            <label>Količina:</label> <input type="number" name="product_amount" placeholder="označeno na izdelku" step="0.01" min="0.01">
+                            <label>Enota:</label> <input type="text" name="product_unit" placeholder="npr. kg">
+                            <label>Št. kosov:</label> <input type="number" name="product_quantity" step="1" min="1"  placeholder="npr. 2">
                             <label>Kategorija:</label> 
                             <select name="product_category">
                                 <?php 
@@ -178,6 +178,33 @@ $chosen_id = isset($_GET['storage_id']) ? (int)$_GET['storage_id'] : 0;
                 <ul id="expired_list" class="on_right_list"></ul>
                 <div id="expired_empty" class="on_right_empty" hidden>Prazno</div>
             </div>
+            <div class="on_right_panel" id="last_panel">
+                <div class="on_right_title">KATEGORIJE:</div>
+
+                <ul class="on_right_list category_list" <?= empty($category_table) ? 'hidden' : '' ?>>
+                    <?php foreach ($category_table as $category): ?>
+                        <li class="category_row">
+                            <span class="category_name"><?= htmlspecialchars($category["name"]) ?></span>
+
+                            <form method="post" action="delete_category.php" onsubmit="return confirm('Izbrišem kategorijo?');">
+                                <input type="hidden" name="category_id" value="<?= (int)$category["id"] ?>">
+                                <button
+                                    type="submit"
+                                    class="category_delete_btn"
+                                    aria-label="Izbriši kategorijo"
+                                    title="Izbriši kategorijo"
+                                >
+                                    <img src="../img/delete_category.svg" alt="Izbriši">
+                                </button>
+                            </form>
+                        </li>
+
+                    <?php endforeach; ?>
+                </ul>
+
+                <div class="on_right_empty" <?= empty($category_table) ? '' : 'hidden' ?>>Prazno</div>
+            </div>
+
         </div>
 
         <div id="nav_menu" class="menu">

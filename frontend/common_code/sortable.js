@@ -69,8 +69,12 @@ function compareValues(type, aTxt, bTxt, aSortValue, bSortValue) {
 
 document.addEventListener("click", (e) => {
   const sortButton = e.target.closest(".sortable");
+  if (!sortButton) return;
+
   const table = sortButton.closest("table");
-  const tbody = table.querySelector("tbody");
+  const tbody = table?.querySelector("tbody");
+  if (!table || !tbody) return;
+
   const colIndex = Number(sortButton.dataset.col);
   const type = sortButton.dataset.type || "text";
   const key = "sortAsc_" + colIndex;
@@ -90,7 +94,7 @@ document.addEventListener("click", (e) => {
     const result = compareValues(type, textA, textB, sortValueA, sortValueB);
 
     if (ascending) return result;
-    else return -result;
+    return -result;
   });
 
   table.dataset[key] = ascending ? "0" : "1";
@@ -99,4 +103,5 @@ document.addEventListener("click", (e) => {
     tbody.appendChild(row);
   });
 });
+
 

@@ -120,7 +120,7 @@ $family_id = (int)$_SESSION["family_id"];
                         <div class="error" id="add_product_error" aria-live="polite" hidden></div>
                         <input type="hidden" name="shop_id" id="product_shop_id">
                         <label>Naziv izdelka:</label> <input type="text" name="product_name">
-                        <label>Količina: </label> <input type="text" name="product_amount" placeholder="označeno na izdelku">
+                        <label>Količina: </label> <input type="number" step="0.01" min="0.01" name="product_amount" placeholder="označeno na izdelku">
                         <label>Enota:</label> <input type="text" name="product_unit" placeholder="npr. kg">
                         <label>Število kosov:</label> <input type="number" name="product_quantity" min="1" step="1" placeholder="npr. 2">
                         <label>Nujnost:</label>

@@ -1,6 +1,6 @@
 const navMenu = document.getElementById("nav_menu");
 const rowMenu = document.getElementById("row_menu");
-const overlay = document.getElementById("add_something_view");
+const foodOverlay = document.getElementById("add_something_view");
 const productWindow = document.querySelector(".add_product_window");
 const productForm = document.getElementById("add_product_form");
 
@@ -98,13 +98,17 @@ async function openEditFoodLocation(foodLocationId) {
   if (productExpiresInput) productExpiresInput.value = row.product_expires_on ?? "";
   if (productStatusSelect) productStatusSelect.value = row.product_status ?? "new";
 
-  overlay?.classList.add("active");
+  foodOverlay?.classList.add("active");
   productWindow?.classList.add("active");
 }
 
 document.addEventListener("contextmenu", (event) => {
-  const navItem = event.target.closest(".nav_item");
+  const target = event.target.closest ? event.target : event.target.parentElement;
+  console.log("contextmenu target:", event.target);
 
+
+
+  const navItem = target?.closest(".nav_item");
   if (navItem) {
     event.preventDefault();
 
@@ -119,8 +123,7 @@ document.addEventListener("contextmenu", (event) => {
     return;
   }
 
-  const row = event.target.closest("#storage_table_body tr");
-
+  const row = target?.closest("#storage_table_body tr");
   if (row) {
     event.preventDefault();
 
@@ -128,6 +131,16 @@ document.addEventListener("contextmenu", (event) => {
 
     if (rightClickedRowId) positionMenu(rowMenu, event);
   }
+});
+
+
+
+navMenu?.addEventListener("contextmenu", (event) => {
+  event.preventDefault();
+});
+
+rowMenu?.addEventListener("contextmenu", (event) => {
+  event.preventDefault();
 });
 
 navMenu?.addEventListener("click", (event) => {
@@ -211,3 +224,14 @@ rowMenu?.querySelector(".delete")?.addEventListener("click", () => {
 
   closeRowMenu();
 });
+
+window.addEventListener("scroll", () => {
+  closeNavMenu();
+  closeRowMenu();
+});
+
+window.addEventListener("resize", () => {
+  closeNavMenu();
+  closeRowMenu();
+});
+
