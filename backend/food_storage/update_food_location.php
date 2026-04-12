@@ -1,14 +1,12 @@
 <?php
 require_once __DIR__ . "/../config.php";
 
-if (!isset($_SESSION["user_id"], $_SESSION["family_id"])) {
+if (!isset($_SESSION["family_id"])) {
     header("Location: ../entry/login.php");
     exit;
 }
 
 $family_id = (int)$_SESSION["family_id"];
-$user_id = (int)$_SESSION["user_id"];
-
 $id = (int)($_POST["food_location_id"] ?? 0);
 $storage_location = (int)($_POST["storage_id"] ?? 0);
 
@@ -225,7 +223,7 @@ if ($ok && !$conflict) {
                 product_id = ?,
                 expires_on = ?,
                 quantity = ?,
-                status = ?,
+                status = ?
             WHERE id = ? AND family_id = ?";
     $stmt = $conn->prepare($sql);
 
