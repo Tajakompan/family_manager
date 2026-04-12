@@ -285,7 +285,7 @@ td.sortable:hover{
 }
 
 .category_list{
-    gap: 10px;
+    gap: 6px;
 }
 .category_row form{
     margin: 0;
@@ -300,8 +300,8 @@ td.sortable:hover{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
-    padding: 10px 12px;
+    gap: 8px;
+    padding: 6px 10px;
     border-radius: 8px;
     border: 1px solid #d0d0d0;
     background: white;
@@ -316,13 +316,13 @@ td.sortable:hover{
 
 .category_delete_btn{
     flex: 0 0 auto;
-    width: 32px;
-    height: 32px;
+    width: 26px;
+    height: 26px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border: 1px solid #d0d0d0;
-    border-radius: 8px;
+    border-radius: 6px;
     background: #f4f4f4;
     cursor: pointer;
     padding: 0;
@@ -333,8 +333,8 @@ td.sortable:hover{
 }
 
 .category_delete_btn img{
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
     display: block;
 }
 
