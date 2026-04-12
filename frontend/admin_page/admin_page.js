@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }).catch(() => null);
 
     if (!response) {
-      showError("update_family_error", "Posodobitev druzine ni uspela. Poskusi znova.");
+      showError("update_family_error", "Posodobitev družine ni uspela. Poskusi znova.");
       openWindow("update_family_window");
       if (submitBtn) submitBtn.disabled = false;
       return;
@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }).catch(() => null);
 
     if (!response) {
-      showError("update_points_error", "Posodobitev tock ni uspela. Poskusi znova.");
+      showError("update_points_error", "Posodobitev točk ni uspela. Poskusi znova.");
       openWindow("update_points_window");
       if (submitBtn) submitBtn.disabled = false;
       return;

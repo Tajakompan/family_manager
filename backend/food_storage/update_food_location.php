@@ -193,7 +193,6 @@ if ($ok && $conflict) {
     $sql = "UPDATE food_location
             SET quantity = quantity + ?,
                 status = ?,
-                app_user_id = ?,
                 purchased_on = LEAST(purchased_on, ?)
             WHERE id = ? AND family_id = ?";
     $stmt = $conn->prepare($sql);
@@ -201,7 +200,7 @@ if ($ok && $conflict) {
     if (!$stmt) {
         $ok = false;
     } else {
-        $stmt->bind_param("isiisi", $product_quantity, $product_status, $user_id, $current_purchased_on, $target_id, $family_id);
+        $stmt->bind_param("isisi", $product_quantity, $product_status, $current_purchased_on, $target_id, $family_id);
 
         if (!$stmt->execute()) {
             $ok = false;
@@ -236,14 +235,13 @@ if ($ok && !$conflict) {
                 expires_on = ?,
                 quantity = ?,
                 status = ?,
-                app_user_id = ?
             WHERE id = ? AND family_id = ?";
     $stmt = $conn->prepare($sql);
 
     if (!$stmt) {
         $ok = false;
     } else {
-        $stmt->bind_param("iisisiii", $storage_location, $product_id, $product_expires_on, $product_quantity, $product_status, $user_id, $id, $family_id);
+        $stmt->bind_param("iisisii", $storage_location, $product_id, $product_expires_on, $product_quantity, $product_status, $id, $family_id);
 
         if (!$stmt->execute()) {
             $ok = false;

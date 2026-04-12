@@ -62,15 +62,14 @@ if ($existing_product) {
 
 $purchased_on = date("Y-m-d");
 
-$sql = "INSERT INTO food_location (family_id, storage_location_id, product_id, purchased_on, expires_on, quantity, app_user_id, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+$sql = "INSERT INTO food_location (family_id, storage_location_id, product_id, purchased_on, expires_on, quantity, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
         quantity = quantity + VALUES(quantity),
         status = VALUES(status),
-        purchased_on = LEAST(purchased_on, VALUES(purchased_on)),
-        app_user_id = VALUES(app_user_id)";
+        purchased_on = LEAST(purchased_on, VALUES(purchased_on))";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("iiissiis",$family_id,$storage_location,$product_id,$purchased_on,$product_expires_on,$product_quantity,$user_id,$product_status);
+$stmt->bind_param("iiissis",$family_id,$storage_location,$product_id,$purchased_on,$product_expires_on,$product_quantity,$product_status);
 $stmt->execute();
 $stmt->close();
 
