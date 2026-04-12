@@ -66,7 +66,13 @@ while ($row = $result->fetch_assoc()) {
         echo "<td>" . $dt->format("j. n. Y") . "</td>";
     }
 
-    echo "<td>" . htmlspecialchars($row["status"]) . "</td>";
+    $status_label = match ($row["status"]) {
+        "new" => "Novo",
+        "open" => "Že odprto",
+        "empty" => "Skoraj prazno",
+        default => $row["status"],
+    };
+    echo "<td>" . htmlspecialchars($status_label) . "</td>";
     echo "</tr>";
 }
 
