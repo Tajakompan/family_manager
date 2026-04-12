@@ -163,6 +163,37 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+function openEditStorageLocation(storageId) {
+  const storageForm = document.getElementById("add_storage_form");
+  if (!storageForm || !storageId) return;
+
+  const title = document.querySelector(".add_storage_location_window .title");
+  const submitBtn = document.getElementById("add_new_storage_btn");
+  const storageIdInput = storageForm.querySelector('input[name="storage_id"]');
+  const storageNameInput = storageForm.querySelector('input[name="new_storage_location"]');
+
+  const navItem = document.querySelector(`.nav_item[data-storage-id="${CSS.escape(String(storageId))}"]`);
+  const currentName = navItem?.textContent?.trim() || "";
+
+  storageForm.action = "update_storage_location.php";
+
+  if (title) title.textContent = "Uredi lokacijo za beleženje zaloge:";
+  if (submitBtn) submitBtn.textContent = "Shrani";
+  if (storageIdInput) storageIdInput.value = String(storageId);
+  if (storageNameInput) storageNameInput.value = currentName;
+
+  foodOverlay?.classList.add("active");
+  document.querySelector(".add_storage_location_window")?.classList.add("active");
+}
+
+navMenu?.querySelector(".edit")?.addEventListener("click", () => {
+  if (!rightClickedStorageId) return;
+
+  openEditStorageLocation(rightClickedStorageId);
+  closeNavMenu();
+});
+
+
 navMenu?.querySelector(".delete")?.addEventListener("click", () => {
   if (!rightClickedStorageId) return;
 

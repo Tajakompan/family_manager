@@ -46,6 +46,7 @@ $chosen_id = isset($_GET['storage_id']) ? (int)$_GET['storage_id'] : 0;
             <div class="add_storage_location_window window">
                 <div class="title">Dodaj novo lokacijo za beleženje zaloge:</div>
                 <form id="add_storage_form" method="post" action="add_storage_in_db.php">
+                    <input type="hidden" name="storage_id" value="">
                     <div class="form">
                             <label>Ime lokacije:</label> <input type="text" name="new_storage_location">
                     </div>
@@ -208,6 +209,7 @@ $chosen_id = isset($_GET['storage_id']) ? (int)$_GET['storage_id'] : 0;
         </div>
 
         <div id="nav_menu" class="menu">
+            <div class="menu_item edit">Uredi lokacijo</div>
             <div class="menu_item delete">Izbriši lokacijo</div>
         </div>
         <div id="row_menu" class="menu">

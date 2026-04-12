@@ -16,6 +16,23 @@ const addStorageForm = document.getElementById("add_storage_form");
 const addProductForm = document.getElementById("add_product_form");
 const addCategoryForm = document.getElementById("add_category_form");
 
+function switchStorageToAddMode() {
+  if (!addStorageForm) return;
+
+  const title = document.querySelector(".add_storage_location_window .title");
+  const submitBtn = document.getElementById("add_new_storage_btn");
+  const storageIdInput = addStorageForm.querySelector('input[name="storage_id"]');
+  const storageNameInput = addStorageForm.querySelector('input[name="new_storage_location"]');
+
+  addStorageForm.action = "add_storage_in_db.php";
+
+  if (title) title.textContent = "Dodaj novo lokacijo za beleženje zaloge:";
+  if (submitBtn) submitBtn.textContent = "Dodaj";
+  if (storageIdInput) storageIdInput.value = "";
+  if (storageNameInput) storageNameInput.value = "";
+}
+
+
 function clearRedFields(form) {
   if (!form) return;
 
@@ -75,6 +92,7 @@ window.switchToAddMode = switchToAddMode;
 
 newStorageBtn?.addEventListener("click", () => {
   clearRedFields(addStorageForm);
+  switchStorageToAddMode();
   openWindow(addStorageWindow);
 });
 
@@ -91,6 +109,7 @@ newCategoryBtn?.addEventListener("click", () => {
 
 cancelNewStorageBtn?.addEventListener("click", () => {
   clearRedFields(addStorageForm);
+  switchStorageToAddMode();
   closeAllWindows();
 });
 
