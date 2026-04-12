@@ -175,7 +175,7 @@ function openEditStorageLocation(storageId) {
   const navItem = document.querySelector(`.nav_item[data-storage-id="${CSS.escape(String(storageId))}"]`);
   const currentName = navItem?.textContent?.trim() || "";
 
-  storageForm.action = "update_storage_location.php";
+  storageForm.action = "update_storage.php";
 
   if (title) title.textContent = "Uredi lokacijo za beleženje zaloge:";
   if (submitBtn) submitBtn.textContent = "Shrani";
