@@ -62,68 +62,33 @@ for ($d = 1; $d <= $days_in_month; $d++) {
 
     if ($selected_user_id > 0) {
         if ($selected_user_id === $user_id) {
-            $sql = "SELECT 
-                        e.id,
-                        e.name,
-                        e.event_time,
-                        e.whole_day,
-                        e.location,
-                        e.description,
-                        a.name AS user_name,
-                        e.reminder,
-                        e.just_for_creator
+            $sql = "SELECT  e.id, e.name, e.event_time, e.whole_day, e.location, e.description, a.name AS user_name, e.reminder, e.just_for_creator
                     FROM event e
                     INNER JOIN app_user a ON e.created_by_app_user_id = a.id
-                    WHERE e.family_id = ?
-                      AND e.event_date = ?
-                      AND e.created_by_app_user_id = ?
+                    WHERE e.family_id = ? AND e.event_date = ? AND e.created_by_app_user_id = ?
                     ORDER BY (e.event_time IS NULL), e.event_time";
-
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("isi", $family_id, $dateKey, $selected_user_id);
-        } else {
-            $sql = "SELECT 
-                        e.id,
-                        e.name,
-                        e.event_time,
-                        e.whole_day,
-                        e.location,
-                        e.description,
-                        a.name AS user_name,
-                        e.reminder,
-                        e.just_for_creator
+        } 
+        else {
+            $sql = "SELECT e.id, e.name, e.event_time, e.whole_day, e.location, e.description, a.name AS user_name, e.reminder, e.just_for_creator
                     FROM event e
                     INNER JOIN app_user a ON e.created_by_app_user_id = a.id
-                    WHERE e.family_id = ?
-                      AND e.event_date = ?
-                      AND e.created_by_app_user_id = ?
-                      AND e.just_for_creator = 0
+                    WHERE e.family_id = ? AND e.event_date = ?
+                      AND e.created_by_app_user_id = ? AND e.just_for_creator = 0
                     ORDER BY (e.event_time IS NULL), e.event_time";
-
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("isi", $family_id, $dateKey, $selected_user_id);
         }
-    } else {
-        $sql = "SELECT 
-                    e.id,
-                    e.name,
-                    e.event_time,
-                    e.whole_day,
-                    e.location,
-                    e.description,
-                    a.name AS user_name,
-                    e.reminder,
-                    e.just_for_creator
+    } 
+    else {
+        $sql = "SELECT  e.id, e.name, e.event_time, e.whole_day, e.location, e.description, a.name AS user_name, e.reminder, e.just_for_creator
                 FROM event e
                 INNER JOIN app_user a ON e.created_by_app_user_id = a.id
                 WHERE e.family_id = ?
                   AND e.event_date = ?
-                  AND (
-                        e.created_by_app_user_id = ?
-                        OR e.just_for_creator = 0
-                  )
+                  AND (e.created_by_app_user_id = ? OR e.just_for_creator = 0)
                 ORDER BY (e.event_time IS NULL), e.event_time";
-
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("isi", $family_id, $dateKey, $user_id);
     }
@@ -334,3 +299,4 @@ for ($d = 1; $d <= $days_in_month; $d++) {
 <script src="../../frontend/calendar/form&btn_work.js"></script>
 </body>
 </html>
+

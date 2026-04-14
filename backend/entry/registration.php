@@ -30,30 +30,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $code = trim($_POST["code"] ?? "");
 
     if ($name === "" || $surname === "" || $birthdate === "" || $email === "" || $password === "" || $password2 === "" || $code === "" || $role === "") {
-        if ($name === "") {
-            $invalid_fields["name"] = true;
-        }
-        if ($surname === "") {
-            $invalid_fields["surname"] = true;
-        }
-        if ($birthdate === "") {
-            $invalid_fields["birthdate"] = true;
-        }
-        if ($email === "") {
-            $invalid_fields["email"] = true;
-        }
-        if ($password === "") {
-            $invalid_fields["password"] = true;
-        }
-        if ($password2 === "") {
-            $invalid_fields["password2"] = true;
-        }
-        if ($code === "") {
-            $invalid_fields["code"] = true;
-        }
-        if ($role === "") {
-            $invalid_fields["role"] = true;
-        }
+        if ($name === "") $invalid_fields["name"] = true;
+        if ($surname === "") $invalid_fields["surname"] = true;
+        if ($birthdate === "") $invalid_fields["birthdate"] = true;
+        if ($email === "") $invalid_fields["email"] = true;
+        if ($password === "") $invalid_fields["password"] = true;
+        if ($password2 === "") $invalid_fields["password2"] = true;
+        if ($code === "") $invalid_fields["code"] = true;
+        if ($role === "") $invalid_fields["role"] = true;
         $error = "Vsa polja so obvezna.";
     }
     else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -155,17 +139,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                     email_verified, email_verification_token_hash, email_verification_sent_at
                                 ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, NOW())";
                         $stmt = $conn->prepare($sql);
-                        $stmt->bind_param(
-                            "sssssiis",
-                            $name,
-                            $surname,
-                            $birthdate,
-                            $email,
-                            $password_hash,
-                            $role_id,
-                            $family_id,
-                            $token_hash
-                        );
+                        $stmt->bind_param("sssssiis", $name, $surname, $birthdate, $email, $password_hash, $role_id, $family_id, $token_hash);
 
                         if ($stmt->execute()) {
                             $verification_mail_sent = sendVerificationEmail($email, $name, $raw_token);
@@ -174,7 +148,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                 $success = "Registracija uspešna. Na vaš email smo poslali povezavo za potrditev.";
                             else 
                                 $success = "Registracija uspešna, vendar pošiljanje potrditvenega emaila ni uspelo. Kontaktirajte skrbnika ali poskusite znova kasneje.";
-                            
                         } 
                         else 
                             $error = "Napaka pri registraciji.";
@@ -341,5 +314,3 @@ function update_roles() {
 
 window.addEventListener("load", update_roles);
 </script>
-
-

@@ -26,17 +26,7 @@ else{
             }
             $error = "Vnos email-a in gesla je obvezen!";
         } else {
-            $sql = "
-                SELECT 
-                    u.id,
-                    u.name,
-                    u.surname,
-                    u.email,
-                    u.password,
-                    u.family_id,
-                    u.email_verified,
-                    u.email_verification_sent_at,
-                    r.user_role_name
+            $sql = "SELECT u.id, u.name, u.surname, u.email, u.password, u.family_id, u.email_verified, u.email_verification_sent_at, r.user_role_name
                 FROM app_user u
                 JOIN user_role r ON r.id = u.user_role_id
                 WHERE u.email = ?
