@@ -56,8 +56,10 @@ $sql = "INSERT INTO food_location
         ON DUPLICATE KEY UPDATE
             quantity = quantity + VALUES(quantity),
             status = VALUES(status),
-            purchased_on = LEAST(purchased_on, VALUES(purchased_on)),
-            app_user_id = VALUES(app_user_id)";
+            purchased_on = LEAST(purchased_on, VALUES(purchased_on))";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("iiissis", $family_id, $storage_id, $product_id, $purchased_on, $expires_on, $qty, $product_status);
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("iiissiis", $family_id, $storage_id, $product_id, $purchased_on, $expires_on, $qty, $product_status);
