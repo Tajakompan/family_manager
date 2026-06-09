@@ -60,9 +60,6 @@ $sql = "INSERT INTO food_location
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("iiissis", $family_id, $storage_id, $product_id, $purchased_on, $expires_on, $qty, $product_status);
-
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("iiissiis", $family_id, $storage_id, $product_id, $purchased_on, $expires_on, $qty, $product_status);
 if (!$stmt->execute()) {
     $stmt->close();
     $conn->rollback();
