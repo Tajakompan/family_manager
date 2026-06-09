@@ -51,8 +51,8 @@ $purchased_on = date("Y-m-d");
 $product_status = "new";
 
 $sql = "INSERT INTO food_location
-        (family_id, storage_location_id, product_id, purchased_on, expires_on, quantity, app_user_id, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        (family_id, storage_location_id, product_id, purchased_on, expires_on, quantity, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
             quantity = quantity + VALUES(quantity),
             status = VALUES(status),
@@ -60,7 +60,7 @@ $sql = "INSERT INTO food_location
             app_user_id = VALUES(app_user_id)";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("iiissiis", $family_id, $storage_id, $product_id, $purchased_on, $expires_on, $qty, $user_id, $product_status);
+$stmt->bind_param("iiissiis", $family_id, $storage_id, $product_id, $purchased_on, $expires_on, $qty, $product_status);
 if (!$stmt->execute()) {
     $stmt->close();
     $conn->rollback();

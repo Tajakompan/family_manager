@@ -72,7 +72,7 @@ else{
                     $error = "Email še ni potrjen. Preverite svoj inbox in kliknite potrditveno povezavo.";
                 }
                  else {
-                    $_SESSION["user_id"]   = $user["id"];
+                    $_SESSION["user_id"] = $user["id"];
                     $_SESSION["family_id"] = $user["family_id"];
                     $_SESSION["user_role"] = $user["user_role_name"];
                     $_SESSION["user_name"] = $user["name"];
