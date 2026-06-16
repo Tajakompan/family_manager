@@ -85,6 +85,11 @@ if ($age !== null && $age < 18 && $role_row["user_role_name"] !== "Otrok") {
     exit;
 }
 
+if ($age !== null && $age >= 18 && $role_row["user_role_name"] === "Otrok") {
+    echo json_encode(["ok" => false, "error" => "adult_cannot_be_child"]);
+    exit;
+}
+
 if ($role_row["user_role_name"] === "Starš - admin") {
     $sql = "SELECT COUNT(*) AS total
             FROM app_user

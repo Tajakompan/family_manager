@@ -31,6 +31,7 @@ const userErrorMessages = {
   missing_user: "Izbrani uporabnik ne obstaja več.",
   too_many_parents: "Družina ima lahko največ dva starša - admina.",
   minor_must_be_child: "Mladoletni uporabnik je lahko le otrok.",
+  adult_cannot_be_child: "Polnoletni uporabnik ne more imeti vloge otrok.",
   forbidden: "To lahko ureja le starš - admin."
 };
 
@@ -81,7 +82,7 @@ function getErrorFields(type, errorCode) {
     if (errorCode === "invalid_email" || errorCode === "email_taken") return ["email"];
     if (errorCode === "future_birthdate") return ["birthdate"];
     if (errorCode === "password_mismatch" || errorCode === "password_too_short") return ["password_1", "password_2"];
-    if (errorCode === "too_many_parents" || errorCode === "minor_must_be_child") return ["role"];
+    if (errorCode === "too_many_parents" || errorCode === "minor_must_be_child" || errorCode === "adult_cannot_be_child") return ["role"];
     return [];
   }
   if (type === "points") {
@@ -159,6 +160,13 @@ function syncUpdateUserRoleOptions() {
     adultOption.hidden = true;
     adultOption.disabled = true;
     roleInput.value = childOption.value;
+  } else {
+    childOption.hidden = true;
+    childOption.disabled = true;
+
+    if (roleInput.value === childOption.value) {
+      roleInput.value = adultOption.value;
+    }
   }
 }
 
