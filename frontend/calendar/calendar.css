@@ -249,6 +249,8 @@ body{
 
 .event_title{
   font-weight: 900;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .event_menu_btn{

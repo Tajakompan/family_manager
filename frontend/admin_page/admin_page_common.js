@@ -136,9 +136,10 @@ function syncUpdateUserRoleOptions() {
 
   if (!birthdateInput || !roleInput) return;
 
-  const parentOption = roleInput.querySelector('option[value="1"]');
-  const adultOption = roleInput.querySelector('option[value="2"]');
-  const childOption = roleInput.querySelector('option[value="3"]');
+  const options = Array.from(roleInput.options);
+  const parentOption = options.find((option) => option.textContent.trim() === "Starš - admin");
+  const adultOption = options.find((option) => option.textContent.trim() === "Odrasel");
+  const childOption = options.find((option) => option.textContent.trim() === "Otrok");
 
   if (!parentOption || !adultOption || !childOption) return;
 
